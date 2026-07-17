@@ -532,6 +532,13 @@
     let cleaned = String(answer || '').trim();
     const currentText = String(currentQuestion?.text || '').trim();
     if (currentText) cleaned = cleaned.split(currentText).join('').replace(/\s{2,}/g, ' ').trim();
+    const currentStem = currentText.split(/[？?。！!]/)[0].trim();
+    if (currentStem) {
+      const escapedStem = currentStem.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+      const repeatedQuestion = new RegExp(`(?:^|[\\n。！？])[^\\n。！？]{0,40}${escapedStem}[^\\n。！？]*[。！？]?`, 'g');
+      cleaned = cleaned.replace(repeatedQuestion, '。').replace(/^。/, '').replace(/。{2,}/g, '。').replace(/\s{2,}/g, ' ').trim();
+    }
+    cleaned = cleaned.replace(/[^。！？\n]*(?:都有现货|目前有现货|现在有现货|库存充足|现货充足)[。！？]?/g, '具体库存需要向 Ozwood 确认。');
     return cleaned
       .replace(/\n*\s*(?:我们|接下来|现在).{0,12}(?:继续|回到).{0,12}(?:问题|流程)[：:]?\s*$/i, '')
       .trim();
