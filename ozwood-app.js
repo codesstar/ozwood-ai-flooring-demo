@@ -515,6 +515,25 @@
     return sanitizeProfilePatch(patch);
   }
 
+  function corroborateModelPatch(modelPatch, evidencePatch, text, intent) {
+    if (!['requirements', 'mixed', 'direct_recommend'].includes(intent)) return {};
+    const safe = sanitizeProfilePatch(modelPatch);
+    const corroborated = {};
+    Object.entries(safe).forEach(([id, value]) => {
+      if (evidencePatch[id] !== value) return;
+      if (intent === 'mixed' && id === 'style' && !/(喜欢|想要|偏好|倾向|选定|改成|风格)/.test(text)) return;
+      if (intent === 'mixed' && id === 'room' && !/(主要|准备|打算|需要|想|改造|铺).{0,12}(客厅|餐厅|卧室|书房|全屋)/.test(text)) return;
+      corroborated[id] = value;
+    });
+    return corroborated;
+  }
+
+  function cleanAIAnswer(answer) {
+    return String(answer || '')
+      .replace(/\n+\s*(?:我们|接下来|现在).{0,12}(?:继续|回到).{0,12}(?:问题|流程)[：:][\s\S]*$/i, '')
+      .trim();
+  }
+
   function applyProfilePatch(patch) {
     const safe = sanitizeProfilePatch(patch);
     const changed = [];
@@ -564,7 +583,7 @@
       if (!response.ok) throw new Error(`AI ${response.status}`);
       const data = await response.json();
       return {
-        answer: typeof data.answer === "string" ? data.answer.trim().slice(0, 1200) : "",
+        answer: typeof data.answer === "string" ? cleanAIAnswer(data.answer).slice(0, 1200) : "",
         intent: typeof data.intent === "string" ? data.intent : "question",
         profilePatch: sanitizeProfilePatch(data.profilePatch)
       };
@@ -576,9 +595,10 @@
   async function handleFlexibleInput(text) {
     const currentBefore = firstMissingQuestion();
     const questionLike = looksLikeQuestion(text);
+    const evidencePatch = extractProfilePatch(text);
     // 问句里的产品或风格关键词可能只是比较对象，不能直接当作用户偏好。
     // 混合型“需求 + 问题”交给结构化 AI 抽取；断网时宁可少记，也绝不污染画像。
-    const localPatch = questionLike ? {} : extractProfilePatch(text);
+    const localPatch = questionLike ? {} : evidencePatch;
     const changed = applyProfilePatch(localPatch);
     const directRecommendation = /(直接|现在|先).{0,5}(推荐|出结果)|给我推荐|不用再问|^推荐(一下|一款|吧)?$/.test(text);
     state.chatBusy = true;
@@ -601,7 +621,8 @@
     } catch (_) {
       // 云端中断时继续使用本地理解与知识，不破坏当前问答状态。
     }
-    const modelChanged = applyProfilePatch(result.profilePatch);
+    const modelPatch = corroborateModelPatch(result.profilePatch, evidencePatch, text, result.intent);
+    const modelChanged = applyProfilePatch(modelPatch);
     const allChanged = [...new Set([...changed, ...modelChanged])];
     typing.remove();
 
