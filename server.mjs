@@ -32,7 +32,11 @@ const BASE_URL = (process.env.DEEPSEEK_BASE_URL || 'https://api.deepseek.com').r
 const MODEL = process.env.DEEPSEEK_MODEL || 'deepseek-v4-flash';
 const catalog = JSON.parse(await readFile(path.join(ROOT, 'ai-recommendation-data.json'), 'utf8'));
 
-const OZWOOD_KNOWLEDGE = `你是 Ozwood Australia 的中文地板顾问，只回答地板选购、产品区别、安装、养护、预算和 Ozwood 品牌知识。回答要自然、明确、控制在 180 个中文字以内，不要使用 Markdown 表格，也不要编造认证、库存、保修或价格。
+const OZWOOD_KNOWLEDGE = `你是 Ozwood Australia 的中文地板顾问，也是允许用户随时插问、修改需求或跳过流程的销售助手。固定问题流程只是辅助，绝不能强迫用户按顺序回答。先判断用户是在提问、提供需求、二者都有、要求直接推荐，还是明显跑题；问题必须先回答，绝不能把问题或插话误填进当前字段。
+
+只输出 JSON：{"intent":"question|requirements|mixed|direct_recommend|off_topic","answer":"自然中文回答","profilePatch":{}}。requirements 只用一句话确认，不要提前给正式推荐；mixed 必须同时存在明确问题，没有疑问意图时不要判为 mixed。profilePatch 只填写用户明确表达的条件，没有明确表达就不要猜。允许字段和值：space=house|apartment|commercial|unknown；room=living|bedroom|study|whole|unknown；area=5–3000 的数字或 unknown；style=light|warm|australian|herringbone|cool|unknown；lifestyle=kids-pets|heavy|quiet|rental|unknown；subfloor=concrete|tiles|timber|unknown；moisture=waterproof|occasional|dry|unknown；service=supply-install|supply-only|sample|showroom|unknown；budget=under35|35-55|55plus|quote|unknown。
+
+回答要自然、明确，通常不超过 220 个中文字，不要使用 Markdown 表格，也不要编造认证、库存、保修或价格。客户端会恢复流程，所以回答中不要重复当前预设问题。
 
 除 Ozwood、官方产品名/编号、AU$ 和必要的行业缩写外，尽量使用中文。
 
@@ -507,39 +511,104 @@ async function handleChat(req, res) {
   });
 }
 
+const OZWOOD_PROFILE_VALUES = {
+  space: ['house', 'apartment', 'commercial', 'unknown'],
+  room: ['living', 'bedroom', 'study', 'whole', 'unknown'],
+  style: ['light', 'warm', 'australian', 'herringbone', 'cool', 'unknown'],
+  lifestyle: ['kids-pets', 'heavy', 'quiet', 'rental', 'unknown'],
+  subfloor: ['concrete', 'tiles', 'timber', 'unknown'],
+  moisture: ['waterproof', 'occasional', 'dry', 'unknown'],
+  service: ['supply-install', 'supply-only', 'sample', 'showroom', 'unknown'],
+  budget: ['under35', '35-55', '55plus', 'quote', 'unknown']
+};
+
+function sanitizeOzwoodProfile(patch) {
+  const safe = {};
+  if (!patch || typeof patch !== 'object') return safe;
+  for (const [key, values] of Object.entries(OZWOOD_PROFILE_VALUES)) {
+    if (values.includes(patch[key])) safe[key] = patch[key];
+  }
+  if (patch.area === 'unknown') safe.area = 'unknown';
+  else if (Number.isFinite(Number(patch.area)) && Number(patch.area) >= 5 && Number(patch.area) <= 3000) safe.area = Number(patch.area);
+  return safe;
+}
+
+function sanitizeOzwoodHistory(history) {
+  if (!Array.isArray(history)) return [];
+  return history
+    .filter(item => item && ['user', 'assistant'].includes(item.role) && typeof item.content === 'string')
+    .slice(-10)
+    .map(item => ({ role: item.role, content: item.content.trim().slice(0, 1000) }))
+    .filter(item => item.content);
+}
+
+function parseOzwoodResult(content) {
+  const raw = String(content || '').trim();
+  if (!raw) throw new Error('模型返回空正文');
+  const fenced = raw.match(/```(?:json)?\s*([\s\S]*?)```/i);
+  const candidate = fenced?.[1] || raw.match(/\{[\s\S]*\}/)?.[0] || raw;
+  try {
+    const parsed = JSON.parse(candidate);
+    const intents = new Set(['question', 'requirements', 'mixed', 'direct_recommend', 'off_topic']);
+    return {
+      intent: intents.has(parsed.intent) ? parsed.intent : 'question',
+      answer: String(parsed.answer || '').trim().slice(0, 1400),
+      profilePatch: sanitizeOzwoodProfile(parsed.profilePatch)
+    };
+  } catch (_) {
+    return { intent: 'question', answer: raw.slice(0, 1400), profilePatch: {} };
+  }
+}
+
 async function handleOzwoodQuestion(req, res) {
   const body = await readJson(req);
   const question = typeof body.question === 'string' ? body.question.trim().slice(0, 2000) : '';
   if (!question) return sendJson(res, 400, { error: '请输入问题。' });
   if (!API_KEY || /your[_-]?key|replace|sk-xxx/i.test(API_KEY)) {
-    return sendJson(res, 503, { error: 'AI 未配置，将使用浏览器本地知识库回答。' });
+    return sendJson(res, 200, { intent: 'question', answer: '', profilePatch: {}, fallback: true });
   }
 
   const controller = new AbortController();
   const timer = setTimeout(() => controller.abort(), 18_000);
   try {
-    const response = await fetch(`${BASE_URL}/chat/completions`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${API_KEY}` },
-      body: JSON.stringify({
+    const currentQuestion = body.currentQuestion && typeof body.currentQuestion === 'object'
+      ? { id: String(body.currentQuestion.id || '').slice(0, 30), text: String(body.currentQuestion.text || '').slice(0, 300) }
+      : null;
+    const context = `当前已确认画像：${JSON.stringify(sanitizeOzwoodProfile(body.profile))}\n当前流程问题：${currentQuestion ? JSON.stringify(currentQuestion) : '无，需求流程已经完成'}`;
+    for (let attempt = 0; attempt < 2; attempt += 1) {
+      const requestBody = {
         model: MODEL,
         messages: [
           { role: 'system', content: OZWOOD_KNOWLEDGE },
+          { role: 'system', content: context },
+          ...sanitizeOzwoodHistory(body.history),
           { role: 'user', content: question }
         ],
         thinking: { type: 'disabled' },
-        max_tokens: 500
-      }),
-      signal: controller.signal
-    });
-    if (!response.ok) {
-      const details = await response.text();
-      throw new Error(`DeepSeek API 返回 ${response.status}: ${details.slice(0, 240)}`);
+        max_tokens: 700
+      };
+      if (attempt === 0) requestBody.response_format = { type: 'json_object' };
+      const response = await fetch(`${BASE_URL}/chat/completions`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${API_KEY}` },
+        body: JSON.stringify(requestBody),
+        signal: controller.signal
+      });
+      if (!response.ok) {
+        const details = await response.text();
+        throw new Error(`DeepSeek API 返回 ${response.status}: ${details.slice(0, 240)}`);
+      }
+      const data = await response.json();
+      const content = String(data.choices?.[0]?.message?.content || '').trim();
+      if (!content && attempt === 0) continue;
+      const result = parseOzwoodResult(content);
+      if (!result.answer) result.answer = result.intent === 'requirements' ? '好的，我已经记下这些条件。' : '我理解了，请继续。';
+      return sendJson(res, 200, result);
     }
-    const data = await response.json();
-    const answer = String(data.choices?.[0]?.message?.content || '').trim();
-    if (!answer) throw new Error('模型返回空正文');
-    return sendJson(res, 200, { answer: answer.slice(0, 1200) });
+    throw new Error('模型连续返回空正文');
+  } catch (error) {
+    console.warn(`[${new Date().toISOString()}] Ozwood AI fallback: ${error.message}`);
+    return sendJson(res, 200, { intent: 'question', answer: '', profilePatch: {}, fallback: true });
   } finally {
     clearTimeout(timer);
   }

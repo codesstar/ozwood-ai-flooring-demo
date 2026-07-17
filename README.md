@@ -4,7 +4,7 @@
 
 [打开 Ozwood AI 地板顾问演示](https://codesstar.github.io/ozwood-ai-flooring-demo/)
 
-GitHub Pages 版本包含 3 个空间、5 款地板、A/B 双侧独立切换、产品与品牌故事，以及稳定的 9 步本地推荐和产品问答。由于 GitHub Pages 是静态托管，自由问答使用浏览器本地知识库；本地通过 `npm start` 启动时可调用受约束的 DeepSeek 接口。
+GitHub Pages 版本包含 3 个空间、5 款地板、A/B 双侧独立切换、产品与品牌故事，以及稳定的 9 步推荐和自由问答。自由输入通过 Vercel 服务端安全调用 DeepSeek，支持中途插问、一次描述多个需求、跳过、撤销和修改后重新推荐；接口中断时自动使用浏览器本地知识库，流程不会报错或丢失进度。
 
 ## 启动
 

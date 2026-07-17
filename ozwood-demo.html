@@ -6,14 +6,14 @@
   <meta name="description" content="Ozwood AI 地板顾问与一键换地板概念演示">
   <link rel="icon" href="data:,">
   <title>Ozwood · AI 地板顾问演示</title>
-  <link rel="stylesheet" href="ozwood.css?v=5">
+  <link rel="stylesheet" href="ozwood.css?v=6">
 </head>
 <body>
   <div class="desktop-shell">
     <header class="topbar">
       <a class="brand" href="https://ozwoodaustralia.com.au/" target="_blank" rel="noreferrer" aria-label="访问 Ozwood Australia 官方网站">
-        <span class="brand-symbol">OZ</span>
-        <span class="brand-copy"><b>OZWOOD</b><small>专业，让选择更安心</small></span>
+        <img class="brand-logo" src="assets/ozwood/official/ozwood-logo.png" alt="Ozwood Australia 官方标志">
+        <span class="brand-copy"><b>OZWOOD AUSTRALIA</b><small>专业，让选择更安心</small></span>
       </a>
 
       <nav class="top-actions" aria-label="效果预览操作">
@@ -102,14 +102,14 @@
       <aside class="consultant-panel" aria-label="AI 地板顾问">
         <header class="consultant-head">
           <div class="consultant-avatar">OZ</div>
-          <div><h2>Ozwood AI 地板顾问</h2><p><i></i> 支持自由提问 · 稳定演示模式</p></div>
+          <div><h2>Ozwood AI 地板顾问</h2><p><i></i> 可以随时提问、打断或修改答案</p></div>
           <button class="restart-button" id="restartChat" type="button" title="重新开始咨询">
             <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 12a9 9 0 1 0 3-6.7L3 8"></path><path d="M3 3v5h5"></path></svg>
           </button>
         </header>
 
         <div class="consultant-intro">
-          <span>9 步需求分析</span>
+          <span>自由对话 · 9 步需求分析</span>
           <b id="progressLabel">0 / 9</b>
           <div class="progress-track"><i id="progressBar"></i></div>
         </div>
@@ -118,14 +118,14 @@
         <div class="quick-options" id="quickOptions"></div>
 
         <div class="chat-compose">
-          <input id="chatInput" type="text" autocomplete="off" placeholder="也可以直接描述：60㎡公寓，有猫，喜欢浅色…">
+          <input id="chatInput" type="text" autocomplete="off" placeholder="直接提问，或描述：60㎡公寓，有猫，喜欢浅色…">
           <button id="chatSend" type="button" aria-label="发送消息">
             <svg viewBox="0 0 24 24" aria-hidden="true"><path d="m22 2-7 20-4-9-9-4z"></path><path d="M22 2 11 13"></path></svg>
           </button>
         </div>
 
         <footer class="consultant-footer">
-          <span><i></i> AI 问答 + 本地知识库兜底</span>
+          <span><i></i> 云端 AI + 本地安全兜底</span>
           <button id="viewStoriesFromChat" type="button">知识与品牌故事 ↗</button>
         </footer>
       </aside>
@@ -160,6 +160,6 @@
   <div class="toast" id="toast" role="status"></div>
 
   <script src="ozwood-data.js?v=5"></script>
-  <script src="ozwood-app.js?v=5"></script>
+  <script src="ozwood-app.js?v=6"></script>
 </body>
 </html>

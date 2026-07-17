@@ -4,6 +4,9 @@
   const DATA = window.OZWOOD_DEMO;
   const products = DATA.products;
   const rooms = DATA.rooms;
+  const AI_ENDPOINT = window.location.hostname.endsWith("github.io")
+    ? "https://ozwood-ai-flooring-demo.vercel.app/api/ozwood-question"
+    : "/api/ozwood-question";
 
   const $ = (selector, root = document) => root.querySelector(selector);
   const $$ = (selector, root = document) => Array.from(root.querySelectorAll(selector));
@@ -23,6 +26,8 @@
     storyId: DATA.stories[0].id,
     swapToken: 0,
     profile: {},
+    answerOrder: [],
+    history: [],
     chatBusy: false,
     chatComplete: false
   };
@@ -313,7 +318,7 @@
     showToast.timer = window.setTimeout(() => elements.toast.classList.remove("show"), 2400);
   }
 
-  function addMessage(role, content, html = false) {
+  function addMessage(role, content, html = false, record = true) {
     const row = document.createElement("div");
     row.className = `message-row ${role}`;
     if (role === "assistant") row.innerHTML = `<span class="message-avatar">OZ</span>`;
@@ -323,12 +328,19 @@
     else bubble.textContent = content;
     row.appendChild(bubble);
     elements.chatStream.appendChild(row);
+    if (record) {
+      const historyText = bubble.textContent.trim().slice(0, 1200);
+      if (historyText) {
+        state.history.push({ role, content: historyText });
+        state.history = state.history.slice(-14);
+      }
+    }
     scrollChat();
     return row;
   }
 
   function showTyping() {
-    const row = addMessage("assistant", '<span class="typing-dots"><i></i><i></i><i></i></span>', true);
+    const row = addMessage("assistant", '<span class="typing-dots"><i></i><i></i><i></i></span>', true, false);
     row.dataset.typing = "true";
     return row;
   }
@@ -384,76 +396,67 @@
     }, delay);
   }
 
+  const PROFILE_VALUES = {
+    space: ["house", "apartment", "commercial", "unknown"],
+    room: ["living", "bedroom", "study", "whole", "unknown"],
+    style: ["light", "warm", "australian", "herringbone", "cool", "unknown"],
+    lifestyle: ["kids-pets", "heavy", "quiet", "rental", "unknown"],
+    subfloor: ["concrete", "tiles", "timber", "unknown"],
+    moisture: ["waterproof", "occasional", "dry", "unknown"],
+    service: ["supply-install", "supply-only", "sample", "showroom", "unknown"],
+    budget: ["under35", "35-55", "55plus", "quote", "unknown"]
+  };
+  const FIELD_LABELS = {
+    space: "项目", room: "区域", area: "面积", style: "风格", lifestyle: "使用情况",
+    subfloor: "基层", moisture: "防水需求", service: "服务", budget: "预算"
+  };
+  const VALUE_LABELS = {
+    house: "独立屋", apartment: "公寓", commercial: "商用空间", living: "客餐厅",
+    bedroom: "卧室", study: "书房", whole: "全屋", light: "明亮通透", warm: "温暖自然",
+    australian: "澳洲木材个性", herringbone: "人字拼", cool: "冷灰现代", "kids-pets": "孩子或宠物家庭",
+    heavy: "高频使用", quiet: "安静成人家庭", rental: "出租或投资房", concrete: "混凝土",
+    tiles: "现有瓷砖", timber: "木基层", waterproof: "需要防水", occasional: "偶尔有水",
+    dry: "普通干区", "supply-install": "供货加安装", "supply-only": "只供货", sample: "先寄样板",
+    showroom: "先看展厅", under35: "AU$35 以下", "35-55": "AU$35–55", "55plus": "AU$55 以上",
+    quote: "先看效果再报价", unknown: "待确认"
+  };
+
   function looksLikeQuestion(text) {
     return /[?？]/.test(text)
-      || /(有什么区别|区别是什么|怎么选|为什么|是什么|是不是|是否|能不能|可不可以|可以吗|哪款|哪一个|哪个好|哪个|多少钱|适合吗|耐不耐|如何|怎么保养|怎么安装|需要注意什么)/.test(text);
+      || /^(请问|想问|问一下|我想知道)/.test(text)
+      || /(区别|怎么|如何|为什么|什么|是否|能否|能不能|可不可以|可以吗|哪款|哪一个|哪个好|哪个|多少钱|适合吗|耐不耐|保养|安装|注意事项|建议)/.test(text);
   }
 
   function localKnowledgeAnswer(question) {
     const text = question.toLowerCase();
     if (/(明亮|温暖|澳洲木材|人字拼|冷灰|这几个|五个).*(区别|怎么选)|风格.*区别/.test(text)) {
-      return "这五个选项描述的是空间感觉，不是产品等级：明亮通透用浅色放大空间；温暖自然强调舒适和百搭；澳洲木材个性突出天然色差与本土木纹；人字拼把地面变成设计焦点，但人工和损耗更高；冷灰现代更克制，适合极简或商用环境。";
+      return "这五个选项描述的是空间感觉，不是产品等级：明亮通透用浅色放大空间；温暖自然强调舒适和百搭；澳洲木材个性突出天然色差；人字拼把地面变成设计焦点，但人工和损耗更高；冷灰现代更克制。";
     }
     if (/(工程木|强化|混合|hybrid|laminate).*(区别|怎么选)|区别.*(工程木|强化|混合)/.test(text)) {
-      return "工程木地板表层是真实木材，质感自然、结构比实木稳定，但仍要控制水分；强化地板以耐磨表层和高密度基材为主，价格友好、锁扣快装，防潮耐水不等于防水；混合地板更强调防水和高频使用，适合宠物、投资房或靠近厨房的空间，但天然木材触感较弱。人字拼则主要是铺装形式，成本和施工精度通常更高。";
+      return "工程木表层是真实木材，质感自然但要控制水分；强化地板耐磨、价格友好、锁扣快装；混合地板更强调防水和日常省心，但天然木材触感较弱。人字拼主要是铺装形式，成本和施工精度通常更高。";
     }
     if (/(防水|潮湿|厨房|水渍)/.test(text)) {
-      return "当前五款里，灰橡混合地板明确强调防水，最适合水渍和高频清洁需求；OZ2628 白橡木是防潮耐水，并不等于完全防水；欧洲橡木、斑纹桉和人字拼属于木质方向，安装前必须确认基层含水率，也不建议用于长期积水区域。";
+      return "当前五款里，灰橡混合地板明确强调防水；OZ2628 白橡木是防潮耐水，并不等于完全防水；木质方向安装前必须确认基层含水率，也不建议长期积水。";
     }
     if (/(孩子|宠物|猫|狗|耐磨|耐脏)/.test(text)) {
-      return "孩子、宠物和高频使用优先看灰橡混合地板或澳洲斑纹桉：前者更省心、防水且预算友好；后者木材个性更强、硬度高，但需要接受天然色差和木地板的养护方式。";
+      return "孩子、宠物和高频使用优先看灰橡混合地板或澳洲斑纹桉：前者防水、省心且预算友好；后者硬度和木材个性更强，但需要接受天然色差与木地板养护。";
     }
     if (/(价格|预算|多少钱|报价)/.test(text)) {
-      return "当前官网参考中，灰橡混合地板约 AU$19.8/m²、OZ2628 白橡木约 AU$28.8/m²、欧洲橡木 5106 的产品页促销参考约 AU$49/m²；斑纹桉和人字拼需要单独报价。官网存在不同页面价格记录，正式报价仍需确认库存、批次、面积、损耗和安装条件。";
+      return "官网参考中，灰橡混合地板约 AU$19.8/m²、OZ2628 白橡木约 AU$28.8/m²、欧洲橡木 5106 约 AU$49/m²；斑纹桉和人字拼需单独报价。正式报价仍要确认库存、批次、面积、损耗和安装条件。";
     }
     if (/(斑纹桉|spotted gum)/.test(text)) {
-      return "澳洲斑纹桉的特点是木纹和色彩变化明显，常见绿色、灰色、蜂蜜色与暖棕变化，硬度和澳洲本土辨识度都很突出。它适合希望地面有个性、能接受天然色差的家庭。";
+      return "澳洲斑纹桉木纹和色彩变化明显，常见灰、蜂蜜色与暖棕变化，硬度和本土辨识度突出，适合接受天然色差、希望地面更有个性的家庭。";
     }
     if (/(人字拼|herringbone)/.test(text)) {
-      return "人字拼的优势是方向感、层次和高端设计感；代价是放线、切割、收边更复杂，材料损耗和安装费通常高于直铺。它更适合作为客厅、玄关或重点空间的视觉主角。";
+      return "人字拼的优势是方向感、层次和高端设计感；代价是放线、切割、收边更复杂，材料损耗和安装费通常高于直铺。";
     }
     if (/(安装|基层|混凝土|瓷砖|找平|含水率)/.test(text)) {
-      return "无论选择哪款，先确认基层平整度和含水率。混凝土楼板要检测潮气；旧瓷砖要确认牢固和平整；人字拼需要专业放线；锁扣类产品也必须保留伸缩缝。最终安装方式应由现场测量决定。";
+      return "无论选择哪款，都要先确认基层平整度和含水率。混凝土要检测潮气，旧瓷砖要确认牢固平整，人字拼需要专业放线，锁扣类也必须保留伸缩缝。";
     }
     if (/(保养|养护|清洁|拖地)/.test(text)) {
-      return "日常先清除砂粒并及时处理水渍。工程木地板使用微湿拖布和建议的木地板清洁剂；强化和混合地板更容易打理，但也应避免磨蚀清洁剂。家具脚建议使用保护垫。";
+      return "日常先清除砂粒并及时处理水渍。工程木使用微湿拖布和木地板清洁剂；强化和混合地板更容易打理，但也应避免磨蚀清洁剂。";
     }
-    return "可以自由提问。你可以问我产品材质区别、哪款更适合孩子宠物、防水能力、价格、安装基层、清洁养护，或者直接把两款产品放在一起比较。我会先回答问题，再保留当前选购进度。";
-  }
-
-  async function answerCustomQuestion(question) {
-    const currentQuestion = firstMissingQuestion();
-    state.chatBusy = true;
-    const typing = showTyping();
-    let answer = localKnowledgeAnswer(question);
-    const supportsCloudAI = !window.location.hostname.endsWith("github.io");
-    if (supportsCloudAI) {
-      try {
-        const controller = new AbortController();
-        const timer = window.setTimeout(() => controller.abort(), 9000);
-        const response = await fetch("/api/ozwood-question", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ question }),
-          signal: controller.signal
-        });
-        window.clearTimeout(timer);
-        if (response.ok) {
-          const data = await response.json();
-          if (typeof data.answer === "string" && data.answer.trim()) answer = data.answer.trim();
-        }
-      } catch (_) {
-        // 本地知识答案已经准备好，API 中断时不影响现场演示。
-      }
-    }
-    typing.remove();
-    const resume = currentQuestion
-      ? `<div class="question-resume">你的选购进度已保留，请继续回答当前问题。</div>`
-      : `<div class="question-resume">你还可以继续提问，或重新开始需求分析。</div>`;
-    addMessage("assistant", `${escapeHTML(answer)}${resume}`, true);
-    if (currentQuestion) renderOptions(currentQuestion.options);
-    else renderOptions(["重新做一次需求问答", "打开品牌故事"]);
-    state.chatBusy = false;
+    return "我可以直接回答任何与地板选购、材料、安装、养护和 Ozwood 产品相关的问题；如果云端 AI 暂时不可用，我仍会保留你的咨询进度，不会把这句话误当成预设答案。";
   }
 
   function normalizeForQuestion(questionId, raw) {
@@ -470,7 +473,7 @@
     };
     if (questionId === "area") {
       const number = text.match(/(\d{2,4})\s*(?:平|m²|m2|square)?/);
-      return number ? Number(number[1]) : null;
+      return number ? Number(number[1]) : undefined;
     }
     if (questionId === "budget") {
       const direct = (maps.budget || []).find(([pattern]) => pattern.test(text));
@@ -482,23 +485,156 @@
         if (value <= 55) return "35-55";
         return "55plus";
       }
-      return String(raw);
+      return undefined;
     }
     const match = (maps[questionId] || []).find(([pattern]) => pattern.test(text));
-    return match ? match[1] : String(raw);
+    return match ? match[1] : undefined;
   }
 
-  function extractProfile(raw) {
-    const text = String(raw);
-    const ids = DATA.questions.map(question => question.id);
-    ids.forEach(id => {
-      const value = normalizeForQuestion(id, text);
-      if (id === "area") {
-        if (value) state.profile.area = value;
-      } else if (typeof value === "string" && value !== text) {
-        state.profile[id] = value;
+  function sanitizeProfilePatch(patch) {
+    const safe = {};
+    if (!patch || typeof patch !== "object") return safe;
+    DATA.questions.forEach(question => {
+      const value = patch[question.id];
+      if (question.id === "area") {
+        if (value === "unknown") safe.area = "unknown";
+        else if (Number.isFinite(Number(value)) && Number(value) >= 5 && Number(value) <= 3000) safe.area = Number(value);
+      } else if (PROFILE_VALUES[question.id]?.includes(value)) {
+        safe[question.id] = value;
       }
     });
+    return safe;
+  }
+
+  function extractProfilePatch(raw) {
+    const patch = {};
+    DATA.questions.forEach(question => {
+      const value = normalizeForQuestion(question.id, raw);
+      if (value !== undefined) patch[question.id] = value;
+    });
+    return sanitizeProfilePatch(patch);
+  }
+
+  function applyProfilePatch(patch) {
+    const safe = sanitizeProfilePatch(patch);
+    const changed = [];
+    Object.entries(safe).forEach(([id, value]) => {
+      if (state.profile[id] === value) return;
+      state.profile[id] = value;
+      state.answerOrder = state.answerOrder.filter(item => item !== id);
+      state.answerOrder.push(id);
+      changed.push(id);
+    });
+    if (changed.length) {
+      state.chatComplete = false;
+      updateProgress();
+      if (["living", "bedroom", "study"].includes(state.profile.room)) chooseRoom(state.profile.room);
+    }
+    return changed;
+  }
+
+  function formatCapturedFields(ids) {
+    const unique = [...new Set(ids)];
+    return unique.map(id => {
+      const value = state.profile[id];
+      const display = id === "area" && value !== "unknown" ? `${value} m²` : (VALUE_LABELS[value] || String(value));
+      return `${FIELD_LABELS[id]}：${display}`;
+    }).join(" · ");
+  }
+
+  function completedOptions() {
+    return ["继续自由提问", "修改需求后重新推荐", "重新做一次需求问答", "打开品牌故事"];
+  }
+
+  async function callFlexibleAI(text, currentQuestion) {
+    const controller = new AbortController();
+    const timer = window.setTimeout(() => controller.abort(), 15000);
+    try {
+      const response = await fetch(AI_ENDPOINT, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          question: text,
+          history: state.history.slice(0, -1),
+          profile: state.profile,
+          currentQuestion: currentQuestion ? { id: currentQuestion.id, text: currentQuestion.text } : null
+        }),
+        signal: controller.signal
+      });
+      if (!response.ok) throw new Error(`AI ${response.status}`);
+      const data = await response.json();
+      return {
+        answer: typeof data.answer === "string" ? data.answer.trim().slice(0, 1200) : "",
+        intent: typeof data.intent === "string" ? data.intent : "question",
+        profilePatch: sanitizeProfilePatch(data.profilePatch)
+      };
+    } finally {
+      window.clearTimeout(timer);
+    }
+  }
+
+  async function handleFlexibleInput(text) {
+    const currentBefore = firstMissingQuestion();
+    const questionLike = looksLikeQuestion(text);
+    // 问句里的产品或风格关键词可能只是比较对象，不能直接当作用户偏好。
+    // 混合型“需求 + 问题”交给结构化 AI 抽取；断网时宁可少记，也绝不污染画像。
+    const localPatch = questionLike ? {} : extractProfilePatch(text);
+    const changed = applyProfilePatch(localPatch);
+    const directRecommendation = /(直接|现在|先).{0,5}(推荐|出结果)|给我推荐|不用再问|^推荐(一下|一款|吧)?$/.test(text);
+    state.chatBusy = true;
+    const typing = showTyping();
+    if (directRecommendation) {
+      typing.remove();
+      if (changed.length) addMessage("assistant", `已更新你的需求：${formatCapturedFields(changed)}。我先按现有信息给出阶段推荐，之后仍然可以继续补充或修改。`);
+      else addMessage("assistant", "可以。我先按当前已知信息给出阶段推荐，之后你仍然可以继续提问或补充条件。");
+      state.chatBusy = false;
+      finishRecommendation(220);
+      return;
+    }
+    let result = {
+      answer: localKnowledgeAnswer(text),
+      intent: changed.length ? "requirements" : "question",
+      profilePatch: {}
+    };
+    try {
+      result = await callFlexibleAI(text, currentBefore);
+    } catch (_) {
+      // 云端中断时继续使用本地理解与知识，不破坏当前问答状态。
+    }
+    const modelChanged = applyProfilePatch(result.profilePatch);
+    const allChanged = [...new Set([...changed, ...modelChanged])];
+    typing.remove();
+
+    if (result.intent === "direct_recommend") {
+      if (allChanged.length) addMessage("assistant", `已更新你的需求：${escapeHTML(formatCapturedFields(allChanged))}。`);
+      state.chatBusy = false;
+      finishRecommendation(260);
+      return;
+    }
+
+    const latestQuestion = firstMissingQuestion();
+    const shouldAnswer = ["question", "mixed", "off_topic"].includes(result.intent) || (!allChanged.length && result.answer);
+    const parts = [];
+    if (shouldAnswer && result.answer) parts.push(escapeHTML(result.answer));
+    if (allChanged.length) parts.push(`<strong>已理解：</strong>${escapeHTML(formatCapturedFields(allChanged))}`);
+    if (!parts.length) parts.push(escapeHTML(result.answer || localKnowledgeAnswer(text)));
+
+    if (!allChanged.length && latestQuestion) {
+      parts.push(`<div class="question-resume"><b>进度没有丢失</b> · 回答完你的问题后，我们仍停在：${escapeHTML(latestQuestion.text)}</div>`);
+    } else if (!latestQuestion) {
+      parts.push('<div class="question-resume">需求已经足够，你仍可以继续自由提问，或修改任何条件后重新推荐。</div>');
+    }
+    addMessage("assistant", parts.join("<br>"), true);
+    state.chatBusy = false;
+
+    if (!latestQuestion) {
+      if (allChanged.length) finishRecommendation(260);
+      else renderOptions(completedOptions());
+    } else if (allChanged.length) {
+      askNext(260);
+    } else {
+      renderOptions(latestQuestion.options);
+    }
   }
 
   function acknowledge(questionId) {
@@ -516,43 +652,61 @@
     return messages[questionId] || "收到，我已经把这个条件加入推荐。";
   }
 
-  function submitAnswer(raw) {
+  function submitAnswer(raw, options = {}) {
     const text = String(raw).trim();
     if (!text || state.chatBusy) return;
+    if (/^(重新开始|从头开始|清空重来|重做一次)$/.test(text)) {
+      startChat();
+      showToast("已重新开始咨询");
+      return;
+    }
     addMessage("user", text);
     elements.chatInput.value = "";
     elements.quickOptions.innerHTML = "";
 
-    if (looksLikeQuestion(text)) {
-      answerCustomQuestion(text);
-      return;
-    }
-
-    if (state.chatComplete) {
-      extractProfile(text);
-      state.chatComplete = false;
-      finishRecommendation(420);
-      return;
-    }
-
     const currentQuestion = firstMissingQuestion();
-    extractProfile(text);
-    if (currentQuestion && state.profile[currentQuestion.id] === undefined) {
-      state.profile[currentQuestion.id] = normalizeForQuestion(currentQuestion.id, text);
+    if (/^(上一步|返回上一题|撤销上一个答案)$/.test(text)) {
+      const previous = state.answerOrder.pop();
+      if (previous) {
+        delete state.profile[previous];
+        state.chatComplete = false;
+        updateProgress();
+        addMessage("assistant", `已撤销“${FIELD_LABELS[previous]}”的答案，我们回到这里重新选择。`);
+        askNext(220);
+      } else {
+        addMessage("assistant", "目前还没有可以撤销的答案，请直接回答当前问题即可。");
+        if (currentQuestion) renderOptions(currentQuestion.options);
+      }
+      return;
+    }
+    if (/^(跳过|不知道|不清楚|先跳过)$/.test(text) && currentQuestion) {
+      applyProfilePatch({ [currentQuestion.id]: "unknown" });
+      addMessage("assistant", "没问题，这项先标记为待确认，不会阻塞后面的推荐。");
+      askNext(220);
+      return;
+    }
+    if (/^(继续|继续流程|继续问吧)$/.test(text)) {
+      if (currentQuestion) askNext(160);
+      else renderOptions(completedOptions());
+      return;
     }
 
-    if (state.profile.room === "living" || state.profile.room === "bedroom" || state.profile.room === "study") {
-      chooseRoom(state.profile.room);
+    if (options.fromOption && currentQuestion) {
+      const value = normalizeForQuestion(currentQuestion.id, text);
+      applyProfilePatch({ [currentQuestion.id]: value === undefined ? "unknown" : value });
+      const thanks = acknowledge(currentQuestion.id);
+      state.chatBusy = true;
+      const typing = showTyping();
+      window.setTimeout(() => {
+        typing.remove();
+        addMessage("assistant", thanks);
+        state.chatBusy = false;
+        askNext(240);
+      }, 260);
+      return;
     }
-    const thanks = acknowledge(currentQuestion?.id);
-    state.chatBusy = true;
-    const typing = showTyping();
-    window.setTimeout(() => {
-      typing.remove();
-      addMessage("assistant", thanks);
-      state.chatBusy = false;
-      askNext(280);
-    }, 340);
+
+    handleFlexibleInput(text);
   }
 
   function scoreProducts() {
@@ -653,7 +807,7 @@
       holder.innerHTML = recommendationCard(winner, alternatives).trim();
       elements.chatStream.appendChild(holder.firstElementChild);
       chooseProduct(winner.key, { forcePrimary: true, force: true });
-      renderOptions(["重新做一次需求问答", "打开品牌故事"]);
+      renderOptions(completedOptions());
       updateProgress();
       state.chatComplete = true;
       state.chatBusy = false;
@@ -663,12 +817,14 @@
 
   function startChat() {
     state.profile = {};
+    state.answerOrder = [];
+    state.history = [];
     state.chatBusy = false;
     state.chatComplete = false;
     elements.chatStream.innerHTML = "";
     elements.quickOptions.innerHTML = "";
     updateProgress();
-    addMessage("assistant", "你好，我会像一位真实的地板顾问一样，先了解空间、生活方式、基层和预算，再从当前 5 个 Ozwood 产品方向中给出一款主推荐与两款备选。每一步都有按钮，也可以直接用一句话告诉我全部需求。");
+    addMessage("assistant", "你好，我是 Ozwood AI 地板顾问。你可以跟着按钮完成 9 步分析，也可以随时打断我、自由提问、一次说完全部需求，或者修改之前的答案；我会保留进度，不会把插话误当成当前问题的答案。");
     askNext(360);
   }
 
@@ -679,6 +835,16 @@
     }
     if (answer.includes("品牌故事")) {
       openStories();
+      return true;
+    }
+    if (answer.includes("继续自由")) {
+      elements.chatInput.focus();
+      showToast("可以直接输入任何地板问题");
+      return true;
+    }
+    if (answer.includes("修改需求")) {
+      addMessage("assistant", "直接告诉我新的条件即可，例如“预算改成 AU$40”“现在有一只狗”“改成冷灰风格”。我会更新画像并重新推荐，不需要从头再来。");
+      elements.chatInput.focus();
       return true;
     }
     return false;
@@ -729,7 +895,7 @@
       const option = event.target.closest("[data-answer]");
       if (!option) return;
       if (state.chatComplete && handleCompletedOption(option.dataset.answer)) return;
-      submitAnswer(option.dataset.answer);
+      submitAnswer(option.dataset.answer, { fromOption: true });
     });
     $("#chatSend").addEventListener("click", () => submitAnswer(elements.chatInput.value));
     elements.chatInput.addEventListener("keydown", event => {
