@@ -1,0 +1,46 @@
+.hero canvas { display: none; }
+.real-scene { position: absolute; inset: 0; overflow: hidden; background: #d9d0c5; pointer-events: none; }
+.real-scene img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; display: block; }
+.real-current { z-index: 1; }
+.real-incoming { z-index: 2; opacity: 0; transition: opacity .52s ease; }
+.real-incoming.show { opacity: 1; }
+.real-vignette { position: absolute; z-index: 3; inset: 0; pointer-events: none; background: linear-gradient(180deg, rgba(20,14,9,.03), transparent 62%, rgba(20,14,9,.2)); }
+.real-badge { position: absolute; z-index: 7; top: 18px; right: 18px; display: inline-flex; align-items: center; gap: 7px; padding: 7px 11px; border-radius: 999px; color: #fff; background: rgba(24,20,16,.58); border: 1px solid rgba(255,255,255,.22); backdrop-filter: blur(10px); font-size: 10px; font-weight: 650; }
+.real-badge i { width: 7px; height: 7px; border-radius: 50%; background: #79dc8f; box-shadow: 0 0 0 4px rgba(121,220,143,.16); }
+.real-scan { position: absolute; z-index: 8; left: 0; right: 0; top: -4px; height: 2px; opacity: 0; background: linear-gradient(90deg, transparent, #f3c978, transparent); box-shadow: 0 0 18px #f3c978; }
+.real-processing { position: absolute; z-index: 9; left: 50%; top: 50%; transform: translate(-50%,-50%) scale(.96); opacity: 0; padding: 14px 18px; border-radius: 16px; color: #fff; background: rgba(22,18,14,.72); border: 1px solid rgba(255,255,255,.18); backdrop-filter: blur(14px); text-align: center; pointer-events: none; transition: .2s; white-space: nowrap; }
+.real-processing strong { display: block; font-size: 12px; margin-bottom: 4px; }
+.real-processing span { color: rgba(255,255,255,.7); font-size: 9px; }
+.real-scene.processing .real-scan { opacity: 1; animation: realScan 1s ease-in-out infinite; }
+.real-scene.processing .real-processing { opacity: 1; transform: translate(-50%,-50%) scale(1); }
+.real-compare-layer { position: absolute; z-index: 4; inset: 0 auto 0 0; width: 50%; overflow: hidden; display: none; pointer-events: none; }
+.real-compare-layer img { position: absolute; inset: 0; max-width: none; object-fit: cover; object-position: left center; display: block; }
+.hero.real-compare .real-compare-layer { display: block; }
+.real-compare-line { display: none; position: absolute; z-index: 8; top: 0; bottom: 0; left: 50%; width: 2px; background: rgba(255,255,255,.96); box-shadow: 0 0 0 1px rgba(0,0,0,.08); pointer-events: none; }
+.hero.real-compare .real-compare-line { display: block; }
+.real-compare-knob { position: absolute; left: 50%; top: 50%; transform: translate(-50%,-50%); width: 42px; height: 42px; display: grid; place-items: center; border-radius: 50%; color: #70451f; background: #fff; box-shadow: 0 4px 15px rgba(0,0,0,.2); }
+.real-compare-input { display: none; position: absolute; z-index: 9; inset: 0; width: 100%; height: 100%; opacity: 0; cursor: ew-resize; }
+.hero.real-compare .real-compare-input { display: block; }
+.real-compare-label { display: none; position: absolute; z-index: 8; top: 18px; padding: 7px 11px; border-radius: 999px; color: #fff; background: rgba(22,18,14,.62); backdrop-filter: blur(8px); font-size: 10px; pointer-events: none; }
+.hero.real-compare .real-compare-label { display: block; }
+.real-after { left: 18px; }
+.real-before { right: 18px; }
+.real-compare-pair { display: none; position: absolute; z-index: 10; top: 16px; left: 50%; transform: translateX(-50%); align-items: center; gap: 5px; padding: 5px; border-radius: 16px; background: rgba(255,255,255,.9); border: 1px solid rgba(255,255,255,.72); backdrop-filter: blur(14px); box-shadow: 0 8px 24px rgba(33,24,16,.14); }
+.real-compare-pair.show { display: flex; }
+.real-compare-slot { width: 158px; min-width: 0; height: 44px; padding: 5px 10px; border: 1px solid transparent; border-radius: 11px; background: transparent; text-align: left; cursor: pointer; }
+.real-compare-slot:hover, .real-compare-slot.active { border-color: #bf9365; background: #fbf3e9; }
+.real-compare-slot small { display: block; color: #9a7047; font-size: 8px; font-weight: 800; }
+.real-compare-slot strong { display: block; margin-top: 2px; overflow: hidden; color: #33271d; font-size: 10px; white-space: nowrap; text-overflow: ellipsis; }
+.real-compare-swap { width: 32px; height: 32px; flex: 0 0 32px; border: 1px solid #e5d9cc; border-radius: 50%; background: #fff; color: #80552f; cursor: pointer; font-size: 16px; }
+.real-compare-swap:hover { background: #f7ede2; }
+.real-compare-tip { max-width: 120px; padding: 0 8px 0 5px; color: #8c8176; font-size: 9px; line-height: 1.35; }
+.hero-hint, .room-tabs, .hero-label { z-index: 6; }
+.detail-card { z-index: 11; }
+@keyframes realScan { from { top: 0; } to { top: 100%; } }
+
+@media (max-width: 720px) {
+  .real-compare-pair { top: 10px; width: calc(100% - 20px); }
+  .real-compare-slot { flex: 1; width: auto; }
+  .real-compare-tip { display: none; }
+  .real-compare-label { top: 70px; }
+}

@@ -1,0 +1,13 @@
+.loci/
+.DS_Store
+.env
+.env.local
+.env.*.local
+.vercel
+node_modules/
+.claude/
+AGENTS.md
+CLAUDE.md
+assets/floors/*.png
+assets/rooms/*.png
+assets/ozwood/rooms/*.png

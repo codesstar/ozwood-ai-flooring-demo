@@ -1,0 +1,441 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="icon" href="data:,">
+<title>智慧地板 · AI 一键换地板</title>
+<style>
+* { box-sizing: border-box; margin: 0; padding: 0; }
+:root {
+  --ink: #211b16; --muted: #8b8176; --brand: #8a5b2e; --gold: #bd8848;
+  --cream: #f4efe7; --panel: #fff; --line: #e8e0d5; --red: #c94a2e;
+}
+html, body { height: 100%; }
+body {
+  font-family: -apple-system, BlinkMacSystemFont, "PingFang SC", "Microsoft YaHei", sans-serif;
+  color: var(--ink); background: var(--cream); overflow: hidden;
+}
+button, input { font: inherit; }
+button { color: inherit; }
+.app { height: 100vh; display: flex; flex-direction: column; }
+
+.topbar {
+  height: 62px; flex: 0 0 62px; display: flex; align-items: center; gap: 12px;
+  padding: 0 20px; background: rgba(255,255,255,.96); border-bottom: 1px solid var(--line);
+  position: relative; z-index: 20;
+}
+.brand-mark {
+  width: 36px; height: 36px; border-radius: 11px; display: grid; place-items: center;
+  color: #fff; font-weight: 800; font-size: 18px;
+  background: linear-gradient(135deg, var(--brand), var(--gold));
+  box-shadow: 0 5px 14px rgba(138,91,46,.22);
+}
+.brand-copy { line-height: 1.05; }
+.brand-copy strong { display: block; font-size: 15px; letter-spacing: .08em; }
+.brand-copy span { color: #a09589; font-size: 8px; letter-spacing: .28em; }
+.top-title { margin-left: 24px; padding-left: 24px; border-left: 1px solid var(--line); }
+.top-title strong { font-size: 15px; }
+.top-title span {
+  margin-left: 8px; color: var(--brand); background: #f5eadc; border-radius: 999px;
+  padding: 4px 9px; font-size: 10px; font-weight: 700;
+}
+.top-actions { margin-left: auto; display: flex; align-items: center; gap: 8px; }
+.top-btn, .back {
+  height: 36px; border: 1px solid var(--line); background: #fff; border-radius: 999px;
+  padding: 0 14px; display: inline-flex; align-items: center; gap: 7px;
+  cursor: pointer; text-decoration: none; font-size: 12px; transition: .2s ease;
+}
+.top-btn:hover, .back:hover { border-color: #cdb18d; background: #fbf6ef; }
+.top-btn svg { width: 15px; height: 15px; }
+
+.body { flex: 1; min-height: 0; display: grid; grid-template-columns: 300px minmax(0,1fr); }
+.sidebar {
+  background: #fff; border-right: 1px solid var(--line); min-height: 0;
+  display: flex; flex-direction: column; position: relative; z-index: 10;
+}
+.side-head { padding: 20px 18px 14px; border-bottom: 1px solid var(--line); }
+.side-head h1 { font-size: 18px; margin-bottom: 6px; }
+.side-head p { color: var(--muted); font-size: 11.5px; line-height: 1.65; }
+.status {
+  margin-top: 12px; display: inline-flex; align-items: center; gap: 7px;
+  padding: 6px 10px; border-radius: 999px; background: #edf7ef; color: #36744b;
+  font-size: 10px; font-weight: 700;
+}
+.status i { width: 6px; height: 6px; border-radius: 50%; background: #4cac69; box-shadow: 0 0 0 4px rgba(76,172,105,.12); }
+.product-list { flex: 1; overflow-y: auto; padding: 10px; }
+.product {
+  width: 100%; border: 1px solid transparent; background: #fff; border-radius: 15px;
+  padding: 9px; display: grid; grid-template-columns: 72px 1fr; gap: 11px;
+  text-align: left; cursor: pointer; margin-bottom: 6px; transition: .22s ease;
+}
+.product:hover { background: #faf7f2; }
+.product.selected { border-color: #b88a57; background: #fbf6ee; box-shadow: 0 5px 16px rgba(87,58,31,.08); }
+.thumb { width: 72px; height: 72px; object-fit: cover; border-radius: 10px; border: 1px solid rgba(0,0,0,.06); }
+.p-meta { min-width: 0; padding-top: 2px; }
+.p-brand { font-size: 9px; color: #9c9186; text-transform: uppercase; letter-spacing: .08em; }
+.p-name { font-size: 13px; font-weight: 750; margin: 3px 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.p-code { font-size: 9.5px; color: var(--muted); }
+.p-price { margin-top: 6px; font-weight: 800; color: var(--red); font-size: 14px; }
+.p-price small { font-size: 9px; font-weight: 500; color: var(--muted); }
+.side-foot { padding: 13px 16px 16px; border-top: 1px solid var(--line); }
+.side-foot p { font-size: 9px; color: #aaa096; line-height: 1.55; }
+
+.workspace { min-width: 0; min-height: 0; padding: 14px 18px 18px; display: flex; flex-direction: column; gap: 12px; }
+.toolbar {
+  min-height: 44px; display: flex; align-items: center; justify-content: center; gap: 7px;
+}
+.tool-btn {
+  height: 38px; border: 1px solid var(--line); background: #fff; border-radius: 999px;
+  padding: 0 14px; display: inline-flex; align-items: center; gap: 7px;
+  font-size: 11px; font-weight: 650; cursor: pointer; box-shadow: 0 2px 8px rgba(42,29,18,.04);
+}
+.tool-btn:hover, .tool-btn.active { border-color: #b88a57; background: #fbf5eb; color: #754921; }
+.tool-btn svg { width: 15px; height: 15px; }
+.scene-picker { display: inline-flex; gap: 3px; padding: 3px; border: 1px solid var(--line); background: rgba(255,255,255,.74); border-radius: 999px; }
+.scene-btn { height: 30px; min-width: 48px; padding: 0 12px; border: 0; border-radius: 999px; background: transparent; color: var(--muted); font-size: 10px; font-weight: 700; cursor: pointer; }
+.scene-btn:hover, .scene-btn.active { color: #754921; background: #fff; box-shadow: 0 2px 8px rgba(60,40,22,.09); }
+
+.scene-shell { flex: 1; min-height: 0; display: flex; align-items: center; justify-content: center; }
+.scene-frame {
+  position: relative; width: min(100%, 1280px); aspect-ratio: 3 / 2; max-height: 100%;
+  border-radius: 20px; overflow: hidden; background: #ddd4c8;
+  box-shadow: 0 16px 45px rgba(46,32,20,.15);
+}
+.scene-image, .compare-layer img {
+  position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; display: block;
+}
+.scene-image { z-index: 1; }
+.incoming { z-index: 2; opacity: 0; transition: opacity .55s ease; }
+.incoming.show { opacity: 1; }
+.compare-layer { position: absolute; inset: 0 auto 0 0; width: 50%; z-index: 3; overflow: hidden; display: none; }
+.compare-layer img { width: 100vw; max-width: none; object-position: left center; }
+.scene-frame.compare .compare-layer { display: block; }
+.scene-frame.compare .current { content-visibility: auto; }
+.compare-line { display: none; position: absolute; z-index: 6; top: 0; bottom: 0; left: 50%; width: 2px; background: rgba(255,255,255,.95); box-shadow: 0 0 0 1px rgba(0,0,0,.08); pointer-events: none; }
+.scene-frame.compare .compare-line { display: block; }
+.compare-knob {
+  position: absolute; left: 50%; top: 50%; transform: translate(-50%,-50%); width: 42px; height: 42px;
+  border-radius: 50%; display: grid; place-items: center; color: #70451f; background: #fff; box-shadow: 0 4px 15px rgba(0,0,0,.2);
+}
+.compare-input { display: none; position: absolute; z-index: 8; inset: 0; width: 100%; height: 100%; opacity: 0; cursor: ew-resize; }
+.scene-frame.compare .compare-input { display: block; }
+.compare-label {
+  display: none; position: absolute; z-index: 7; top: 18px; padding: 7px 11px;
+  border-radius: 999px; color: #fff; background: rgba(22,18,14,.62); backdrop-filter: blur(8px); font-size: 10px;
+}
+.scene-frame.compare .compare-label { display: block; }
+.label-before { left: 18px; } .label-after { right: 18px; }
+.surface-chip {
+  position: absolute; z-index: 5; left: 50%; top: 74%; transform: translate(-50%,-50%);
+  display: inline-flex; align-items: center; gap: 7px; background: rgba(20,17,14,.74); color: #fff;
+  border: 1px solid rgba(255,255,255,.8); backdrop-filter: blur(8px); border-radius: 999px;
+  padding: 7px 11px; font-size: 10px; pointer-events: none;
+}
+.surface-chip i { width: 7px; height: 7px; border: 2px solid #fff; border-radius: 50%; }
+.scene-caption {
+  position: absolute; z-index: 5; left: 18px; bottom: 16px; max-width: 300px;
+  color: #fff; background: rgba(21,17,13,.56); backdrop-filter: blur(12px);
+  border: 1px solid rgba(255,255,255,.16); border-radius: 14px; padding: 10px 13px;
+}
+.scene-caption strong { display: block; font-size: 12px; }
+.scene-caption span { font-size: 9px; color: rgba(255,255,255,.72); }
+.scan-line { position: absolute; z-index: 9; left: 0; right: 0; height: 2px; top: -4px; opacity: 0; background: linear-gradient(90deg, transparent, #f2cc83, transparent); box-shadow: 0 0 18px #f3c76f; }
+.scene-frame.processing .scan-line { opacity: 1; animation: scan 1s ease-in-out infinite; }
+.processing-card {
+  position: absolute; z-index: 10; left: 50%; top: 50%; transform: translate(-50%,-50%) scale(.96);
+  opacity: 0; pointer-events: none; background: rgba(24,20,16,.72); color: #fff; backdrop-filter: blur(14px);
+  border: 1px solid rgba(255,255,255,.18); border-radius: 16px; padding: 14px 18px; text-align: center; transition: .2s;
+}
+.scene-frame.processing .processing-card { opacity: 1; transform: translate(-50%,-50%) scale(1); }
+.processing-card strong { display: block; font-size: 12px; margin-bottom: 4px; }
+.processing-card span { font-size: 9px; color: rgba(255,255,255,.68); }
+@keyframes scan { from { top: 0; } to { top: 100%; } }
+
+.info-bar {
+  max-width: 1280px; width: 100%; margin: 0 auto; min-height: 64px; background: #fff;
+  border: 1px solid var(--line); border-radius: 16px; padding: 10px 14px;
+  display: grid; grid-template-columns: minmax(220px,1fr) auto auto; align-items: center; gap: 18px;
+  box-shadow: 0 5px 18px rgba(51,34,20,.05);
+}
+.selected-info { display: flex; align-items: center; gap: 11px; min-width: 0; }
+.selected-info img { width: 44px; height: 44px; border-radius: 9px; object-fit: cover; }
+.selected-copy { min-width: 0; }
+.selected-copy strong { display: block; font-size: 12px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.selected-copy span { display: block; color: var(--muted); font-size: 9px; margin-top: 3px; }
+.tags { display: flex; gap: 5px; }
+.tags span { padding: 5px 8px; border-radius: 999px; background: #f4efe8; color: #74675a; font-size: 9px; white-space: nowrap; }
+.estimator { display: flex; align-items: center; gap: 8px; }
+.area-wrap { height: 38px; display: flex; align-items: center; border: 1px solid var(--line); border-radius: 10px; padding: 0 10px; }
+.area-wrap input { width: 68px; border: 0; outline: 0; font-size: 12px; }
+.area-wrap span { color: var(--muted); font-size: 10px; }
+.estimate { min-width: 110px; }
+.estimate small { display: block; color: var(--muted); font-size: 8.5px; }
+.estimate strong { font-size: 14px; color: var(--red); }
+
+.toast {
+  position: fixed; z-index: 50; left: 50%; bottom: 24px; transform: translate(-50%,16px);
+  background: #251f19; color: #fff; border-radius: 999px; padding: 10px 16px; font-size: 10px;
+  opacity: 0; pointer-events: none; transition: .25s ease;
+}
+.toast.show { opacity: 1; transform: translate(-50%,0); }
+::-webkit-scrollbar { width: 5px; height: 5px; }
+::-webkit-scrollbar-thumb { background: #d4c6b6; border-radius: 10px; }
+
+@media (max-width: 1000px) {
+  body { overflow: auto; }
+  .app { height: auto; min-height: 100vh; }
+  .body { display: flex; flex-direction: column; justify-content: flex-start; }
+  .workspace { order: 1; min-height: 660px; }
+  .sidebar { order: 2; }
+  .sidebar { border: 0; border-top: 1px solid var(--line); }
+  .side-head { display: none; }
+  .product-list { display: flex; overflow-x: auto; padding: 10px; }
+  .product { min-width: 265px; margin: 0 7px 0 0; }
+  .side-foot { display: none; }
+}
+@media (max-width: 680px) {
+  .topbar { padding: 0 12px; }
+  .top-title, .back span, .top-btn span { display: none; }
+  .back, .top-btn { width: 36px; padding: 0; justify-content: center; }
+  .workspace { padding: 10px; min-height: 530px; }
+  .toolbar { justify-content: flex-start; overflow-x: auto; }
+  .tool-btn { flex: 0 0 auto; }
+  .scene-frame { border-radius: 14px; }
+  .scene-caption { display: none; }
+  .surface-chip { top: 72%; }
+  .info-bar { grid-template-columns: 1fr auto; gap: 8px; }
+  .tags { display: none; }
+  .estimator { grid-column: 1 / -1; }
+}
+</style>
+</head>
+<body>
+<div class="app">
+  <header class="topbar">
+    <div class="brand-mark">木</div>
+    <div class="brand-copy"><strong>智慧地板</strong><span>SMART FLOORING</span></div>
+    <div class="top-title"><strong>AI 一键换地板</strong><span>高保真 Demo</span></div>
+    <div class="top-actions">
+      <button class="top-btn" id="shareBtn" title="分享当前方案">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><path d="M8.6 10.7l6.8-4.1M8.6 13.3l6.8 4.1"/></svg><span>分享</span>
+      </button>
+      <a class="back" href="index.html"><span>返回方案选择</span>←</a>
+    </div>
+  </header>
+
+  <main class="body">
+    <aside class="sidebar">
+      <div class="side-head">
+        <h1>选择地板</h1>
+        <p>点击任意 SKU，AI 自动识别地面并生成真实铺装效果。</p>
+        <div class="status"><i></i> 地面识别已完成 · 可实时切换</div>
+      </div>
+      <div class="product-list" id="productList"></div>
+      <div class="side-foot"><p>效果图仅供选材参考。受屏幕显示与现场光线影响，最终颜色请以门店实物为准。</p></div>
+    </aside>
+
+    <section class="workspace">
+      <div class="toolbar">
+        <div class="scene-picker" id="scenePicker" aria-label="选择演示场景"></div>
+        <button class="tool-btn" id="compareBtn">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M12 3v18"/></svg>原图对比
+        </button>
+        <button class="tool-btn" id="fullscreenBtn">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M8 3H3v5M16 3h5v5M8 21H3v-5M16 21h5v-5"/></svg>全屏预览
+        </button>
+        <button class="tool-btn" id="downloadBtn">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 3v12m0 0l4-4m-4 4l-4-4M5 21h14"/></svg>保存效果图
+        </button>
+      </div>
+
+      <div class="scene-shell">
+        <div class="scene-frame" id="sceneFrame">
+          <img class="scene-image current" id="currentImage" src="assets/rooms/living-oak-natural.jpg" alt="客厅地板铺装效果">
+          <img class="scene-image incoming" id="incomingImage" alt="正在生成的铺装效果">
+          <div class="compare-layer" id="compareLayer"><img id="compareImage" src="assets/rooms/living-oak-natural.jpg" alt="新地板效果"></div>
+          <div class="compare-line" id="compareLine"><div class="compare-knob">↔</div></div>
+          <input class="compare-input" id="compareInput" type="range" min="0" max="100" value="50" aria-label="拖动查看更换前后对比">
+          <span class="compare-label label-before">更换后</span><span class="compare-label label-after">更换前</span>
+          <div class="surface-chip"><i></i><span id="surfaceStatus">AI 已识别 · 地板</span></div>
+          <div class="scene-caption"><strong id="sceneCaption">现代客厅 · 自然采光</strong><span>真实材质比例 · 保留家具遮挡与原有光影</span></div>
+          <div class="scan-line"></div>
+          <div class="processing-card"><strong>AI 正在替换地板</strong><span>匹配透视、比例、遮挡与环境光…</span></div>
+        </div>
+      </div>
+
+      <div class="info-bar">
+        <div class="selected-info">
+          <img id="selectedThumb" src="assets/floors/sku-oak-natural-thumb.jpg" alt="选中地板纹理">
+          <div class="selected-copy"><strong id="selectedName"></strong><span id="selectedMeta"></span></div>
+        </div>
+        <div class="tags" id="selectedTags"></div>
+        <div class="estimator">
+          <label class="area-wrap"><input id="areaInput" type="number" min="1" value="36" aria-label="铺装面积"><span>m²</span></label>
+          <div class="estimate"><small>材料预估</small><strong id="estimatePrice"></strong></div>
+        </div>
+      </div>
+    </section>
+  </main>
+</div>
+<div class="toast" id="toast"></div>
+
+<script src="visualizer-data.js?v=1"></script>
+<script>
+const PRODUCTS = window.VISUALIZER.floors;
+const SCENES = window.VISUALIZER.scenes;
+
+let selected = PRODUCTS[0];
+let currentScene = 'living';
+let processing = false;
+let compareMode = false;
+let toastTimer;
+const frame = document.getElementById('sceneFrame');
+const currentImage = document.getElementById('currentImage');
+const incomingImage = document.getElementById('incomingImage');
+const compareImage = document.getElementById('compareImage');
+
+function roomFor(product = selected, scene = currentScene) {
+  return window.VISUALIZER.matrix[scene][product.key];
+}
+
+function renderScenes() {
+  document.getElementById('scenePicker').innerHTML = SCENES.map(scene =>
+    `<button class="scene-btn ${scene.key === currentScene ? 'active' : ''}" data-scene="${scene.key}">${scene.name}</button>`
+  ).join('');
+  document.querySelectorAll('.scene-btn').forEach(btn => btn.addEventListener('click', () => selectScene(btn.dataset.scene)));
+  const scene = SCENES.find(item => item.key === currentScene);
+  document.getElementById('sceneCaption').textContent = scene.caption;
+}
+
+function renderProducts() {
+  document.getElementById('productList').innerHTML = PRODUCTS.map(p => `
+    <button class="product ${p.id === selected.id ? 'selected' : ''}" data-id="${p.id}" aria-label="查看 ${p.name} 铺装效果">
+      <img class="thumb" src="${p.thumb}" alt="${p.name} 纹理">
+      <span class="p-meta">
+        <span class="p-brand">${p.brand}</span>
+        <span class="p-name">${p.name}</span>
+        <span class="p-code">${p.id} · ${p.category}</span>
+        <span class="p-price">¥${p.price}<small>/m²</small></span>
+      </span>
+    </button>`).join('');
+  document.querySelectorAll('.product').forEach(btn => btn.addEventListener('click', () => selectProduct(btn.dataset.id)));
+}
+
+function renderInfo() {
+  document.getElementById('selectedThumb').src = selected.thumb;
+  document.getElementById('selectedName').textContent = selected.name;
+  document.getElementById('selectedMeta').textContent = `${selected.id} · ${selected.size} · ${selected.install}`;
+  document.getElementById('selectedTags').innerHTML = selected.tags.map(t => `<span>${t}</span>`).join('');
+  document.getElementById('surfaceStatus').textContent = `AI 已识别 · ${selected.name}`;
+  updateEstimate();
+}
+
+async function selectProduct(id) {
+  const next = PRODUCTS.find(p => p.id === id);
+  if (!next || next.id === selected.id || processing) return;
+  processing = true;
+  compareMode = false;
+  frame.classList.remove('compare');
+  document.getElementById('compareBtn').classList.remove('active');
+  frame.classList.add('processing');
+
+  incomingImage.src = roomFor(next);
+  try { await incomingImage.decode(); } catch (_) {}
+  await new Promise(r => setTimeout(r, 650));
+  incomingImage.classList.add('show');
+  await new Promise(r => setTimeout(r, 560));
+  currentImage.src = roomFor(next);
+  compareImage.src = roomFor(next);
+  incomingImage.classList.remove('show');
+  frame.classList.remove('processing');
+  selected = next;
+  processing = false;
+  renderProducts();
+  renderInfo();
+  showToast(`已铺装：${selected.name}`);
+}
+
+async function selectScene(sceneKey) {
+  if (!window.VISUALIZER.matrix[sceneKey] || sceneKey === currentScene || processing) return;
+  processing = true;
+  compareMode = false;
+  frame.classList.remove('compare');
+  document.getElementById('compareBtn').classList.remove('active');
+  frame.classList.add('processing');
+  currentScene = sceneKey;
+  renderScenes();
+  incomingImage.src = roomFor();
+  try { await incomingImage.decode(); } catch (_) {}
+  await new Promise(r => setTimeout(r, 480));
+  incomingImage.classList.add('show');
+  await new Promise(r => setTimeout(r, 560));
+  currentImage.src = roomFor();
+  compareImage.src = roomFor();
+  incomingImage.classList.remove('show');
+  frame.classList.remove('processing');
+  processing = false;
+  showToast(`已切换到${SCENES.find(s => s.key === currentScene).name}`);
+}
+
+function toggleCompare() {
+  if (processing) return;
+  compareMode = !compareMode;
+  frame.classList.toggle('compare', compareMode);
+  document.getElementById('compareBtn').classList.toggle('active', compareMode);
+  if (compareMode) {
+    currentImage.src = roomFor(PRODUCTS[0]);
+    compareImage.src = roomFor(selected);
+    updateCompare(50);
+  } else {
+    currentImage.src = roomFor(selected);
+  }
+}
+
+function updateCompare(value) {
+  const pct = `${value}%`;
+  document.getElementById('compareLayer').style.width = pct;
+  document.getElementById('compareLine').style.left = pct;
+  compareImage.style.width = `${frame.clientWidth}px`;
+  compareImage.style.height = `${frame.clientHeight}px`;
+}
+
+function updateEstimate() {
+  const area = Math.max(0, Number(document.getElementById('areaInput').value) || 0);
+  document.getElementById('estimatePrice').textContent = area ? `¥${Math.round(area * selected.price).toLocaleString('zh-CN')}` : '—';
+}
+
+function showToast(text) {
+  const toast = document.getElementById('toast');
+  toast.textContent = text; toast.classList.add('show');
+  clearTimeout(toastTimer); toastTimer = setTimeout(() => toast.classList.remove('show'), 2200);
+}
+
+document.getElementById('compareBtn').addEventListener('click', toggleCompare);
+document.getElementById('compareInput').addEventListener('input', e => updateCompare(e.target.value));
+document.getElementById('areaInput').addEventListener('input', updateEstimate);
+window.addEventListener('resize', () => { if (compareMode) updateCompare(document.getElementById('compareInput').value); });
+
+document.getElementById('fullscreenBtn').addEventListener('click', async () => {
+  try {
+    if (!document.fullscreenElement) await frame.requestFullscreen(); else await document.exitFullscreen();
+  } catch (_) { showToast('当前浏览器不支持全屏预览'); }
+});
+document.getElementById('downloadBtn').addEventListener('click', () => {
+  const a = document.createElement('a'); a.href = roomFor(); a.download = `${currentScene}-${selected.id}-room-preview.jpg`; a.click();
+  showToast('效果图已准备保存');
+});
+document.getElementById('shareBtn').addEventListener('click', async () => {
+  const sceneName = SCENES.find(s => s.key === currentScene).name;
+  const text = `智慧地板铺装方案：${sceneName} · ${selected.name}（${selected.id}）`;
+  try {
+    if (navigator.share) await navigator.share({ title: '智慧地板铺装方案', text });
+    else { await navigator.clipboard.writeText(text); showToast('方案信息已复制'); }
+  } catch (_) {}
+});
+
+Object.values(window.VISUALIZER.matrix).forEach(scene => Object.values(scene).forEach(src => { const img = new Image(); img.src = src; }));
+renderScenes(); renderProducts(); renderInfo();
+</script>
+</body>
+</html>

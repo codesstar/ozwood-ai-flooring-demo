@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+<link rel="icon" href="data:,">
+<title>智慧地板 · AI虚拟销售顾问（方案A · 底部产品条）</title>
+<link rel="stylesheet" href="shared.css?v=3">
+<link rel="stylesheet" href="real-visualizer.css?v=1">
+<style>
+/* ===== 方案A：产品条在底部 ===== */
+.body-row { flex: 1; display: flex; min-height: 0; }
+.stage-col { flex: 1; display: flex; flex-direction: column; min-width: 0; }
+
+.hero { flex: 1; margin: 16px 0 0 16px; }
+
+.viewer-actions { flex: 1; min-width: 0; display: flex; justify-content: center; gap: 8px; overflow-x: auto; padding: 4px 14px; }
+.viewer-action { height: 38px; flex: 0 0 auto; display: inline-flex; align-items: center; gap: 7px; padding: 0 14px; border: 1px solid var(--line); border-radius: 999px; background: #fff; color: var(--ink); font-size: 12px; font-weight: 650; cursor: pointer; box-shadow: 0 2px 8px rgba(42,29,18,.04); transition: .2s ease; }
+.viewer-action:hover, .viewer-action.active { border-color: #b88a57; background: #fbf5eb; color: #754921; }
+.viewer-action svg { width: 16px; height: 16px; }
+.p-card.compare-a { border-color: #9a6431; box-shadow: 0 0 0 2px rgba(154,100,49,.14); }
+.p-card.compare-b { border-color: #47778a; box-shadow: 0 0 0 2px rgba(71,119,138,.14); }
+.compare-side-tag { position: absolute; top: 5px; right: 5px; width: 24px; height: 24px; display: grid; place-items: center; border-radius: 50%; color: #fff; background: #8a5b2e; font-size: 11px; font-weight: 800; box-shadow: 0 3px 9px rgba(0,0,0,.2); }
+.p-card.compare-b .compare-side-tag { background: #47778a; }
+
+.strip-section { flex-shrink: 0; padding: 14px 0 16px 16px; }
+.strip-head {
+  display: flex; align-items: baseline; gap: 10px;
+  margin-bottom: 10px; padding-right: 16px;
+}
+.strip-head h3 { font-size: 14.5px; font-weight: 700; }
+.strip-head span { font-size: 12px; color: var(--muted); }
+
+#productStrip {
+  display: flex;
+  gap: 12px;
+  overflow-x: auto;
+  padding: 4px 16px 8px 2px;
+  -webkit-overflow-scrolling: touch;
+}
+.p-card { width: 168px; flex-shrink: 0; }
+.p-thumb { height: 74px; }
+.p-info { padding: 9px 12px 11px; }
+
+.chat-panel { width: 384px; flex-shrink: 0; margin: 16px; }
+
+@media (max-width: 1180px) {
+  .chat-panel { width: 330px; }
+  .detail-card { width: 280px; }
+}
+
+/* 窄屏：上下堆叠 */
+@media (max-width: 900px) {
+  html, body { overflow: auto; }
+  .body-row { flex-direction: column; overflow: visible; }
+  .stage-col { flex: none; }
+  .hero { flex: none; height: 46vh; min-height: 320px; margin: 12px 12px 0; }
+  .detail-card { width: min(300px, calc(100% - 24px)); top: 12px; left: 12px; }
+  .strip-section { padding-left: 12px; }
+  .chat-panel { width: auto; flex: none; height: 58vh; min-height: 420px; margin: 0 12px 16px; }
+  .topbar-status { display: none; }
+  .viewer-actions { justify-content: flex-start; }
+  .viewer-action { width: 38px; padding: 0; justify-content: center; }
+  .viewer-action span { display: none; }
+}
+</style>
+</head>
+<body data-visual-catalog="true" data-manual-detail="true" data-live-ai="true">
+
+<div class="app">
+  <div class="topbar">
+    <div class="brand">
+      <div class="brand-mark">木</div>
+      <div class="brand-name">智慧地板<small>SMART FLOORING</small></div>
+    </div>
+    <div class="viewer-actions">
+      <button class="viewer-action" id="realCompareBtn" onclick="toggleRealCompare()" title="任意两款地板对比">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M12 3v18"/></svg><span>地板对比</span>
+      </button>
+      <button class="viewer-action" id="realFullscreenBtn" onclick="toggleRealFullscreen()" title="全屏预览">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M8 3H3v5M16 3h5v5M8 21H3v-5M16 21h5v-5"/></svg><span>全屏预览</span>
+      </button>
+      <button class="viewer-action" id="realDetailBtn" onclick="toggleDetail()" title="查看产品详情">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M12 11v6M12 7h.01"/></svg><span>详情</span>
+      </button>
+      <button class="viewer-action" id="realDownloadBtn" onclick="downloadRealPreview()" title="保存效果图">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 3v12m0 0l4-4m-4 4l-4-4M5 21h14"/></svg><span>保存效果图</span>
+      </button>
+    </div>
+    <div class="topbar-status"><span class="dot"></span>AI 顾问在线服务中</div>
+  </div>
+
+  <div class="body-row">
+    <div class="stage-col">
+      <div class="hero">
+        <canvas id="roomCanvas"></canvas>
+        <div class="real-scene" id="realScene">
+          <img class="real-current" id="realCurrent" src="assets/rooms/living-oak-natural.jpg" alt="客厅真实铺装效果">
+          <img class="real-incoming" id="realIncoming" alt="正在生成的地板铺装效果">
+          <div class="real-vignette"></div>
+          <div class="real-badge"><i></i><span id="realStatus">AI 已识别地面 · 真实材质</span></div>
+          <div class="real-scan"></div>
+          <div class="real-processing"><strong>AI 正在一键铺装</strong><span>重建透视、遮挡与环境光…</span></div>
+        </div>
+        <div class="real-compare-pair" id="realComparePair">
+          <button class="real-compare-slot" id="compareSlotA" onclick="setCompareEditSide('a')">
+            <small>A · 左侧</small><strong id="compareNameA">选择左侧地板</strong>
+          </button>
+          <button class="real-compare-swap" onclick="swapCompareProducts()" title="交换左右地板">⇄</button>
+          <button class="real-compare-slot" id="compareSlotB" onclick="setCompareEditSide('b')">
+            <small>B · 右侧</small><strong id="compareNameB">选择右侧地板</strong>
+          </button>
+          <span class="real-compare-tip">点 A/B 槽位，再从下方选择地板</span>
+        </div>
+        <div class="real-compare-layer" id="realCompareLayer"><img id="realCompareImage" alt="更换后地板效果"></div>
+        <div class="real-compare-line" id="realCompareLine"><div class="real-compare-knob">↔</div></div>
+        <input class="real-compare-input" id="realCompareInput" type="range" min="0" max="100" value="50" oninput="updateRealCompare(this.value)" aria-label="拖动查看地板更换前后对比">
+        <span class="real-compare-label real-after" id="realCompareLabelA">A · 左侧</span>
+        <span class="real-compare-label real-before" id="realCompareLabelB">B · 右侧</span>
+        <div class="hero-hint" id="heroHint">
+          <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 18l6-6-6-6"/></svg>
+          从下方挑选地板，AI 自动生成真实铺装效果
+        </div>
+        <div class="detail-card" id="detailCard"></div>
+        <div class="room-tabs">
+          <button class="room-tab active" data-room="living">客厅</button>
+          <button class="room-tab" data-room="bedroom">卧室</button>
+          <button class="room-tab" data-room="study">书房</button>
+        </div>
+        <div class="hero-label" id="heroLabel">客厅 · AI 真实铺装预览</div>
+      </div>
+
+      <div class="strip-section">
+        <div class="strip-head">
+          <h3>产品系列</h3>
+          <span id="productCount"></span>
+        </div>
+        <div id="productStrip"></div>
+      </div>
+    </div>
+
+    <div class="chat-panel">
+      <div class="chat-head">
+        <div class="ai-orb">木</div>
+        <div class="who">
+          <div class="name">小木</div>
+          <div class="role">DeepSeek 智能销售顾问 · 在线</div>
+        </div>
+        <button class="voice-btn" id="voiceBtn" onclick="toggleVoice()" title="语音播报开关">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/><path d="M15.54 8.46a5 5 0 010 7.07"/><path d="M19.07 4.93a10 10 0 010 14.14"/></svg>
+        </button>
+        <div class="badge">AI 导购</div>
+      </div>
+      <div class="chat-messages" id="chatMessages"></div>
+      <div class="quick-replies" id="quickReplies"></div>
+      <div class="chat-input-area">
+        <input type="text" id="chatInput" placeholder="想找什么样的地板？问我就好～" />
+        <button id="sendBtn" onclick="sendMessage()">
+          <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script src="visualizer-data.js?v=1"></script>
+<script src="app.js?v=6"></script>
+</body>
+</html>
