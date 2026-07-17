@@ -528,9 +528,12 @@
     return corroborated;
   }
 
-  function cleanAIAnswer(answer) {
-    return String(answer || '')
-      .replace(/\n+\s*(?:我们|接下来|现在).{0,12}(?:继续|回到).{0,12}(?:问题|流程)[：:][\s\S]*$/i, '')
+  function cleanAIAnswer(answer, currentQuestion) {
+    let cleaned = String(answer || '').trim();
+    const currentText = String(currentQuestion?.text || '').trim();
+    if (currentText) cleaned = cleaned.split(currentText).join('').replace(/\s{2,}/g, ' ').trim();
+    return cleaned
+      .replace(/\n*\s*(?:我们|接下来|现在).{0,12}(?:继续|回到).{0,12}(?:问题|流程)[：:]?\s*$/i, '')
       .trim();
   }
 
@@ -583,7 +586,7 @@
       if (!response.ok) throw new Error(`AI ${response.status}`);
       const data = await response.json();
       return {
-        answer: typeof data.answer === "string" ? cleanAIAnswer(data.answer).slice(0, 1200) : "",
+        answer: typeof data.answer === "string" ? cleanAIAnswer(data.answer, currentQuestion).slice(0, 1200) : "",
         intent: typeof data.intent === "string" ? data.intent : "question",
         profilePatch: sanitizeProfilePatch(data.profilePatch)
       };
