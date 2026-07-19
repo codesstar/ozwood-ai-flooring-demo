@@ -1,7 +1,9 @@
 import http from 'node:http';
 import { readFile } from 'node:fs/promises';
+import { readFileSync, existsSync } from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
+import sharp from 'sharp';
 
 const ROOT = path.dirname(fileURLToPath(import.meta.url));
 const PORT = Number(process.env.PORT || 8787);
@@ -73,7 +75,7 @@ async function readJson(req) {
   let body = '';
   for await (const chunk of req) {
     body += chunk;
-    if (body.length > 100_000) throw new Error('请求内容过大');
+    if (body.length > 5_000_000) throw new Error('请求内容过大');
   }
   return body ? JSON.parse(body) : {};
 }
@@ -620,6 +622,120 @@ const MIME = {
   '.png': 'image/png', '.jpg': 'image/jpeg', '.jpeg': 'image/jpeg', '.webp': 'image/webp', '.svg': 'image/svg+xml'
 };
 
+const IMAGE_BASE = (process.env.IMAGE_BASE_URL || 'https://dashscope.aliyuncs.com').replace(/\/$/, '');
+const IMAGE_MODEL = process.env.IMAGE_MODEL || 'qwen-image-2.0-pro-2026-06-22';
+const IMAGE_API_KEY = process.env.IMAGE_API_KEY || '';
+const IMAGE_API_URL = `${IMAGE_BASE}/api/v1/services/aigc/multimodal-generation/generation`;
+const MAX_IMAGE_SIZE = 2048;
+const FLOOR_TEXTURE_MAP = {
+  'european-oak': 'product-european-oak.jpg',
+  'spotted-gum': 'product-spotted-gum.jpg',
+  'herringbone': 'product-herringbone.jpg',
+  'white-oak': 'product-white-oak.jpg',
+  'hybrid-grey': 'product-hybrid-grey.jpg',
+};
+const FLOOR_SWAP_PROMPT = `Completely remove the original floor from the first image and replace it with the floor texture and color from the second reference image (regardless of whether the original floor is wood, tile, cement, or any other material, forcibly replace it with the reference flooring material).
+
+Key Material Constraints:
+
+1.The replaced floor must have the authentic surface quality of real wood: a natural, finely-grained texture with a gentle, soft luster. It should respond naturally to the scene's lighting, showing subtle, warm specular highlights on the wood grain in lit areas, without turning into a perfectly flat, dead-matte surface.
+
+2.The overall brightness, contrast, and color tone must strictly match the reference floor image, blending naturally into the scene's lighting. Preserve the original image's real lighting highlights and shadow structure, but adapt their material expression to that of natural wood. Specifically suppress any harsh, mirror-like reflections, waxy gloss, or polished-tile shine that is unnatural to wood.
+
+Strict Rules:
+
+3.Identify all floor areas in the original image (flat floors + stair/step treads that are also covered with flooring), and replace all of them with the reference floor.
+
+4.If stairs or steps are also covered with flooring, replace them as well; if they are bare wood, stone, or other non-flooring materials, keep them as they are.
+
+5.Walls, doors, baseboards, handrails, and furniture must remain completely unchanged, with clean, non-bleeding edges.
+
+Floor Planking Method:
+
+6.If the reference texture has a distinct parquet pattern (such as herringbone or chevron), strictly follow that pattern. The parquet across the entire floor must remain continuous and uniform, with no pattern breaks, sudden direction changes, or localized disarray.
+
+7.If the reference image is just a texture sample without visible plank seams, you must generate a realistic wood plank assembly. Individual plank width should be approximately 12–19 cm (proportional to the original image), laid in a staggered running bond pattern. A single, seamless giant wood sheet is strictly forbidden. The seams between planks must be extremely subtle, suggested only by a very thin shadow line slightly darker than the wood; absolutely no thick black lines, deep grooves, or large gaps are allowed.
+
+8.The grain direction, laying angle, and perspective distortion of the floor must be perfectly consistent with the original ground plane.
+
+Lighting and Output:
+
+9.Preserve the overall lighting direction and atmosphere of the original image. Keep the real highlights and shadows from the original light sources, and only modify how these highlights appear: they should feel like light interacting with oiled or natural wood, not with reflective tile or wax. The seam shadows remain extremely shallow and thin, blending naturally.
+
+10.The wood floor surface shows a natural, organic sheen where the light hits, with gentle highlights. It avoids both the extreme dullness of a totally matte surface and the artificial shine of a polished tile.
+
+11.Output a complete, high-resolution final edited image, with the floor seamlessly integrated into the scene, as if captured in a real photograph.`;
+
+async function compressImageBuffer(buffer) {
+  const metadata = await sharp(buffer).metadata();
+  let w = metadata.width || 0;
+  let h = metadata.height || 0;
+  if (Math.max(w, h) > MAX_IMAGE_SIZE) {
+    const ratio = MAX_IMAGE_SIZE / Math.max(w, h);
+    w = Math.round(w * ratio);
+    h = Math.round(h * ratio);
+    return sharp(buffer).resize(w, h, { fit: 'inside', withoutEnlargement: true }).jpeg({ quality: 85 }).toBuffer();
+  }
+  return buffer;
+}
+
+async function handleFloorSwap(req, res) {
+  if (!IMAGE_API_KEY) return sendJson(res, 200, { error: 'IMAGE_API_KEY 未配置', fallback: true });
+
+  const body = await readJson(req);
+  const { image, floorKey } = body || {};
+  if (!image || typeof image !== 'string') return sendJson(res, 400, { error: '请提供 base64 图片' });
+  if (!floorKey || !FLOOR_TEXTURE_MAP[floorKey]) return sendJson(res, 400, { error: '无效的 floorKey' });
+
+  const texturePath = path.join(ROOT, 'assets', 'ozwood', 'official', FLOOR_TEXTURE_MAP[floorKey]);
+  if (!existsSync(texturePath)) return sendJson(res, 500, { error: '地板参考图文件不存在' });
+
+  try {
+    const textureBase64 = readFileSync(texturePath).toString('base64');
+    const imageBuffer = Buffer.from(image, 'base64');
+    const compressed = await compressImageBuffer(imageBuffer);
+    const compressedBase64 = compressed.toString('base64');
+
+    const response = await fetch(IMAGE_API_URL, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${IMAGE_API_KEY}` },
+      body: JSON.stringify({
+        model: IMAGE_MODEL,
+        input: {
+          messages: [{
+            role: 'user',
+            content: [
+              { image: `data:image/jpeg;base64,${compressedBase64}` },
+              { image: `data:image/jpeg;base64,${textureBase64}` },
+              { text: FLOOR_SWAP_PROMPT },
+            ],
+          }],
+        },
+        parameters: { n: 1, watermark: false },
+      }),
+    });
+
+    if (!response.ok) {
+      const text = await response.text();
+      return sendJson(res, 200, { error: `AI 服务返回 ${response.status}`, detail: text.slice(0, 300), fallback: true });
+    }
+
+    const data = await response.json();
+    if (!data.output?.choices?.[0]) {
+      return sendJson(res, 200, { error: 'AI 返回异常', detail: JSON.stringify(data).slice(0, 300), fallback: true });
+    }
+
+    const imgUrl = data.output.choices[0].message?.content?.[0]?.image;
+    if (!imgUrl) {
+      return sendJson(res, 200, { error: 'AI 返回无图片', fallback: true });
+    }
+
+    return sendJson(res, 200, { url: imgUrl });
+  } catch (err) {
+    return sendJson(res, 200, { error: err.message || '生成失败', fallback: true });
+  }
+}
+
 async function serveStatic(req, res) {
   const url = new URL(req.url, `http://${req.headers.host || 'localhost'}`);
   let pathname = decodeURIComponent(url.pathname);
@@ -646,6 +762,7 @@ const server = http.createServer(async (req, res) => {
     }
     if (req.method === 'POST' && req.url === '/api/chat') return await handleChat(req, res);
     if (req.method === 'POST' && req.url === '/api/ozwood-question') return await handleOzwoodQuestion(req, res);
+    if (req.method === 'POST' && req.url === '/api/floor-swap') return await handleFloorSwap(req, res);
     if (req.method === 'GET' || req.method === 'HEAD') return await serveStatic(req, res);
     return sendJson(res, 405, { error: 'Method not allowed' });
   } catch (error) {
