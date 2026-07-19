@@ -1,177 +1,26 @@
 <!DOCTYPE html>
 <html lang="zh-CN">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<link rel="icon" href="data:,">
-<title>智慧地板 · 布局方案对比</title>
-<style>
-* { margin: 0; padding: 0; box-sizing: border-box; }
-:root {
-  --bg: #F3EDE2; --ink: #2E241A; --muted: #9A8C7A;
-  --brand: #7A5230; --brand-2: #B8863B; --line: #E9E1D2;
-}
-html, body {
-  min-height: 100%;
-  font-family: -apple-system, BlinkMacSystemFont, "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", sans-serif;
-  background: var(--bg);
-  color: var(--ink);
-}
-.wrap {
-  min-height: 100vh;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  padding: 40px 24px;
-}
-.brand-mark {
-  width: 52px; height: 52px;
-  border-radius: 15px;
-  background: linear-gradient(135deg, var(--brand), var(--brand-2));
-  display: flex; align-items: center; justify-content: center;
-  color: #fff; font-weight: 800; font-size: 24px;
-  box-shadow: 0 8px 20px rgba(122,82,48,0.3);
-  margin-bottom: 18px;
-}
-h1 { font-size: 26px; font-weight: 800; letter-spacing: 1px; }
-.sub { font-size: 13.5px; color: var(--muted); margin: 8px 0 40px; letter-spacing: 0.5px; }
-
-.cards { display: flex; gap: 24px; flex-wrap: wrap; justify-content: center; }
-.card {
-  width: 340px;
-  background: #fff;
-  border-radius: 20px;
-  padding: 22px;
-  text-decoration: none;
-  color: var(--ink);
-  box-shadow: 0 4px 16px rgba(62,43,27,0.08);
-  border: 2px solid transparent;
-  transition: all 0.25s;
-}
-.card:hover {
-  transform: translateY(-4px);
-  border-color: var(--brand-2);
-  box-shadow: 0 18px 40px rgba(62,43,27,0.16);
-}
-
-/* CSS 画的布局示意图 */
-.mini {
-  height: 170px;
-  border-radius: 12px;
-  background: var(--bg);
-  padding: 8px;
-  display: flex;
-  gap: 6px;
-  margin-bottom: 16px;
-}
-.mini .col { display: flex; flex-direction: column; gap: 6px; flex: 1; }
-.mini .blk { border-radius: 6px; }
-.mini .b-hero {
-  flex: 1;
-  background: linear-gradient(180deg, #EDE7DB 42%, #C9A97C 42%);
-  position: relative;
-}
-.mini .b-photo {
-  background: linear-gradient(180deg, #DAD2C2 42%, #8B6F4E 42%);
-  position: relative;
-}
-.mini .b-photo::before {
-  content: '';
-  position: absolute; left: 50%; top: 0; bottom: 0; width: 2px;
-  background: rgba(255,255,255,0.85);
-}
-.mini .b-hero::after {
-  content: '铺装效果';
-  position: absolute; inset: 0;
-  display: flex; align-items: center; justify-content: center;
-  font-size: 11px; color: rgba(46,36,26,0.55); font-weight: 600;
-}
-.mini .b-photo::after { content: '原图 ⇔ 新地板'; color: rgba(255,255,255,0.85); }
-.mini .b-strip {
-  height: 34px;
-  background: #fff;
-  display: flex; gap: 4px; padding: 5px;
-}
-.mini .b-strip i { flex: 1; border-radius: 3px; background: #C9A97C; opacity: 0.55; }
-.mini .b-strip i:nth-child(2) { background: #8B6F4E; }
-.mini .b-strip i:nth-child(4) { background: #E8D8B8; }
-.mini .b-list {
-  width: 64px;
-  background: #fff;
-  display: flex; flex-direction: column; gap: 4px; padding: 5px;
-}
-.mini .b-list i { flex: 1; border-radius: 3px; background: #C9A97C; opacity: 0.55; }
-.mini .b-list i:nth-child(2) { background: #8B6F4E; }
-.mini .b-list i:nth-child(4) { background: #E8D8B8; }
-.mini .b-chat {
-  width: 74px;
-  background: linear-gradient(180deg, #FBF7EF, #F5EDDD);
-  position: relative;
-}
-.mini .b-chat::after {
-  content: 'AI';
-  position: absolute; inset: 0;
-  display: flex; align-items: center; justify-content: center;
-  font-size: 12px; color: var(--brand); font-weight: 800;
-}
-
-.card h2 { font-size: 17px; font-weight: 700; margin-bottom: 6px; }
-.card h2 span {
-  font-size: 11px;
-  background: rgba(184,134,59,0.12);
-  color: var(--brand);
-  padding: 3px 9px;
-  border-radius: 999px;
-  vertical-align: 2px;
-  margin-left: 8px;
-  font-weight: 700;
-}
-.card p { font-size: 12.5px; color: var(--muted); line-height: 1.7; }
-.foot { margin-top: 40px; font-size: 12px; color: var(--muted); }
-</style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="Ozwood AI 地板顾问与一键换地板概念演示">
+  <meta http-equiv="refresh" content="0; url=ozwood-demo.html">
+  <title>Ozwood · AI 地板顾问演示</title>
+  <style>
+    * { box-sizing: border-box; }
+    body { min-height: 100vh; margin: 0; display: grid; place-items: center; background: #f5f0e8; color: #44372c; font-family: -apple-system, BlinkMacSystemFont, "PingFang SC", sans-serif; }
+    a { display: grid; gap: 16px; justify-items: center; color: inherit; text-decoration: none; }
+    img { width: 112px; height: 112px; object-fit: contain; }
+    span { font-size: 14px; }
+  </style>
 </head>
 <body>
-<div class="wrap">
-  <div class="brand-mark">木</div>
-  <h1>智慧地板 · AI虚拟销售顾问</h1>
-  <div class="sub">AI 导购布局 + 高保真实景换地板 · 点击进入体验</div>
-
-  <div class="cards">
-    <a class="card" href="layout-bottom.html">
-      <div class="mini">
-        <div class="col">
-          <div class="blk b-hero"></div>
-          <div class="blk b-strip"><i></i><i></i><i></i><i></i><i></i></div>
-        </div>
-        <div class="blk b-chat"></div>
-      </div>
-      <h2>方案A · AI 实景导购<span>推荐体验</span></h2>
-      <p>下方 12 款商品、中央 3 个真实房间一键铺装、右侧 AI 导购联动。效果图最大化，适合门店大屏沉浸演示。</p>
-    </a>
-
-    <a class="card" href="layout-left.html">
-      <div class="mini">
-        <div class="blk b-list"><i></i><i></i><i></i><i></i><i></i></div>
-        <div class="col"><div class="blk b-hero"></div></div>
-        <div class="blk b-chat"></div>
-      </div>
-      <h2>方案B · 左侧产品列表<span>导购式</span></h2>
-      <p>产品列表纵向常驻左侧，一屏可见更多款式，浏览选购动线清晰。适合客户自助挑选、快速对比的场景。</p>
-    </a>
-
-    <a class="card" href="photo-swap.html">
-      <div class="mini">
-        <div class="col">
-          <div class="blk b-hero b-photo"></div>
-        </div>
-      </div>
-      <h2>AI 一键换地板<span>高保真 Demo</span></h2>
-      <p>客厅、卧室、书房 × 5 款品牌 SKU，共 15 种高保真组合；保留透视、光影与家具遮挡，支持原图对比与效果图保存。</p>
-    </a>
-  </div>
-
-  <div class="foot">方案A：AI 导购对话 · 3 场景 × 5 地板 · 一键真实铺装 · 面积算价 ｜ 独立 Demo：前后对比 · 全屏 · 保存效果图</div>
-</div>
+  <a href="ozwood-demo.html">
+    <img src="assets/ozwood/official/ozwood-logo.png" alt="Ozwood Australia 官方标志">
+    <span>正在进入 Ozwood AI 地板顾问演示…</span>
+  </a>
+  <script>
+    window.location.replace(`ozwood-demo.html${window.location.search}${window.location.hash}`);
+  </script>
 </body>
 </html>

@@ -548,6 +548,9 @@ function refreshCompareImages(resetSlider = false) {
   const current = document.getElementById('realCurrent');
   const compareImage = document.getElementById('realCompareImage');
   if (!current || !compareImage) return;
+  realRenderToken++;
+  document.getElementById('realIncoming')?.classList.remove('show');
+  document.getElementById('realScene')?.classList.remove('processing');
   current.src = visualRoomPath(compareProductB);
   current.dataset.path = visualRoomPath(compareProductB);
   compareImage.src = visualRoomPath(compareProductA);
@@ -593,13 +596,19 @@ function setRealCompare(enabled) {
     compareEditSide = 'b';
     realCompareMode = true;
     hero.classList.add('real-compare');
-    document.getElementById('realCompareBtn')?.classList.add('active');
+    const compareButton = document.getElementById('realCompareBtn');
+    compareButton?.classList.add('active');
+    const compareButtonLabel = compareButton?.querySelector('span');
+    if (compareButtonLabel) compareButtonLabel.textContent = '退出对比';
     refreshCompareImages(true);
   } else {
     const returnProduct = compareProductA || selectedProduct;
     realCompareMode = false;
     hero.classList.remove('real-compare');
-    document.getElementById('realCompareBtn')?.classList.remove('active');
+    const compareButton = document.getElementById('realCompareBtn');
+    compareButton?.classList.remove('active');
+    const compareButtonLabel = compareButton?.querySelector('span');
+    if (compareButtonLabel) compareButtonLabel.textContent = '地板对比';
     renderComparePair();
     if (returnProduct && selectedProduct?.id !== returnProduct.id) selectProduct(returnProduct.id);
     else {
