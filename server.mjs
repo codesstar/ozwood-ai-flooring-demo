@@ -623,7 +623,7 @@ const MIME = {
 async function serveStatic(req, res) {
   const url = new URL(req.url, `http://${req.headers.host || 'localhost'}`);
   let pathname = decodeURIComponent(url.pathname);
-  if (pathname === '/') pathname = '/index.html';
+  if (pathname === '/') pathname = '/ozwood-demo.html';
   if (/(^|\/)(?:\.env(?:\.|\/|$)|\.git(?:\/|$)|\.loci(?:\/|$))/i.test(pathname)) {
     return sendJson(res, 404, { error: 'Not found' });
   }
@@ -656,6 +656,6 @@ const server = http.createServer(async (req, res) => {
 });
 
 server.listen(PORT, '127.0.0.1', () => {
-  console.log(`智慧地板 Demo 已启动：http://127.0.0.1:${PORT}/layout-bottom.html`);
+  console.log(`Ozwood AI 地板顾问已启动：http://127.0.0.1:${PORT}/`);
   console.log(`DeepSeek：${API_KEY ? '已配置' : '未配置'} · 模型：${MODEL}`);
 });
