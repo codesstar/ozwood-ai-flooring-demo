@@ -71,11 +71,11 @@ function sendJson(res, status, value) {
   res.end(JSON.stringify(value));
 }
 
-async function readJson(req) {
+async function readJson(req, maxBytes = 100_000) {
   let body = '';
   for await (const chunk of req) {
     body += chunk;
-    if (body.length > 5_000_000) throw new Error('请求内容过大');
+    if (body.length > maxBytes) throw new Error('请求内容过大');
   }
   return body ? JSON.parse(body) : {};
 }
@@ -682,7 +682,7 @@ async function compressImageBuffer(buffer) {
 async function handleFloorSwap(req, res) {
   if (!IMAGE_API_KEY) return sendJson(res, 200, { error: 'IMAGE_API_KEY 未配置', fallback: true });
 
-  const body = await readJson(req);
+  const body = await readJson(req, 5_000_000);
   const { image, floorKey } = body || {};
   if (!image || typeof image !== 'string') return sendJson(res, 400, { error: '请提供 base64 图片' });
   if (!floorKey || !FLOOR_TEXTURE_MAP[floorKey]) return sendJson(res, 400, { error: '无效的 floorKey' });

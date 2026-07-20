@@ -969,5 +969,12 @@
     preloadScenes();
   }
 
+  window.OZWOOD_APP = {
+    chooseProduct,
+    chooseRoom,
+    toggleCompare,
+    getState: () => ({ productKey: state.productKey, room: state.room, compare: state.compare })
+  };
+
   init();
 })();

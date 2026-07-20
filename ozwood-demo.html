@@ -166,11 +166,9 @@
   <div class="toast" id="toast" role="status"></div>
 
   <script src="ozwood-data.js?v=5"></script>
-  <script src="ozwood-app.js?v=9"></script>
+  <script src="ozwood-app.js?v=10"></script>
   <script>
   (function() {
-    // ── 全局房间状态跟踪 ──
-    window._ozwoodRoom = 'living';
     // ── 元素 ──
     const swapBtn = document.getElementById('swapPhotoBtn');
     const fileInput = document.getElementById('swapPhotoInput');
@@ -212,6 +210,7 @@
     }
 
     function enterSwapMode(dataUrl) {
+      window.OZWOOD_APP?.toggleCompare(false);
       swapPhoto = dataUrl;
       swapMode = true;
       swapResults.clear();
@@ -237,13 +236,8 @@
       swapBlurBg.style.display = 'none';
       sceneCurrent.style.opacity = '1';
       // 恢复原始产品场景
-      const activeCard = document.querySelector('.product-card.active');
-      if (activeCard) {
-        const prod = window.OZWOOD_DEMO.products.find(p => p.key === activeCard.dataset.product);
-        if (prod) {
-          sceneCurrent.src = `assets/ozwood/rooms/${window._ozwoodRoom || 'living'}-${prod.key}.jpg`;
-        }
-      }
+      const appState = window.OZWOOD_APP?.getState() || { productKey: 'european-oak', room: 'living' };
+      sceneCurrent.src = `assets/ozwood/rooms/${appState.room}-${appState.productKey}.jpg`;
       if (conceptBadge) {
         const roomActive = document.querySelector('.room-button.active');
         const roomLabel = roomActive ? roomActive.textContent.trim() : '客厅';
@@ -255,7 +249,6 @@
     function applySwapResult(url, floorKey) {
       swapResults.set(floorKey, url);
       // 渐变展示结果
-      incoming.src = url;
       incoming.onload = function() {
         incoming.classList.add('show');
         setTimeout(() => {
@@ -267,6 +260,29 @@
           showToast('换地板完成');
         }, 550);
       };
+      incoming.src = url;
+    }
+
+    function preparePhoto(file) {
+      return new Promise((resolve, reject) => {
+        const reader = new FileReader();
+        reader.onerror = () => reject(new Error('照片读取失败'));
+        reader.onload = () => {
+          const image = new Image();
+          image.onerror = () => reject(new Error('当前照片格式暂不支持'));
+          image.onload = () => {
+            const maxSide = 2048;
+            const scale = Math.min(1, maxSide / Math.max(image.naturalWidth, image.naturalHeight));
+            const canvas = document.createElement('canvas');
+            canvas.width = Math.max(1, Math.round(image.naturalWidth * scale));
+            canvas.height = Math.max(1, Math.round(image.naturalHeight * scale));
+            canvas.getContext('2d').drawImage(image, 0, 0, canvas.width, canvas.height);
+            resolve(canvas.toDataURL('image/jpeg', 0.86));
+          };
+          image.src = reader.result;
+        };
+        reader.readAsDataURL(file);
+      });
     }
 
     // ── 打开文件选择 ──
@@ -284,9 +300,9 @@
     fileInput.addEventListener('change', async function() {
       const file = this.files?.[0];
       if (!file || !file.type.startsWith('image/')) { showToast('请选择图片文件'); return; }
-      const reader = new FileReader();
-      reader.onload = function(e) {
-        enterSwapMode(e.target.result);
+      try {
+        const preparedPhoto = await preparePhoto(file);
+        enterSwapMode(preparedPhoto);
         updateSwapBtn();
 
         // 上传完成后，自动用当前选中的产品调用 AI 换地板
@@ -297,8 +313,9 @@
             activeCard.click();
           }, 400);
         }
-      };
-      reader.readAsDataURL(file);
+      } catch (error) {
+        showToast(error.message || '照片处理失败');
+      }
     });
 
     // ── 问题3 方案: 拦截产品点击 ──
@@ -309,13 +326,13 @@
 
       e.stopImmediatePropagation();
       const floorKey = card.dataset.product;
+      window.OZWOOD_APP?.chooseProduct(floorKey, { forcePrimary: true, force: true, instant: true });
 
       // 检查缓存
       if (swapResults.has(floorKey)) {
         stage.classList.add('processing');
         setTimeout(() => {
           applySwapResult(swapResults.get(floorKey), floorKey);
-          stage.classList.remove('processing');
         }, 300);
         return;
       }
@@ -360,8 +377,7 @@
       btn.addEventListener('click', function(e) {
         if (!swapMode) return;
         e.stopImmediatePropagation();
-        // 只更新标签，不切图
-        window._ozwoodRoom = this.dataset.room;
+        window.OZWOOD_APP?.chooseRoom(this.dataset.room, { instant: true });
         const roomName = this.textContent.trim();
         const badges = document.querySelectorAll('.concept-badge b');
         badges.forEach(b => b.textContent = roomName);
