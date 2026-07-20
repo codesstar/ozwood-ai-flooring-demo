@@ -181,6 +181,9 @@
     const toast = document.getElementById('toast');
     const roomButtons = document.querySelectorAll('.room-button');
     const productStrip = document.getElementById('productStrip');
+    const floorSwapEndpoint = window.location.hostname.endsWith('github.io')
+      ? 'https://ozwood-ai-flooring-demo.vercel.app/api/floor-swap'
+      : '/api/floor-swap';
 
     let swapPhoto = null;         // data URL of uploaded photo
     let swapMode = false;         // true = user uploaded a photo
@@ -345,7 +348,7 @@
         const b64 = swapPhoto.split(',')[1];
         if (!b64) throw new Error('图片数据异常');
 
-        const resp = await fetch('/api/floor-swap', {
+        const resp = await fetch(floorSwapEndpoint, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ image: b64, floorKey }),
