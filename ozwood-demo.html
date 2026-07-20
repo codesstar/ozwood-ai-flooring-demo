@@ -21,6 +21,10 @@
           <svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="3" width="18" height="18" rx="3"></rect><path d="M12 3v18"></path></svg>
           <span>地板对比</span>
         </button>
+        <button class="top-action" id="swapPhotoBtn" type="button">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><rect x="3" y="3" width="18" height="18" rx="3"/><circle cx="9" cy="9" r="1.5"/><path d="M3 16l5-5 4 4 4-5 5 5v3a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/></svg>
+          <span>拍照换地板</span>
+        </button>
         <button class="top-action" id="fullscreenBtn" type="button">
           <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M8 3H3v5M16 3h5v5M8 21H3v-5M16 21h5v-5"></path></svg>
           <span>全屏预览</span>
@@ -132,6 +136,8 @@
     </main>
   </div>
 
+  <input type="file" id="swapPhotoInput" accept="image/*" style="display:none">
+
   <div class="overlay" id="storyOverlay" aria-hidden="true">
     <button class="overlay-backdrop" id="closeStoriesBackdrop" type="button" aria-label="关闭品牌故事"></button>
     <aside class="stories-drawer">
@@ -161,5 +167,212 @@
 
   <script src="ozwood-data.js?v=5"></script>
   <script src="ozwood-app.js?v=9"></script>
+  <script>
+  (function() {
+    // ── 全局房间状态跟踪 ──
+    window._ozwoodRoom = 'living';
+    // ── 元素 ──
+    const swapBtn = document.getElementById('swapPhotoBtn');
+    const fileInput = document.getElementById('swapPhotoInput');
+    const sceneStack = document.getElementById('sceneStack');
+    const sceneCurrent = document.getElementById('sceneCurrent');
+    const incoming = document.getElementById('sceneIncoming');
+    const stage = document.getElementById('visualStage');
+    const conceptBadge = document.querySelector('.concept-badge span');
+    const conceptBadgeRoot = document.querySelector('.concept-badge');
+    const toast = document.getElementById('toast');
+    const roomButtons = document.querySelectorAll('.room-button');
+    const productStrip = document.getElementById('productStrip');
+
+    let swapPhoto = null;         // data URL of uploaded photo
+    let swapMode = false;         // true = user uploaded a photo
+    let swapResults = new Map();  // floorKey → result image URL
+
+    // ── 问题1 方案: 上传图片用独立层展示 ──
+    // 动态创建一个 <img> 放在 scene-stack 中，不覆盖 sceneCurrent
+    let swapOverlay = document.getElementById('swapOverlay');
+    if (!swapOverlay) {
+      swapOverlay = document.createElement('img');
+      swapOverlay.id = 'swapOverlay';
+      swapOverlay.style.cssText = 'position:absolute;inset:0;width:100%;height:100%;z-index:5;display:none;pointer-events:none';
+      sceneStack.appendChild(swapOverlay);
+    }
+    // 模糊背景底图
+    let swapBlurBg = document.getElementById('swapBlurBg');
+    if (!swapBlurBg) {
+      swapBlurBg = document.createElement('img');
+      swapBlurBg.id = 'swapBlurBg';
+      swapBlurBg.style.cssText = 'position:absolute;inset:0;width:100%;height:100%;object-fit:cover;z-index:4;display:none;pointer-events:none;filter:blur(16px) brightness(0.6);transform:scale(1.1)';
+      sceneStack.appendChild(swapBlurBg);
+    }
+
+    function showToast(msg) {
+      toast.textContent = msg; toast.classList.add('show');
+      clearTimeout(showToast._t); showToast._t = setTimeout(() => toast.classList.remove('show'), 2400);
+    }
+
+    function enterSwapMode(dataUrl) {
+      swapPhoto = dataUrl;
+      swapMode = true;
+      swapResults.clear();
+
+      // 模糊背景（上传图自身 放大+高斯模糊）
+      swapBlurBg.src = dataUrl;
+      swapBlurBg.style.display = 'block';
+      // 前景清晰图
+      swapOverlay.style.cssText = 'position:absolute;inset:0;width:100%;height:100%;object-fit:contain;z-index:5;display:block;pointer-events:none;padding:40px';
+      swapOverlay.src = dataUrl;
+      // 隐藏原始场景图
+      sceneCurrent.style.opacity = '0';
+      incoming.classList.remove('show');
+
+      if (conceptBadge) conceptBadge.innerHTML = '上传模式 · <b>选择下方地板进行 AI 换地板</b>';
+      showToast('照片已上传，请从下方选择地板');
+    }
+
+    function exitSwapMode() {
+      swapMode = false;
+      swapPhoto = null;
+      swapOverlay.style.display = 'none';
+      swapBlurBg.style.display = 'none';
+      sceneCurrent.style.opacity = '1';
+      // 恢复原始产品场景
+      const activeCard = document.querySelector('.product-card.active');
+      if (activeCard) {
+        const prod = window.OZWOOD_DEMO.products.find(p => p.key === activeCard.dataset.product);
+        if (prod) {
+          sceneCurrent.src = `assets/ozwood/rooms/${window._ozwoodRoom || 'living'}-${prod.key}.jpg`;
+        }
+      }
+      if (conceptBadge) {
+        const roomActive = document.querySelector('.room-button.active');
+        const roomLabel = roomActive ? roomActive.textContent.trim() : '客厅';
+        conceptBadge.innerHTML = '概念效果 · <b>' + roomLabel + '</b>';
+      }
+      updateSwapBtn();
+    }
+
+    function applySwapResult(url, floorKey) {
+      swapResults.set(floorKey, url);
+      // 渐变展示结果
+      incoming.src = url;
+      incoming.onload = function() {
+        incoming.classList.add('show');
+        setTimeout(() => {
+          swapOverlay.src = url;
+          swapBlurBg.src = url;
+          incoming.classList.remove('show');
+          stage.classList.remove('processing');
+          if (conceptBadge) conceptBadge.innerHTML = 'AI 换地板 · <b>再次点击可重新上传</b>';
+          showToast('换地板完成');
+        }, 550);
+      };
+    }
+
+    // ── 打开文件选择 ──
+    swapBtn.addEventListener('click', () => {
+      if (swapMode) { exitSwapMode(); return; }
+      fileInput.click();
+    });
+
+    // 按钮文字随模式变化
+    function updateSwapBtn() {
+      swapBtn.querySelector('span').textContent = swapMode ? '退出换地板' : '拍照换地板';
+    }
+
+    // ── 选择照片 ──
+    fileInput.addEventListener('change', async function() {
+      const file = this.files?.[0];
+      if (!file || !file.type.startsWith('image/')) { showToast('请选择图片文件'); return; }
+      const reader = new FileReader();
+      reader.onload = function(e) {
+        enterSwapMode(e.target.result);
+        updateSwapBtn();
+
+        // 上传完成后，自动用当前选中的产品调用 AI 换地板
+        const activeCard = document.querySelector('.product-card.active');
+        if (activeCard) {
+          setTimeout(() => {
+            // 模拟点了一下当前亮着的产品
+            activeCard.click();
+          }, 400);
+        }
+      };
+      reader.readAsDataURL(file);
+    });
+
+    // ── 问题3 方案: 拦截产品点击 ──
+    // 在 swap 模式下用独立逻辑处理，不触发 ozwood-app.js 的 chooseProduct
+    productStrip.addEventListener('click', async function(e) {
+      const card = e.target.closest('[data-product]');
+      if (!card || !swapMode || !swapPhoto) return;
+
+      e.stopImmediatePropagation();
+      const floorKey = card.dataset.product;
+
+      // 检查缓存
+      if (swapResults.has(floorKey)) {
+        stage.classList.add('processing');
+        setTimeout(() => {
+          applySwapResult(swapResults.get(floorKey), floorKey);
+          stage.classList.remove('processing');
+        }, 300);
+        return;
+      }
+
+      stage.classList.add('processing');
+      const procLabel = document.querySelector('.processing-card b');
+      if (procLabel) procLabel.textContent = 'AI 正在更换地板';
+
+      try {
+        const b64 = swapPhoto.split(',')[1];
+        if (!b64) throw new Error('图片数据异常');
+
+        const resp = await fetch('/api/floor-swap', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ image: b64, floorKey }),
+        });
+        const data = await resp.json();
+
+        if (data.url) {
+          applySwapResult(data.url, floorKey);
+        } else {
+          // 问题2 方案: 429 友好提示
+          if (data.error && (data.error.includes('429') || data.error.includes('throttl') || data.error.includes('limit'))) {
+            showToast('生成器短暂休息中，请等待 10 秒后再试');
+          } else {
+            throw new Error(data.error || '生成失败');
+          }
+        }
+      } catch(err) {
+        stage.classList.remove('processing');
+        if (!err.message.includes('429') && !err.message.includes('throttl')) {
+          showToast(err.message || '生成失败');
+        }
+      } finally {
+        if (procLabel) procLabel.textContent = 'AI 正在更换地板';
+      }
+    }, true);  // useCapture = true 确保先于 ozwood-app.js 触发
+
+    // ── 问题3 方案: 拦截房间切换 ──
+    roomButtons.forEach(btn => {
+      btn.addEventListener('click', function(e) {
+        if (!swapMode) return;
+        e.stopImmediatePropagation();
+        // 只更新标签，不切图
+        window._ozwoodRoom = this.dataset.room;
+        const roomName = this.textContent.trim();
+        const badges = document.querySelectorAll('.concept-badge b');
+        badges.forEach(b => b.textContent = roomName);
+        roomButtons.forEach(b => b.classList.remove('active'));
+        this.classList.add('active');
+      }, true);
+    });
+
+    // 更新按钮文本
+    updateSwapBtn();
+  })();
+  </script>
 </body>
 </html>
