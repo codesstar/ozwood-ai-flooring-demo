@@ -480,11 +480,105 @@
     return /(直接|现在|先).{0,24}(推荐|出结果|列\s*几|给\s*几|来几款)/.test(t)
       || /(给我推荐|推荐几[个款]|列几[个款]|给几[个款]|出几款|先推荐|不用再问|推荐一下)/.test(t)
       || /(适合的?(木板|地板|产品)|哪几款|有什么推荐|推荐模板)/.test(t)
+      || /推荐.{0,20}(适合|孕妇|宠物|小孩|老人|猫|狗|潮湿|防水|防潮)/.test(t)
+      || /(适合|给).{0,12}(孕妇|宠物|小孩|老人|猫|狗|潮湿|防水).{0,10}(推荐|地板|木板)?/.test(t)
+      || /(再|还要|另外|基础上).{0,16}(推荐|适合)/.test(t)
       || /^(推荐(一下|一款|几款|吧)?)$/.test(t);
   }
 
+  /** 在已有推荐上追加条件（拓展画像） */
+  function wantsProfileExpansion(text) {
+    const t = String(text || "").trim();
+    if (!t || looksLikeQuestion(t)) return false;
+    return /(再|还要|另外|同时|也要|加上|基础上|并且|而且|补充|接着|然后).{0,24}(适合|考虑|推荐|宠物|孕妇|小孩|老人|猫|狗|预算|采光|色调|防水|潮湿|防潮|风格)/.test(t)
+      || (state.chatComplete && /(宠物|孕妇|小孩|老人|猫|狗|预算|采光|色调|防水|潮湿|防潮|湿区|改成|换成)/.test(t));
+  }
+
+  function mergeHousehold(existing, incoming, text = "") {
+    if (!incoming) return existing;
+    if (!existing || existing === "unknown") return incoming;
+    if (incoming === "none") return "none";
+    if (/(改成|换成|不是|不要|取消|只考虑)/.test(text)) return incoming;
+    if (existing === incoming) return existing;
+    const additive = /(再|还要|另外|同时|也要|加上|基础上|并且|而且|补充|接着)/.test(text)
+      || state.chatComplete;
+    const specials = new Set(["kids", "pregnant", "elderly", "pets"]);
+    if (additive && specials.has(existing) && specials.has(incoming) && existing !== incoming) return "mixed";
+    if (existing === "mixed" || incoming === "mixed") return "mixed";
+    return incoming;
+  }
+
+  function buildExpandingPatch(text, currentQuestionId = null) {
+    const patch = extractProfilePatch(text, currentQuestionId);
+    // 家庭情况叠加：孕妇 + 宠物 → mixed
+    if (patch.household) {
+      patch.household = mergeHousehold(state.profile.household, patch.household, text);
+    } else if (/(宠物|猫|狗)/.test(text) && !/(没有宠物|没猫|没狗)/.test(text)) {
+      const merged = mergeHousehold(state.profile.household, "pets", text);
+      if (merged) patch.household = merged;
+    } else if (/孕妇|备孕|怀孕/.test(text)) {
+      const merged = mergeHousehold(state.profile.household, "pregnant", text);
+      if (merged) patch.household = merged;
+    } else if (/小孩|孩子|儿童/.test(text)) {
+      const merged = mergeHousehold(state.profile.household, "kids", text);
+      if (merged) patch.household = merged;
+    } else if (/老人|长辈/.test(text)) {
+      const merged = mergeHousehold(state.profile.household, "elderly", text);
+      if (merged) patch.household = merged;
+    }
+    // 潮湿 / 防水拓展：自然语言兜底
+    if (patch.moisture === undefined) {
+      if (/(完全防水|需要防水|潮湿环境|很潮|湿度大|易积水|湿区|厨卫)/.test(text)) {
+        patch.moisture = "waterproof";
+      } else if (/(防潮|偶尔有水|有点水|水渍)/.test(text)) {
+        patch.moisture = "occasional";
+      } else if (/(普通干区|干燥环境|很干)/.test(text)) {
+        patch.moisture = "dry";
+      }
+    }
+    // 采光拓展兜底
+    if (patch.lighting === undefined) {
+      if (/(采光\s*(很好|充足|不错)|光线\s*(很好|充足|亮))/.test(text)) patch.lighting = "bright";
+      else if (/(采光\s*(一般|中等)|光线\s*(一般|中等))/.test(text)) patch.lighting = "medium";
+      else if (/(采光\s*(差|暗|不足)|比较暗|昏暗)/.test(text)) patch.lighting = "dim";
+    }
+    // 提到宠物时，若尚未设使用强度，补一档便于打分
+    if ((patch.household === "pets" || patch.household === "mixed" || /(宠物|猫|狗)/.test(text))
+      && state.profile.lifestyle === undefined
+      && patch.lifestyle === undefined
+      && /(宠物|猫|狗|耐磨)/.test(text)) {
+      patch.lifestyle = "kids-pets";
+    }
+    return sanitizeProfilePatch(patch);
+  }
+
+  function expandProfileAndRerecommend(text, currentQuestionId = null) {
+    const priorCount = Object.keys(definedProfile()).length;
+    const patch = buildExpandingPatch(text, currentQuestionId);
+    const changed = applyProfilePatch(patch);
+    const known = formatFullProfile();
+    if (changed.length && priorCount > 0) {
+      addMessage(
+        "assistant",
+        `好的，已在现有需求上补充：<strong>${escapeHTML(formatCapturedFields(changed))}</strong>。<br>当前画像：<strong>${escapeHTML(known)}</strong>。我按更新后的条件重新匹配。`,
+        true
+      );
+    } else if (changed.length) {
+      addMessage(
+        "assistant",
+        `好的，已记下：<strong>${escapeHTML(formatCapturedFields(changed))}</strong>。我按当前条件给出推荐。`,
+        true
+      );
+    } else if (known) {
+      addMessage("assistant", `好的，我按当前画像重新匹配：<strong>${escapeHTML(known)}</strong>。`, true);
+    } else {
+      addMessage("assistant", "好的，已知条件还不多，我先给出综合稳妥的阶段推荐；你之后仍可继续补充。");
+    }
+    requestImmediateRecommendation(240);
+  }
+
   function partialRecommendationOptions() {
-    return ["继续补全画像", "修改需求后重新推荐", "继续自由提问", "打开品牌故事"];
+    return ["继续补全画像", "再补充一个条件", "修改需求后重新推荐", "继续自由提问", "打开品牌故事"];
   }
 
   function askNext(delay = 330) {
@@ -552,7 +646,7 @@
   }
 
   function isDomainRelevantMessage(text) {
-    return /(装修|翻新|房子|家里|房间|客厅|餐厅|卧室|书房|厨房|地板|木板|铺装|材料|安装|基层|防水|预算|面积|平方米|平米|采光|光线|色调|颜色|小孩|孩子|孕妇|老人|宠物|展厅|样板|ozwood|floor|renovat|interior|subfloor)/i.test(text)
+    return /(装修|翻新|房子|家里|房间|客厅|餐厅|卧室|书房|厨房|地板|木板|铺装|材料|安装|基层|防水|潮湿|防潮|湿区|预算|面积|平方米|平米|采光|光线|色调|颜色|小孩|孩子|孕妇|老人|宠物|展厅|样板|ozwood|floor|renovat|interior|subfloor)/i.test(text)
       || /(?:\d+(?:\.\d+)?\s*(?:平|m²|m2|square)|约\s*\d+\s*(?:平|m))/i.test(text);
   }
 
@@ -641,7 +735,12 @@
       household: [[/多种|都有|(小孩|孩子|儿童).{0,6}(宠物|猫|狗)|(宠物|猫|狗).{0,6}(小孩|孩子)|(孕妇|备孕).{0,8}(老人|小孩|孩子)|(老人|长辈).{0,8}(孕妇|小孩|孩子|宠物)/, "mixed"], [/孕妇|备孕|怀孕|pregnancy/, "pregnant"], [/老人|长辈|elderly/, "elderly"], [/(没有特殊|无特殊|都没有|没有以上|没有宠物|没养猫|没养狗)/, "none"], [/小孩|孩子|儿童|kids?/, "kids"], [/宠物|养猫|养狗|有只猫|有只狗|一只猫|一只狗|养了猫|养了狗|有猫|有狗|猫|狗|pets?/, "pets"]],
       lifestyle: [[/孩子和宠物|小孩.*宠物|宠物.*高频|高频.*宠物|耐磨优先|人流较大|heavy/, "kids-pets"], [/人流|耐磨|heavy/, "heavy"], [/出租|投资|rental|investment/, "rental"], [/安静|成人/, "quiet"]],
       subfloor: [[/瓷砖|tile/, "tiles"], [/混凝土|水泥|concrete|slab/, "concrete"], [/木基层|timber subfloor/, "timber"], [/不清楚|不知道/, "unknown"]],
-      moisture: [[/需要防水|很潮|wet|waterproof/, "waterproof"], [/偶尔|清洁|spill/, "occasional"], [/干区|普通|dry/, "dry"], [/判断|不清楚/, "unknown"]],
+      moisture: [
+        [/需要防水|完全防水|很潮|潮湿环境|潮湿|湿度大|易积水|经常有水|湿区|厨卫|waterproof|humid|moisture/i, "waterproof"],
+        [/偶尔有水|偶尔|防潮|有点水|清洁水渍|spill/, "occasional"],
+        [/干区|普通干燥|干燥|dry\b/, "dry"],
+        [/判断|不清楚|现场确认/, "unknown"]
+      ],
       service: [[/供货.*安装|supply.*install/, "supply-install"], [/只.*供货|supply only/, "supply-only"], [/样板|sample/, "sample"], [/展厅|showroom/, "showroom"]],
       budget: [
         [/单价\s*au\s*\$?\s*35\s*以下|au\s*\$?\s*35\s*以下|under\s*\$?35|预算低/, "under35"],
@@ -991,10 +1090,16 @@
       ? Object.fromEntries(Object.entries(evidencePatch).filter(([id]) => id === "area" || id === "budget" || id === currentBefore?.id))
       : evidencePatch;
 
-    const directRecommendation = wantsImmediateRecommendation(text);
+    const directRecommendation = wantsImmediateRecommendation(text) || wantsProfileExpansion(text);
+
+    // 明确要推荐 / 拓展画像：合并条件后直接出卡，不走批量确认弹窗
+    if (directRecommendation) {
+      expandProfileAndRerecommend(text, currentBefore?.id);
+      return;
+    }
 
     // 多条件一次描述：先确认再写入，避免用户被迫重走全流程
-    if (!questionLike && !directRecommendation && shouldConfirmBatch(localPatch, currentBefore, text)) {
+    if (!questionLike && shouldConfirmBatch(localPatch, currentBefore, text)) {
       presentBatchConfirmation(localPatch);
       return;
     }
@@ -1002,13 +1107,6 @@
     const changed = applyProfilePatch(localPatch);
     state.chatBusy = true;
     const typing = showTyping();
-    if (directRecommendation) {
-      typing.remove();
-      if (changed.length) addMessage("assistant", `已更新你的需求：${formatCapturedFields(changed)}。`);
-      state.chatBusy = false;
-      requestImmediateRecommendation(220);
-      return;
-    }
     let result = {
       answer: localKnowledgeAnswer(text),
       bridge: "",
@@ -1049,10 +1147,15 @@
     const allChanged = [...new Set([...changed, ...modelChanged])];
     typing.remove();
 
-    if (result.intent === "direct_recommend" || wantsImmediateRecommendation(text)) {
-      if (allChanged.length) addMessage("assistant", `已更新你的需求：${escapeHTML(formatCapturedFields(allChanged))}。`);
+    if (result.intent === "direct_recommend" || wantsImmediateRecommendation(text) || wantsProfileExpansion(text)) {
+      if (allChanged.length) {
+        // 已写入的普通字段保留；家庭叠加再跑一遍
+        state.chatBusy = false;
+        expandProfileAndRerecommend(text, currentBefore?.id);
+        return;
+      }
       state.chatBusy = false;
-      requestImmediateRecommendation(260);
+      expandProfileAndRerecommend(text, currentBefore?.id);
       return;
     }
 
@@ -1122,11 +1225,9 @@
 
     const currentQuestion = firstMissingQuestion() || firstIncompleteCritical();
 
-    // 用户明确要求立刻推荐：不再追问补全，按当前画像出产品卡
-    if (wantsImmediateRecommendation(text)) {
-      const patch = extractProfilePatch(text, currentQuestion?.id);
-      if (Object.keys(patch).length) applyProfilePatch(patch);
-      requestImmediateRecommendation(220);
+    // 用户明确要求立刻推荐，或在已有推荐上继续拓展画像
+    if (wantsImmediateRecommendation(text) || wantsProfileExpansion(text)) {
+      expandProfileAndRerecommend(text, currentQuestion?.id);
       return;
     }
 
@@ -1416,6 +1517,13 @@
       askNext(200);
       return true;
     }
+    if (answer.includes("再补充")) {
+      state.chatComplete = false;
+      addMessage("assistant", "可以。直接说新条件即可，例如「还要适合宠物」「预算改成单价 AU$55 以上」「采光比较暗」。我会叠加到现有画像并重新推荐。");
+      elements.chatInput.focus();
+      renderOptions(["还要适合宠物", "家里有小孩", "采光比较暗", "单价 AU$55 以上", "继续补全画像"]);
+      return true;
+    }
     if (answer.includes("品牌故事")) {
       openStories();
       return true;
@@ -1428,7 +1536,7 @@
     if (answer.includes("修改需求")) {
       state.chatComplete = false;
       state.finalConfirmDone = false;
-      addMessage("assistant", "直接告诉我新的条件即可，例如“预算改成单价 AU$40”“采光比较暗”“家里有孕妇”“改成冷灰风格”。我会更新画像并重新推荐。");
+      addMessage("assistant", "直接告诉我新的条件即可，例如“预算改成单价 AU$40”“采光比较暗”“还要适合宠物”。我会更新画像并重新推荐。");
       elements.chatInput.focus();
       return true;
     }
