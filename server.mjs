@@ -34,7 +34,7 @@ const catalog = JSON.parse(await readFile(path.join(ROOT, 'ai-recommendation-dat
 
 const OZWOOD_KNOWLEDGE = `你是 Ozwood Australia 的中文地板顾问，也是允许用户随时插问、修改需求或跳过流程的销售助手。固定问题流程只是辅助，绝不能强迫用户按顺序回答。先判断用户是在提问、提供需求、二者都有、要求直接推荐，还是明显跑题；问题必须先回答，绝不能把问题或插话误填进当前字段。
 
-只输出 JSON：{"intent":"question|requirements|mixed|direct_recommend|off_topic","answer":"自然中文回答","profilePatch":{}}。requirements 只用一句话确认，不要提前给正式推荐；mixed 必须同时存在明确问题，没有疑问意图时不要判为 mixed。profilePatch 只填写用户明确表达的条件，没有明确表达就不要猜。允许字段和值：space=house|apartment|commercial|unknown；room=living|bedroom|study|whole|unknown；area=5–3000 的数字或 unknown；style=light|warm|australian|herringbone|cool|unknown；lifestyle=kids-pets|heavy|quiet|rental|unknown；subfloor=concrete|tiles|timber|unknown；moisture=waterproof|occasional|dry|unknown；service=supply-install|supply-only|sample|showroom|unknown；budget=under35|35-55|55plus|quote|unknown。
+只输出 JSON：{"intent":"question|requirements|mixed|direct_recommend|off_topic","answer":"自然中文回答","profilePatch":{}}。requirements 只用一句话确认，不要提前给正式推荐；mixed 必须同时存在明确问题，没有疑问意图时不要判为 mixed。profilePatch 只填写用户明确表达的条件，没有明确表达就不要猜。允许字段和值：space=house|apartment|commercial|unknown；room=living|bedroom|study|whole|unknown；area=5–3000 的数字或 unknown；lighting=bright|medium|dim|unknown；style=light|warm|australian|herringbone|cool|unknown；household=kids|pregnant|elderly|pets|mixed|none|unknown；lifestyle=kids-pets|heavy|quiet|rental|unknown；subfloor=concrete|tiles|timber|unknown；moisture=waterproof|occasional|dry|unknown；service=supply-install|supply-only|sample|showroom|unknown；budget=under35|35-55|55plus|quote|unknown。关键画像未齐时若用户催促推荐，只给方向性建议，不要点名具体型号。
 
 回答要自然、明确，通常不超过 220 个中文字，不要使用 Markdown 表格，也不要编造认证、库存、保修或价格。客户端会恢复流程，所以回答中不要重复当前预设问题。
 
@@ -103,43 +103,180 @@ function normalizeProfile(profile) {
   return sanitizeProfilePatch(profile);
 }
 
+function isDomainRelevantMessage(message) {
+  return /(地板|木板|铺装|装修|翻新|房间|客厅|卧室|书房|厨房|基层|地暖|防水|材料预算|每平|采光|光线|色调|暖色|冷色|ozwood|floor|renovat|interior|subfloor)/i.test(message);
+}
+
+function isSlotAnswerMessage(message) {
+  return /(?:\d+(?:\.\d+)?\s*(?:平方米|平米|平方|㎡|m²|平)|约?\s*\d+\s*平|平以内|[–—\-到至]\s*\d+\s*平|采光|光线|有地暖|没有地暖|没地暖|无地暖|预算每平|家里用|公司或门店|全屋通铺|只铺卧室|客厅和卧室|普通干燥|偶尔有水|直接遇水|温暖自然|明亮浅色|冷灰现代|喜欢暖色|喜欢冷色|暖色|冷色|偏暖|偏冷|耐磨耐脏|天然质感|性价比优先|有孩子或宠物|没有孩子宠物|还没测量|先看方案|风格还不确定)/i.test(message);
+}
+
+function extractLighting(message) {
+  // 必须带采光/光线语境，避免「明亮浅色」被误判成采光。
+  if (/(采光\s*(比较暗|偏暗|不好|较差|差)|光线\s*(比较暗|偏暗|暗|不足|差)|昏暗|暗房)/.test(message)) return 'dim';
+  if (/(采光\s*(很好|不错|可以|充足|好|棒|足)|光线\s*(很好|不错|可以|充足|好|足|亮)|采光充足|光线充足)/.test(message)) return 'bright';
+  if (/(采光\s*(一般|中等|还行)|光线\s*(一般|中等|还行))/.test(message)) return 'medium';
+  return undefined;
+}
+
+function extractTemperature(message) {
+  if (/(暖色|偏暖|温馨|暖调|温暖自然|喜欢暖)/.test(message)) return 'warm';
+  if (/(冷色|偏冷|冷调|冷灰现代|喜欢冷)/.test(message)) return 'cool';
+  if (/(浅色显大|浅色系|明亮浅色|冷暖都可以|风格还不确定|没有风格偏好)/.test(message)) return 'neutral';
+  return undefined;
+}
+
+function applyContextualShortAnswer(message, missingField) {
+  if (!missingField) return {};
+  const t = String(message || '').trim();
+  if (!t || t.length > 24) return {};
+
+  if (missingField === 'lighting') {
+    if (/^(很好|不错|可以|很亮|明亮|充足|好|亮)$/.test(t)) return { lighting: 'bright' };
+    if (/^(一般|还行|中等|还好)$/.test(t)) return { lighting: 'medium' };
+    if (/^(较暗|偏暗|暗|不好|比较暗)$/.test(t)) return { lighting: 'dim' };
+    if (/^(不确定|不清楚|不知道)$/.test(t)) return { lighting: 'medium' };
+  }
+  if (missingField === 'temperature') {
+    if (/^(暖|偏暖|暖色|温馨|暖调)$/.test(t)) return { temperature: 'warm' };
+    if (/^(冷|偏冷|冷色|冷调)$/.test(t)) return { temperature: 'cool' };
+    if (/^(浅色|中性|不确定|都可以|还不确定)$/.test(t)) return { temperature: 'neutral' };
+  }
+  if (missingField === 'floor_heating') {
+    if (/^(有|有的|是|装了)$/.test(t)) return { floor_heating: true };
+    if (/^(没有|没|无|否)$/.test(t)) return { floor_heating: false };
+    if (/^(不确定|还不确定|不清楚)$/.test(t)) return { floor_heating: null };
+  }
+  if (missingField === 'moisture') {
+    if (/^(干燥|普通|正常|不潮湿)$/.test(t)) return { moisture: 'normal' };
+    if (/^(潮湿|返潮|偶尔有水|有点潮)$/.test(t)) return { moisture: 'damp' };
+    if (/^(遇水|明水|经常泡水)$/.test(t)) return { moisture: 'direct_water' };
+  }
+  if (missingField === 'usage_type') {
+    if (/^(家里|家用|住宅)$/.test(t)) return { usage_type: 'home' };
+    if (/^(公司|门店|商用|商业)$/.test(t)) return { usage_type: 'business' };
+  }
+  if (missingField === 'area_m2') {
+    const bare = t.match(/^约?\s*(\d+(?:\.\d+)?)\s*$/);
+    if (bare) {
+      const value = Number(bare[1]);
+      if (Number.isFinite(value) && value >= 5 && value <= 3000) return { area_m2: value };
+    }
+  }
+  return {};
+}
+
+function extractAreaM2(message) {
+  if (/(还没测量|暂时不清楚|不清楚面积|不确定面积|面积还不确定)/.test(message)) return undefined;
+  if (/(?:30\s*平?\s*以内|小于\s*30\s*平|不到\s*30\s*平)/.test(message)) return 25;
+  if (/30\s*[–—\-到至]\s*70/.test(message)) return 50;
+  if (/70\s*[–—\-到至]\s*120/.test(message)) return 95;
+  if (/(?:120\s*平?\s*以上|大于\s*120\s*平)/.test(message)) return 150;
+  // 只认面积单位；避免把「300元/平」里的数字当成面积。
+  const area = message.match(/(\d+(?:\.\d+)?)\s*(?:平方米|平米|平方|㎡|m²|平)(?!\s*(?:方|米)?(?:预算|单价))/i);
+  if (area) {
+    const around = message.slice(Math.max(0, area.index - 6), area.index);
+    if (/(?:元|¥|￥|\/)\s*$/.test(around)) return undefined;
+    const value = Number(area[1]);
+    if (Number.isFinite(value) && value >= 5 && value <= 3000) return value;
+  }
+  return undefined;
+}
+
+function hasExplicitBudgetCue(message) {
+  return /(?:预算|单价|材料价|每平(?:米|方米)?(?:材料)?|\d+(?:\.\d+)?\s*元|¥|￥|\/\s*(?:m²|㎡|平))/.test(message);
+}
+
+function extractBudgetPerM2(message) {
+  if (/(先看方案再定|先看方案|预算未定|预算先不定)/.test(message)) return { deferred: true };
+
+  // 「200元以内 / 500元以上」
+  let match = message.match(/(\d+(?:\.\d+)?)\s*元\s*(?:以内|以下|左右|以上)/);
+  if (match) {
+    const value = Number(match[1]);
+    if (Number.isFinite(value) && value > 0) return { value };
+  }
+
+  // 「200–350元/平」——必须带「元」，避免把「70–120平」面积区间当成预算。
+  match = message.match(/(\d+(?:\.\d+)?)\s*[–—\-到至]\s*(\d+(?:\.\d+)?)\s*元(?:\s*\/?\s*(?:平|m²|㎡))?/);
+  if (match) {
+    const low = Number(match[1]);
+    const high = Number(match[2]);
+    if (Number.isFinite(low) && Number.isFinite(high) && low > 0 && high > 0) {
+      return { value: (low + high) / 2 };
+    }
+  }
+
+  // 「300元/m²」「¥328/平」
+  match = message.match(/(?:¥|￥)?\s*(\d+(?:\.\d+)?)\s*(?:元)?\s*\/\s*(?:m²|㎡|平)/i);
+  if (match) {
+    const value = Number(match[1]);
+    if (Number.isFinite(value) && value > 0) return { value };
+  }
+
+  // 「预算每平300」「单价不超过200」「预算改为400元」
+  match = message.match(/(?:预算|每平(?:米|方米)?|单价)[^\d]{0,10}(\d+(?:\.\d+)?)/);
+  if (match) {
+    const value = Number(match[1]);
+    if (Number.isFinite(value) && value > 0) return { value };
+  }
+
+  return null;
+}
+
+/** 修复历史会话：面积区间中值曾被误写入 budget_per_m2。 */
+function scrubConfusedAreaBudget(profile, message = '') {
+  const clean = { ...profile };
+  const areaRangeMidpoints = new Set([25, 50, 95, 150]);
+  if (
+    !hasExplicitBudgetCue(message)
+    && clean.area_m2 != null
+    && clean.budget_per_m2 != null
+    && Number(clean.budget_per_m2) === Number(clean.area_m2)
+    && areaRangeMidpoints.has(Number(clean.area_m2))
+  ) {
+    delete clean.budget_per_m2;
+  }
+  return clean;
+}
+
 function extractProfileLocally(message) {
   const patch = {};
-  if (/(公司|办公室|门店|商铺|展厅|工作室|商业)/.test(message)) patch.usage_type = 'business';
-  else if (/(家里|家庭|新房|旧房|客厅|卧室|书房|儿童房|全屋)/.test(message)) patch.usage_type = 'home';
+  if (/(公司|办公室|门店|商铺|展厅|工作室|商业|公司或门店)/.test(message)) patch.usage_type = 'business';
+  else if (/(家里|家庭|新房|旧房|客厅|卧室|书房|儿童房|全屋|家里用)/.test(message)) patch.usage_type = 'home';
 
   const rooms = ['客厅', '卧室', '书房', '儿童房', '玄关', '办公室', '门店', '工作室', '全屋']
     .filter(room => message.includes(room));
   if (rooms.length) patch.rooms = rooms;
 
-  const area = message.match(/(\d+(?:\.\d+)?)\s*(?:平方米|平米|平方|㎡|m²|平)(?!\s*(?:方|米)?预算)/i);
-  if (area) patch.area_m2 = Number(area[1]);
-  const budget = message.match(/(?:预算|每平|单价)[^\d]{0,8}(\d+(?:\.\d+)?)/)
-    || message.match(/(\d+(?:\.\d+)?)\s*(?:元)?\s*\/\s*(?:m²|㎡|平)/i)
-    || message.match(/(\d+(?:\.\d+)?)\s*元\s*(?:以内|以下|左右|以上)/);
-  if (budget) patch.budget_per_m2 = Number(budget[1]);
-  if (/(不能超|不超过|最高|硬预算)/.test(message)) patch.budget_is_hard_limit = true;
+  const area = extractAreaM2(message);
+  if (area !== undefined) patch.area_m2 = area;
 
-  if (/(采光差|比较暗|昏暗|暗房)/.test(message)) patch.lighting = 'dim';
-  else if (/(采光很好|采光好|很亮|明亮)/.test(message)) patch.lighting = 'bright';
-  else if (/(采光一般|采光中等)/.test(message)) patch.lighting = 'medium';
+  const budget = extractBudgetPerM2(message);
+  if (budget?.value != null) patch.budget_per_m2 = budget.value;
+  if (/(不能超|不超过|最高|硬预算)/.test(message)) patch.budget_is_hard_limit = true;
+  if (budget?.deferred) {
+    patch.budget_is_hard_limit = false;
+  }
+
+  const lighting = extractLighting(message);
+  if (lighting) patch.lighting = lighting;
   if (/(小户型|空间小|面积小)/.test(message)) patch.space_size = 'small';
   else if (/(大户型|空间大|面积大)/.test(message)) patch.space_size = 'large';
 
-  if (/(暖色|偏暖|温馨|暖调)/.test(message)) patch.temperature = 'warm';
-  else if (/(冷色|偏冷|冷调)/.test(message)) patch.temperature = 'cool';
-  else if (/(浅色显大|浅色系|冷暖都可以)/.test(message)) patch.temperature = 'neutral';
+  const temperature = extractTemperature(message);
+  if (temperature) patch.temperature = temperature;
   const styles = ['现代简约', '北欧', '日式', '奶油风', '原木风', '轻奢', '法式', '复古', '工业风', '新中式']
     .filter(style => message.includes(style));
   if (styles.length) patch.style = styles;
 
   const priorities = [];
   if (/(好打理|易清洁|容易清洁|省心)/.test(message)) priorities.push('easy_clean');
-  if (/(耐磨|防刮|抗刮)/.test(message)) priorities.push('wear_resistant');
+  if (/(耐磨|防刮|抗刮|耐磨耐脏)/.test(message)) priorities.push('wear_resistant');
   if (/(显大|提亮|明亮)/.test(message)) priorities.push('brighten');
   if (/(高级|高端|质感)/.test(message)) priorities.push('premium');
   if (/(设计感|个性|人字拼)/.test(message)) priorities.push('design');
-  if (/(天然|实木|原木)/.test(message)) priorities.push('natural');
+  if (/(天然|实木|原木|天然质感)/.test(message)) priorities.push('natural');
   if (/(性价比|便宜|预算友好|实惠)/.test(message)) priorities.push('budget');
   if (priorities.length) patch.priorities = [...new Set(priorities)];
 
@@ -153,31 +290,198 @@ function extractProfileLocally(message) {
     else if (/(宠物|猫|狗)/.test(message)) patch.pets = true;
   }
   if (/(人流大|人多|高频|商用)/.test(message)) patch.traffic = 'high';
-  if (/(明水|经常泡水|直接遇水)/.test(message)) patch.moisture = 'direct_water';
-  else if (/(潮湿|返潮)/.test(message)) patch.moisture = 'damp';
+  if (/(明水|经常泡水|直接遇水|经常直接遇水)/.test(message)) patch.moisture = 'direct_water';
+  else if (/(潮湿|返潮|偶尔有水)/.test(message)) patch.moisture = 'damp';
   else if (/(普通干燥|正常干燥|没有潮湿|不潮湿)/.test(message)) patch.moisture = 'normal';
   if (/(没有地暖|没地暖|无地暖)/.test(message)) patch.floor_heating = false;
   else if (/(有地暖|装地暖|地暖房)/.test(message)) patch.floor_heating = true;
-  else if (/(地暖.*不确定|不确定.*地暖)/.test(message)) patch.floor_heating = null;
-  if (/(风格.*不确定|冷暖都可以|没有风格偏好)/.test(message)) patch.temperature = 'neutral';
+  else if (/(地暖.*不确定|不确定.*地暖)/.test(message) && /地暖/.test(message)) patch.floor_heating = null;
+  if (/(风格.*不确定|冷暖都可以|没有风格偏好|风格还不确定)/.test(message)) patch.temperature = 'neutral';
   if (/(不想保养|低维护|少打理)/.test(message)) patch.maintenance = 'low';
   if (/(工期紧|快装|施工简单)/.test(message)) patch.install_tolerance = 'low';
   return patch;
 }
 
-function localConversationFallback(profile) {
-  if (!profile.usage_type) return { missingField: 'usage_type', reply: '先确认使用场景：地板是家里使用，还是公司、门店等商业空间使用？', quickReplies: ['家里用', '公司或门店用'] };
-  if (!profile.rooms?.length) return { missingField: 'rooms', reply: '主要准备铺在哪些空间？', quickReplies: ['客厅和卧室', '全屋通铺', '只铺卧室', '办公室或门店'] };
-  if (!profile.area_m2) return { missingField: 'area_m2', reply: '预计铺装面积大约多少平方米？面积会影响材料损耗和总价。', quickReplies: ['约30平', '约60平', '约100平', '约150平'] };
-  if (!profile.lighting) return { missingField: 'lighting', reply: '铺装空间的采光怎么样？', quickReplies: ['采光很好', '采光一般', '采光比较暗'] };
-  if (!profile.temperature && !profile.style?.length) return { missingField: 'temperature', reply: '您更喜欢哪一种颜色和空间感觉？', quickReplies: ['喜欢暖色', '喜欢冷色', '浅色显大', '风格还不确定'] };
-  if (profile.kids === undefined && profile.pets === undefined && !profile.priorities?.length) {
-    return { missingField: 'priorities', reply: '日常使用上更看重什么？家里有孩子或宠物吗？', quickReplies: ['有孩子或宠物', '没有孩子宠物', '耐磨耐脏优先', '天然质感优先'] };
+function stripCasualLifestylePatch(patch) {
+  const safe = { ...patch };
+  delete safe.kids;
+  delete safe.pets;
+  delete safe.priorities;
+  delete safe.traffic;
+  return safe;
+}
+
+function corroborateModelProfilePatch(modelPatch, localPatch, message, intent) {
+  if (!['requirements', 'mixed', 'direct_recommend'].includes(intent)) return {};
+  const safe = sanitizeProfilePatch(modelPatch);
+  const corroborated = {};
+  for (const [key, value] of Object.entries(safe)) {
+    if (Object.prototype.hasOwnProperty.call(localPatch, key)) {
+      // 本地关键词解析优先，模型同字段交给最终 merge 中的 localPatch。
+      continue;
+    }
+    if (key === 'area_m2' && extractAreaM2(message) === value) {
+      corroborated[key] = value;
+      continue;
+    }
+    if (key === 'rooms' && Array.isArray(value) && value.some(room => message.includes(room))) {
+      corroborated[key] = value;
+      continue;
+    }
+    if (key === 'usage_type' && ((value === 'home' && /(家里|家庭|新房|旧房)/.test(message)) || (value === 'business' && /(公司|办公室|门店|商铺|商业)/.test(message)))) {
+      corroborated[key] = value;
+      continue;
+    }
+    if (['lighting', 'temperature', 'moisture', 'floor_heating', 'budget_per_m2', 'space_size', 'maintenance', 'install_tolerance', 'kids', 'pets', 'traffic', 'priorities', 'style', 'budget_is_hard_limit'].includes(key)) {
+      // 其余字段仅在本地已抽出时保留；避免模型凭空补全并跳过追问。
+      continue;
+    }
   }
-  if (profile.floor_heating === undefined) return { missingField: 'floor_heating', reply: '铺装区域有地暖吗？这会直接影响可选型号。', quickReplies: ['有地暖', '没有地暖', '地暖情况还不确定'] };
-  if (!profile.moisture) return { missingField: 'moisture', reply: '地面环境是否干燥？有没有潮湿或长期直接遇水的情况？', quickReplies: ['普通干燥区域', '有些潮湿', '会直接遇水'] };
-  if (!profile.budget_per_m2) return { missingField: 'budget_per_m2', reply: '最后确认材料预算：大约考虑多少元每平方米？', quickReplies: ['200元以内', '预算每平300元', '预算每平400元', '500元以上'] };
-  return { missingField: null, reply: '需求信息已经完整，可以开始推荐。', quickReplies: ['现在推荐'] };
+  return corroborated;
+}
+
+function localConversationFallback(profile) {
+  if (!profile.usage_type) return { missingField: 'usage_type', reply: '先从使用场景开始：这次主要是家庭空间还是商业空间？', quickReplies: ['家里用', '公司或门店用', '还没确定'] };
+  if (!profile.rooms?.length) return { missingField: 'rooms', reply: '主要准备铺在哪些空间？', quickReplies: profile.usage_type === 'business' ? ['办公室', '门店', '多个商业区域', '还没确定'] : ['客厅和卧室', '全屋通铺', '只铺卧室', '还没确定'] };
+  if (!profile.area_m2) return { missingField: 'area_m2', reply: '预计铺装面积大约多少平方米？不确定也可以先选范围。', quickReplies: ['30平以内', '30–70平', '70–120平', '还没测量'] };
+  if (!profile.lighting) return { missingField: 'lighting', reply: '铺装空间的自然采光怎么样？', quickReplies: ['采光很好', '采光一般', '采光比较暗', '不确定'] };
+  if (!profile.temperature && !profile.style?.length) return { missingField: 'temperature', reply: '更偏向哪种颜色和空间感觉？', quickReplies: ['温暖自然', '明亮浅色', '冷灰现代', '风格还不确定'] };
+  if (profile.kids === undefined && profile.pets === undefined && !profile.priorities?.length) {
+    return { missingField: 'priorities', reply: '日常使用中，哪项最影响你的选择？', quickReplies: ['有孩子或宠物', '耐磨耐脏优先', '天然质感优先', '性价比优先'] };
+  }
+  if (profile.floor_heating === undefined) return { missingField: 'floor_heating', reply: '铺装区域有地暖吗？', quickReplies: ['有地暖', '没有地暖', '还不确定'] };
+  if (!profile.moisture) return { missingField: 'moisture', reply: '地面环境的水分情况更接近哪一种？', quickReplies: ['普通干燥区域', '偶尔有水或返潮', '经常直接遇水', '还不确定'] };
+  if (!profile.budget_per_m2) return { missingField: 'budget_per_m2', reply: '材料预算大致在哪个范围？', quickReplies: ['200元以内', '200–350元/平', '350–500元/平', '先看方案再定'] };
+  return { missingField: null, reply: '核心需求已经齐了，可以生成推荐。', quickReplies: ['现在推荐', '再补充一个条件'] };
+}
+
+function guidedAnswerResponse(modelResult, profile, domainRelevant, userMessage = '') {
+  const nextStep = localConversationFallback(profile);
+
+  // 离题 / 非领域：先完整回答，再一句主动反问拉回选购。
+  if (modelResult.intent === 'off_topic' || !domainRelevant) {
+    const pullback = buildProactivePullback(modelResult.reply, profile, userMessage);
+    return {
+      reply: pullback.reply,
+      quickReplies: pullback.quickReplies,
+      missingField: pullback.missingField,
+      pullback: true,
+      conversationMode: 'discovery'
+    };
+  }
+
+  if (modelResult.intent === 'mixed') {
+    const composed = composeAnswerWithNextStep(modelResult.reply, nextStep, {
+      leadIn: '为了继续缩小范围：'
+    });
+    return {
+      reply: composed.reply,
+      quickReplies: composed.quickReplies,
+      missingField: composed.missingField,
+      pullback: false,
+      conversationMode: 'discovery'
+    };
+  }
+
+  // 领域内知识问答：先答；画像未齐时再跟一句下一槽位，不硬推 SKU。
+  if (modelResult.intent === 'question' && domainRelevant) {
+    if (nextStep.missingField) {
+      const composed = composeAnswerWithNextStep(modelResult.reply, nextStep, {
+        leadIn: '顺带确认一下：'
+      });
+      return {
+        reply: composed.reply,
+        quickReplies: composed.quickReplies,
+        missingField: composed.missingField,
+        pullback: true,
+        conversationMode: 'discovery'
+      };
+    }
+    return {
+      reply: stripImprovisedDiscoveryAsk(modelResult.reply) || modelResult.reply,
+      quickReplies: ['现在推荐', '再补充一个条件'],
+      missingField: null,
+      pullback: false,
+      conversationMode: 'discovery'
+    };
+  }
+
+  return {
+    reply: modelResult.reply,
+    quickReplies: ['继续了解这个问题', '开始需求匹配'],
+    missingField: null,
+    pullback: false,
+    conversationMode: 'discovery'
+  };
+}
+
+function softenDiscoveryQuestion(question) {
+  return String(question || '')
+    .replace(/^先从使用场景开始：/, '')
+    .replace(/^主要准备/, '主要想')
+    .trim();
+}
+
+/** 去掉模型擅自追问的选购问题，避免文案问 A、按钮却是 B。 */
+function stripImprovisedDiscoveryAsk(reply) {
+  let text = String(reply || '').trim();
+  if (!text) return '';
+  const askPattern = /(?:请问|想问|想先了解|想确认|顺便问|对了)[^\n]{0,40}?(?:平方米|平米|面积|采光|色调|暖色|冷色|地暖|预算|家里用|商用|铺[在在哪]|哪些空间|使用场景)[^\n]*$/;
+  const lines = text.split(/\n+/).map(line => line.trim()).filter(Boolean);
+  while (lines.length) {
+    const last = lines[lines.length - 1];
+    if (
+      /[？?]$/.test(last)
+      && /(?:平方米|平米|面积|采光|地暖|预算|色调|暖色|冷色|家里用|公司|门店|哪些空间|使用场景|铺装)/.test(last)
+    ) {
+      lines.pop();
+      continue;
+    }
+    if (askPattern.test(last)) {
+      lines.pop();
+      continue;
+    }
+    break;
+  }
+  return lines.join('\n').trim();
+}
+
+function composeAnswerWithNextStep(answer, nextStep, { hook = '', leadIn = '对了，要是也在看地板，我想先确认一下：' } = {}) {
+  const base = stripImprovisedDiscoveryAsk(answer);
+  const question = softenDiscoveryQuestion(nextStep.reply);
+  const bridge = `${hook || leadIn}${question}`;
+  return {
+    reply: base ? `${base}\n\n${bridge}` : bridge,
+    quickReplies: (nextStep.quickReplies || []).slice(0, 4),
+    missingField: nextStep.missingField
+  };
+}
+
+/** 离题答完后主动反问一个选购槽位，轻轻拉回 discovery。 */
+function buildProactivePullback(reply, profile, userMessage = '') {
+  const nextStep = localConversationFallback(profile || {});
+  const hook = pickPullbackHook(userMessage, nextStep.missingField);
+  return composeAnswerWithNextStep(reply, nextStep, {
+    hook,
+    leadIn: '对了，要是也在看地板，我想先确认一下：'
+  });
+}
+
+function pickPullbackHook(userMessage, missingField) {
+  const text = String(userMessage || '');
+  if (/(墨尔本|旅游|旅行|出去玩|度假|自驾|景点)/.test(text)) {
+    if (missingField === 'usage_type') {
+      return '玩回来要是也想把家里氛围弄得更轻松，可以先从地板聊起——';
+    }
+    return '玩回来若打算整理家里，我们也可以先把地板条件过一遍：';
+  }
+  if (/(搬家|新家|装修|入住)/.test(text)) {
+    return '说到住的地方，地板其实也挺关键，我想先问一句：';
+  }
+  if (/(天气|下雨|潮湿)/.test(text) && missingField === 'moisture') {
+    return '说到环境干湿，选地板时这点也很关键：';
+  }
+  return '';
 }
 
 function profileReadyForRecommendation(profile) {
@@ -249,7 +553,59 @@ function coreInformationCount(profile) {
 }
 
 function wantsRecommendation(message) {
-  return /(推荐|哪款|哪个好|选什么|适合我|直接选|给我选|帮我挑|帮我定)/.test(message);
+  // 仅认明确的地板选购推荐意图；避免「墨尔本有什么推荐」误触发。
+  return /(现在推荐|直接推荐|帮我选一款|帮我挑(?:一款)?地板|推荐一款地板|给我推荐地板|哪款地板|适合我的地板)/.test(message)
+    || (isDomainRelevantMessage(message) && /(哪款|哪个好|选什么|适合我|直接选|给我选|帮我挑|帮我定)/.test(message));
+}
+
+function normalizeConversationMode(value) {
+  return ['open', 'discovery', 'paused'].includes(value) ? value : 'open';
+}
+
+function resolveConversationMode({ previousMode, intent, domainRelevant, slotAnswer, startDiscovery, forceAnswer, withPullback }) {
+  if (startDiscovery || slotAnswer) return 'discovery';
+  if (withPullback) return 'discovery';
+  if (domainRelevant && intent !== 'off_topic') return 'discovery';
+  if (intent === 'off_topic' || (forceAnswer && !domainRelevant)) {
+    if (previousMode === 'discovery' || previousMode === 'paused') return 'paused';
+    return 'open';
+  }
+  if (intent === 'requirements' || intent === 'mixed' || intent === 'direct_recommend') return 'discovery';
+  return previousMode || 'open';
+}
+
+function shouldForceAnswer(intent, domainRelevant, message = '', slotAnswer = false, startDiscovery = false, hasLocalPatch = false) {
+  if (slotAnswer || startDiscovery || hasLocalPatch) return false;
+  if (intent === 'direct_recommend' || wantsRecommendation(message)) return false;
+  if (intent === 'off_topic' || intent === 'question') return true;
+  // 非领域闲聊一律先回答，禁止因残留画像硬切推荐。
+  if (!domainRelevant) return true;
+  return false;
+}
+
+function canEmitRecommendation({ message, intent, domainRelevant, slotAnswer, profile, mode }) {
+  if (!profileReadyForRecommendation(profile)) return false;
+  if (intent === 'off_topic' || intent === 'question') return false;
+
+  if (intent === 'direct_recommend' || wantsRecommendation(message)) {
+    return domainRelevant || slotAnswer || mode === 'discovery' || mode === 'paused';
+  }
+  if (['requirements', 'mixed'].includes(intent) && (domainRelevant || slotAnswer)) return true;
+  return false;
+}
+
+function recommendationPayload(profile, recommendation, conversationMode, extra = {}) {
+  return {
+    type: 'recommendation',
+    reply: buildRecommendationReply(recommendation),
+    profile,
+    conversationMode,
+    quickReplies: recommendation.status === 'recommended'
+      ? ['预算改为200元', '预算改为400元', '换成冷色风格', '预约量房']
+      : ['不是明水区域', '我可以换材料', '咨询防水款'],
+    recommendation,
+    ...extra
+  };
 }
 
 function add(scoreMap, id, amount, reason) {
@@ -389,10 +745,27 @@ function systemPrompt() {
 优先了解：家用还是商用、房间与面积、采光和空间大小、喜欢暖色/冷色及风格、孩子宠物和耐磨耐脏需求、地暖/潮湿情况、每平方米材料预算、维护和施工偏好。用户已经说过的信息不要重复问。\n
 只允许引用下面产品目录中的事实，不要自行推荐具体型号、不要自行计算价格；最终选品和报价由服务端规则完成。遇到长期直接遇水要明确谨慎。\n
 产品摘要：${JSON.stringify(products)}\n
-只返回一个 JSON 对象，不要 Markdown，不要额外文字：
-{"reply":"自然简洁的中文回复或单个追问","profilePatch":{},"missingField":"下一个希望了解的字段或null","readyToRecommend":false,"quickReplies":["2到4个简短选项"]}
+普通生活、知识或闲聊问题必须先直接回答，不要强行转回地板，也不要把其中的“孩子、宠物、预算”等词提取成地板需求。只有用户主要在提供地板选购条件时，才继续追问画像。
 
-profilePatch 可用字段和值：usage_type=home|business；rooms=字符串数组；area_m2=数字；lighting=bright|medium|dim；space_size=small|medium|large；temperature=warm|cool|neutral；style=字符串数组；priorities=easy_clean|wear_resistant|brighten|premium|design|natural|budget 的数组；kids/pets=true|false；traffic=low|medium|high；moisture=normal|damp|direct_water；floor_heating=true|false；maintenance=low|normal|high；budget_per_m2=数字；budget_is_hard_limit=true|false；install_tolerance=low|normal|high。没有明确表达的字段不要猜。`;
+Answer-First 与离题硬规则（必须遵守）：
+- 用户问旅行、美食、天气、娱乐、自我介绍等与装修无关内容时：intent 必须为 off_topic，reply 只认真回答该问题。
+- off_topic / question 的 reply 中禁止出现具体 SKU、型号编号、材料单价、面积估价或“我更推荐「某款」”。
+- 不要在离题回答里自己连问多个选购问题，也不要硬切回地板推荐；服务端会在答完后追加一句主动反问来拉回选购。
+- 「有什么推荐」若指旅游/餐厅等，仍是 off_topic，不要理解成地板推荐。
+
+单位与字段硬约束（必须遵守）：
+- area_m2 只表示铺装面积，单位是平方米（m²）。用户说「70–120平」「约95m²」「100平方米」时，只能写入 area_m2，绝不能写入 budget_per_m2。
+- budget_per_m2 只表示材料单价预算，单位是元/平方米（¥/m²）。只有用户明确提到预算、单价、元/平、元以内等价格意图时才可填写。
+- 禁止把同一个数字同时当作面积和单价；禁止把面积数字编造成「不超过 ¥xx/m²」的预算说明。
+
+只返回一个 JSON 对象，不要 Markdown，不要额外文字：
+{"intent":"question|requirements|mixed|off_topic|direct_recommend","reply":"自然简洁的中文回复或单个追问","profilePatch":{},"missingField":"下一个希望了解的字段或null","readyToRecommend":false,"quickReplies":["0到4个简短选项"]}
+
+intent 规则：question=地板或装修问题；requirements=只提供选购条件；mixed=条件加问题；off_topic=普通宽域问题或闲聊，仍要正常回答；direct_recommend=明确要求推荐地板款式。question、mixed、off_topic 必须在 reply 中先回答用户问题。question、mixed、off_topic 的 reply 只回答，不要自行追加追问；服务端会选择唯一的下一分支。
+
+不得把品类特征绝对化：不要声称某类地板必然完全防水、零甲醛、绝对耐刮、适合浴室/地暖或可多次翻新。应说明取决于具体产品结构、表层、技术资料和现场条件。
+
+profilePatch 可用字段和值：usage_type=home|business；rooms=字符串数组；area_m2=数字（仅面积 m²）；lighting=bright|medium|dim；space_size=small|medium|large；temperature=warm|cool|neutral；style=字符串数组；priorities=easy_clean|wear_resistant|brighten|premium|design|natural|budget 的数组；kids/pets=true|false；traffic=low|medium|high；moisture=normal|damp|direct_water；floor_heating=true|false；maintenance=low|normal|high；budget_per_m2=数字（仅材料单价 ¥/m²，勿与面积混淆）；budget_is_hard_limit=true|false；install_tolerance=low|normal|high。没有明确表达的字段不要猜。`;
 }
 
 function parseModelJson(content) {
@@ -402,6 +775,7 @@ function parseModelJson(content) {
   const end = trimmed.lastIndexOf('}');
   if (start < 0 && end < 0) {
     return {
+      intent: 'question',
       reply: trimmed.slice(0, 1000),
       profilePatch: {},
       missingField: null,
@@ -413,6 +787,7 @@ function parseModelJson(content) {
   const jsonText = trimmed.slice(start, end + 1);
   const parsed = JSON.parse(jsonText);
   return {
+    intent: ['question', 'requirements', 'mixed', 'off_topic', 'direct_recommend'].includes(parsed.intent) ? parsed.intent : 'question',
     reply: typeof parsed.reply === 'string' ? parsed.reply.slice(0, 1000) : '我再了解一下您的需求。',
     profilePatch: sanitizeProfilePatch(parsed.profilePatch),
     missingField: typeof parsed.missingField === 'string' ? parsed.missingField : null,
@@ -469,42 +844,190 @@ async function handleChat(req, res) {
     return sendJson(res, 503, { error: 'DeepSeek API Key 尚未配置。请填写 .env.local 后重启服务。' });
   }
   const body = await readJson(req);
-  const message = typeof body.message === 'string' ? body.message.trim().slice(0, 3000) : '';
+  let message = typeof body.message === 'string' ? body.message.trim().slice(0, 3000) : '';
   if (!message) return sendJson(res, 400, { error: '请输入一条消息。' });
 
-  const existingProfile = normalizeProfile(body.profile);
-  const localPatch = extractProfileLocally(message);
-  const profileBeforeModel = { ...existingProfile, ...localPatch };
+  const existingProfile = scrubConfusedAreaBudget(normalizeProfile(body.profile), message);
+  let previousMode = normalizeConversationMode(body.conversationMode);
+  if (previousMode === 'open' && Object.keys(existingProfile).length > 0) previousMode = 'discovery';
+  const expectedMissingField = typeof body.missingField === 'string' ? body.missingField : null;
+
+  const startDiscovery = /我想开始地板装修需求匹配|开始装修咨询|开始需求匹配/.test(message);
+
+  // 兼容旧前端：点「继续…」时不能空返回。
+  if (/^(继续当前话题|继续了解这个问题)$/.test(message)) {
+    if (previousMode === 'discovery' || Object.keys(existingProfile).length > 0) {
+      const nextStep = localConversationFallback(existingProfile);
+      return sendJson(res, 200, {
+        type: 'question',
+        reply: `好的，我们继续。${nextStep.reply}`,
+        profile: existingProfile,
+        conversationMode: 'discovery',
+        quickReplies: nextStep.quickReplies,
+        missingField: nextStep.missingField,
+        recommendation: null
+      });
+    }
+    message = message === '继续了解这个问题'
+      ? '请就你上一条回答再展开说明，补充更具体、可执行的建议。'
+      : '请继续刚才的话题，把重点说清楚。';
+  }
+
+  const domainRelevant = isDomainRelevantMessage(message) || startDiscovery;
+  const slotAnswer = isSlotAnswerMessage(message);
+  const inDiscovery = previousMode === 'discovery' || previousMode === 'paused';
+  // 选购进行中也允许抽槽，覆盖「采光好/喜欢暖色」等口语；纯 open 闲聊仍不抽。
+  let localPatch = {};
+  if (domainRelevant || slotAnswer || inDiscovery) {
+    localPatch = extractProfileLocally(message);
+  }
+  const contextualPatch = applyContextualShortAnswer(message, expectedMissingField);
+  localPatch = { ...localPatch, ...contextualPatch };
+  const hasLocalPatch = Object.keys(localPatch).length > 0;
+  const profileBeforeModel = scrubConfusedAreaBudget({ ...existingProfile, ...localPatch }, message);
+
   let modelResult;
   try {
     modelResult = await callDeepSeek(message, body.messages, profileBeforeModel);
   } catch (error) {
     console.warn(`[${new Date().toISOString()}] DeepSeek response fallback: ${error.message}`);
-    const fallback = localConversationFallback(profileBeforeModel);
-    modelResult = { ...fallback, profilePatch: {}, missingField: null, readyToRecommend: false };
-  }
-  // 明确的按钮/关键词解析优先于模型，防止模型覆盖用户刚刚确认的字段。
-  const profile = { ...existingProfile, ...modelResult.profilePatch, ...localPatch };
-  const shouldRecommend = profileReadyForRecommendation(profile);
-
-  if (shouldRecommend) {
-    const recommendation = calculateRecommendation(profile);
+    if (Object.keys(localPatch).length && (domainRelevant || slotAnswer)) {
+      const profile = { ...existingProfile, ...localPatch };
+      const conversationMode = 'discovery';
+      if (canEmitRecommendation({
+        message, intent: 'requirements', domainRelevant, slotAnswer, profile, mode: conversationMode
+      })) {
+        const recommendation = calculateRecommendation(profile);
+        return sendJson(res, 200, recommendationPayload(profile, recommendation, conversationMode, { fallback: true }));
+      }
+      const nextStep = localConversationFallback(profile);
+      return sendJson(res, 200, {
+        type: 'question',
+        reply: nextStep.reply,
+        profile,
+        conversationMode,
+        quickReplies: nextStep.quickReplies,
+        missingField: nextStep.missingField,
+        recommendation: null,
+        fallback: true
+      });
+    }
+    const failIntent = domainRelevant ? 'question' : 'off_topic';
+    if (!domainRelevant) {
+      const pullback = buildProactivePullback(
+        '抱歉，刚才服务暂时没有成功返回内容。你的问题我还想接着聊；也可以先从地板需求开始。',
+        existingProfile,
+        message
+      );
+      return sendJson(res, 200, {
+        type: 'answer',
+        intent: failIntent,
+        reply: pullback.reply,
+        profile: existingProfile,
+        conversationMode: 'discovery',
+        quickReplies: pullback.quickReplies,
+        missingField: pullback.missingField,
+        recommendation: null,
+        pullback: true,
+        fallback: true
+      });
+    }
     return sendJson(res, 200, {
-      type: 'recommendation',
-      reply: buildRecommendationReply(recommendation),
-      profile,
-      quickReplies: recommendation.status === 'recommended'
-        ? ['预算改为200元', '预算改为400元', '换成冷色风格', '预约量房']
-        : ['不是明水区域', '我可以换材料', '咨询防水款'],
-      recommendation
+      type: 'answer',
+      intent: failIntent,
+      reply: '抱歉，刚才服务暂时没有成功返回内容。请再发送一次，我会直接回答当前问题，不会把它当成地板选购条件。',
+      profile: existingProfile,
+      conversationMode: previousMode || 'open',
+      quickReplies: [],
+      recommendation: null,
+      fallback: true
     });
   }
 
+  // 非领域消息强制按回答路径处理，防止误判 requirements 后硬切推荐。
+  // 「现在推荐」等购买意图除外；已抽出选购条件时也不得当离题。
+  let intent = modelResult.intent;
+  if (
+    !domainRelevant && !slotAnswer && !startDiscovery && !hasLocalPatch
+    && intent !== 'off_topic' && intent !== 'question' && intent !== 'direct_recommend'
+    && !wantsRecommendation(message)
+  ) {
+    intent = 'off_topic';
+  }
+  if ((domainRelevant || slotAnswer || hasLocalPatch) && intent === 'off_topic' && hasLocalPatch) {
+    intent = 'requirements';
+  }
+
+  const modelPatch = corroborateModelProfilePatch(modelResult.profilePatch, localPatch, message, intent);
+  const profile = scrubConfusedAreaBudget({ ...existingProfile, ...modelPatch, ...localPatch }, message);
+  const forceAnswer = shouldForceAnswer(intent, domainRelevant, message, slotAnswer || hasLocalPatch, startDiscovery, hasLocalPatch);
+  const conversationMode = resolveConversationMode({
+    previousMode,
+    intent,
+    domainRelevant,
+    slotAnswer,
+    startDiscovery,
+    forceAnswer
+  });
+
+  // Answer-First：先完整回答；再由服务端追加一句主动反问拉回选购（不替换成推荐）。
+  if (forceAnswer) {
+    const guided = guidedAnswerResponse(
+      { ...modelResult, intent },
+      existingProfile,
+      domainRelevant,
+      message
+    );
+    const finalMode = guided.pullback
+      ? 'discovery'
+      : resolveConversationMode({
+        previousMode,
+        intent,
+        domainRelevant,
+        slotAnswer,
+        startDiscovery,
+        forceAnswer: true,
+        withPullback: false
+      });
+    return sendJson(res, 200, {
+      type: 'answer',
+      intent,
+      reply: guided.reply,
+      profile: existingProfile,
+      conversationMode: finalMode,
+      quickReplies: guided.quickReplies,
+      missingField: guided.missingField,
+      recommendation: null,
+      pullback: Boolean(guided.pullback)
+    });
+  }
+
+  if (canEmitRecommendation({
+    message, intent, domainRelevant, slotAnswer, profile, mode: conversationMode
+  })) {
+    const recommendation = calculateRecommendation(profile);
+    return sendJson(res, 200, recommendationPayload(profile, recommendation, 'discovery'));
+  }
+
   const nextStep = localConversationFallback(profile);
+  let reply = nextStep.reply;
+  if (localPatch.area_m2 && existingProfile.area_m2 !== localPatch.area_m2) {
+    reply = `好的，大约 ${profile.area_m2}m² 我记下了。${nextStep.reply}`;
+  } else if (Object.keys(localPatch).length && intent === 'mixed' && modelResult.reply) {
+    reply = composeAnswerWithNextStep(modelResult.reply, nextStep, {
+      leadIn: '为了继续缩小范围：'
+    }).reply;
+  } else if (intent === 'question' && modelResult.reply && domainRelevant) {
+    reply = composeAnswerWithNextStep(modelResult.reply, nextStep, {
+      leadIn: '顺带确认一下：'
+    }).reply;
+  }
+
   return sendJson(res, 200, {
     type: 'question',
-    reply: nextStep.reply,
+    reply,
     profile,
+    conversationMode: 'discovery',
     quickReplies: nextStep.quickReplies,
     missingField: nextStep.missingField,
     recommendation: null
@@ -514,7 +1037,9 @@ async function handleChat(req, res) {
 const OZWOOD_PROFILE_VALUES = {
   space: ['house', 'apartment', 'commercial', 'unknown'],
   room: ['living', 'bedroom', 'study', 'whole', 'unknown'],
+  lighting: ['bright', 'medium', 'dim', 'unknown'],
   style: ['light', 'warm', 'australian', 'herringbone', 'cool', 'unknown'],
+  household: ['kids', 'pregnant', 'elderly', 'pets', 'mixed', 'none', 'unknown'],
   lifestyle: ['kids-pets', 'heavy', 'quiet', 'rental', 'unknown'],
   subfloor: ['concrete', 'tiles', 'timber', 'unknown'],
   moisture: ['waterproof', 'occasional', 'dry', 'unknown'],
@@ -562,56 +1087,22 @@ function parseOzwoodResult(content) {
 
 async function handleOzwoodQuestion(req, res) {
   const body = await readJson(req);
-  const question = typeof body.question === 'string' ? body.question.trim().slice(0, 2000) : '';
-  if (!question) return sendJson(res, 400, { error: '请输入问题。' });
-  if (!API_KEY || /your[_-]?key|replace|sk-xxx/i.test(API_KEY)) {
-    return sendJson(res, 200, { intent: 'question', answer: '', profilePatch: {}, fallback: true });
-  }
-
-  const controller = new AbortController();
-  const timer = setTimeout(() => controller.abort(), 18_000);
-  try {
-    const currentQuestion = body.currentQuestion && typeof body.currentQuestion === 'object'
-      ? { id: String(body.currentQuestion.id || '').slice(0, 30), text: String(body.currentQuestion.text || '').slice(0, 300) }
-      : null;
-    const context = `当前已确认画像：${JSON.stringify(sanitizeOzwoodProfile(body.profile))}\n当前流程问题：${currentQuestion ? JSON.stringify(currentQuestion) : '无，需求流程已经完成'}`;
-    for (let attempt = 0; attempt < 2; attempt += 1) {
-      const requestBody = {
-        model: MODEL,
-        messages: [
-          { role: 'system', content: OZWOOD_KNOWLEDGE },
-          { role: 'system', content: context },
-          ...sanitizeOzwoodHistory(body.history),
-          { role: 'user', content: question }
-        ],
-        thinking: { type: 'disabled' },
-        max_tokens: 700
+  const { default: ozwoodQuestionHandler } = await import('./api/ozwood-question.mjs');
+  const apiReq = { method: 'POST', headers: req.headers, body };
+  const apiRes = {
+    setHeader(name, value) { res.setHeader(name, value); },
+    status(code) {
+      res.statusCode = code;
+      return {
+        json(value) {
+          if (!res.headersSent) res.setHeader('Content-Type', 'application/json; charset=utf-8');
+          res.end(JSON.stringify(value));
+        },
+        end() { res.end(); }
       };
-      if (attempt === 0) requestBody.response_format = { type: 'json_object' };
-      const response = await fetch(`${BASE_URL}/chat/completions`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${API_KEY}` },
-        body: JSON.stringify(requestBody),
-        signal: controller.signal
-      });
-      if (!response.ok) {
-        const details = await response.text();
-        throw new Error(`DeepSeek API 返回 ${response.status}: ${details.slice(0, 240)}`);
-      }
-      const data = await response.json();
-      const content = String(data.choices?.[0]?.message?.content || '').trim();
-      if (!content && attempt === 0) continue;
-      const result = parseOzwoodResult(content);
-      if (!result.answer) result.answer = result.intent === 'requirements' ? '好的，我已经记下这些条件。' : '我理解了，请继续。';
-      return sendJson(res, 200, result);
     }
-    throw new Error('模型连续返回空正文');
-  } catch (error) {
-    console.warn(`[${new Date().toISOString()}] Ozwood AI fallback: ${error.message}`);
-    return sendJson(res, 200, { intent: 'question', answer: '', profilePatch: {}, fallback: true });
-  } finally {
-    clearTimeout(timer);
-  }
+  };
+  return ozwoodQuestionHandler(apiReq, apiRes);
 }
 
 const MIME = {
@@ -623,7 +1114,7 @@ const MIME = {
 async function serveStatic(req, res) {
   const url = new URL(req.url, `http://${req.headers.host || 'localhost'}`);
   let pathname = decodeURIComponent(url.pathname);
-  if (pathname === '/') pathname = '/index.html';
+  if (pathname === '/') pathname = '/ozwood-demo.html';
   if (/(^|\/)(?:\.env(?:\.|\/|$)|\.git(?:\/|$)|\.loci(?:\/|$))/i.test(pathname)) {
     return sendJson(res, 404, { error: 'Not found' });
   }
@@ -631,7 +1122,13 @@ async function serveStatic(req, res) {
   if (file !== ROOT && !file.startsWith(`${ROOT}${path.sep}`)) return sendJson(res, 403, { error: 'Forbidden' });
   try {
     const data = await readFile(file);
-    res.writeHead(200, { 'Content-Type': MIME[path.extname(file).toLowerCase()] || 'application/octet-stream' });
+    const ext = path.extname(file).toLowerCase();
+    const headers = { 'Content-Type': MIME[ext] || 'application/octet-stream' };
+    if (ext === '.html' || ext === '.js' || ext === '.css') {
+      headers['Cache-Control'] = 'no-store, no-cache, must-revalidate';
+      headers.Pragma = 'no-cache';
+    }
+    res.writeHead(200, headers);
     res.end(data);
   } catch (error) {
     if (error.code === 'ENOENT' || error.code === 'EISDIR') return sendJson(res, 404, { error: 'Not found' });
@@ -656,6 +1153,6 @@ const server = http.createServer(async (req, res) => {
 });
 
 server.listen(PORT, '127.0.0.1', () => {
-  console.log(`智慧地板 Demo 已启动：http://127.0.0.1:${PORT}/layout-bottom.html`);
+  console.log(`Ozwood AI Demo 已启动：http://127.0.0.1:${PORT}/ozwood-demo.html`);
   console.log(`DeepSeek：${API_KEY ? '已配置' : '未配置'} · 模型：${MODEL}`);
 });

@@ -178,15 +178,19 @@ window.OZWOOD_DEMO = {
       source: "https://ozwoodaustralia.com.au/contact/"
     }
   ],
+  // critical：必须有有效值（非 unknown）才允许点名产品推荐
+  // optional：可 unknown，不阻塞正式推荐
   questions: [
-    { id: "space", text: "先从项目类型开始：这次铺装是在什么空间？", options: ["独立屋", "公寓", "办公室或商用", "还没确定"] },
-    { id: "room", text: "主要想改造哪个区域？我会同步切换到对应的概念场景。", options: ["客厅和餐厅", "卧室", "书房", "全屋统一"] },
-    { id: "area", text: "大约需要铺多少平方米？这个会影响材料、损耗和预算估算。", options: ["约 30 m²", "约 60 m²", "约 100 m²", "暂时不清楚"] },
-    { id: "style", text: "你希望空间呈现什么感觉？", options: ["明亮通透", "温暖自然", "澳洲木材个性", "人字拼设计感", "冷灰现代"] },
-    { id: "lifestyle", text: "日常使用强度更接近哪一种？", options: ["有孩子和宠物", "人流较大 / 耐磨优先", "安静的成人家庭", "出租或投资房"] },
-    { id: "subfloor", text: "现有基层是什么？不知道也没关系，现场测量时可以确认。", options: ["混凝土楼板", "现有瓷砖", "木基层", "不清楚"] },
-    { id: "moisture", text: "这里对防水或防潮的要求高吗？", options: ["需要防水", "偶尔有水和清洁", "普通干区", "需要现场判断"] },
-    { id: "service", text: "你希望 Ozwood 提供到哪一步？", options: ["供货 + 安装", "只需要供货", "先寄样板", "先到展厅看看"] },
-    { id: "budget", text: "最后一个关键条件：每平方米材料预算大概是多少？", options: ["AU$35 以下", "AU$35–55", "AU$55 以上", "先看效果再报价"] }
+    { id: "space", critical: true, text: "先从项目类型开始：这次铺装是在什么空间？", options: ["独立屋", "公寓", "办公室或商用", "还没确定"] },
+    { id: "room", critical: true, text: "主要想改造哪个区域？我会同步切换到对应的概念场景。", options: ["客厅和餐厅", "卧室", "书房", "全屋统一"] },
+    { id: "area", critical: true, text: "大约需要铺多少平方米？这个会影响材料、损耗和预算估算。", options: ["约 30 m²", "约 60 m²", "约 100 m²", "暂时不清楚"] },
+    { id: "lighting", critical: true, text: "铺装空间的自然采光怎么样？这会影响深浅色调的选择。", options: ["采光很好", "采光一般", "采光比较暗", "暂时不清楚"] },
+    { id: "style", critical: true, text: "你更喜欢哪种颜色和色调感觉？不确定时也可以先说「温暖」「浅色」，我会再帮你细化。", options: ["明亮通透", "温暖自然", "温暖亮色", "澳洲木材个性", "人字拼设计感", "冷灰现代"] },
+    { id: "household", critical: true, text: "家里有没有需要特别照顾的情况？", options: ["有小孩", "有孕妇或备孕", "有老人", "有宠物", "多种特殊情况", "没有特殊情况"] },
+    { id: "lifestyle", critical: true, text: "日常使用强度更接近哪一种？", options: ["孩子宠物高频", "人流较大 / 耐磨优先", "安静的成人家庭", "出租或投资房"] },
+    { id: "moisture", critical: true, text: "这里对防水或防潮的要求高吗？", options: ["需要防水", "偶尔有水和清洁", "普通干区", "需要现场判断"] },
+    { id: "subfloor", critical: false, text: "现有基层是什么？不知道也没关系，现场测量时可以确认。", options: ["混凝土楼板", "现有瓷砖", "木基层", "不清楚"] },
+    { id: "budget", critical: true, text: "每平方米材料预算大概是多少？（指单价 AU$/m²，不是铺装面积）", options: ["单价 AU$35 以下", "单价 AU$35–55", "单价 AU$55 以上", "先看效果再报价"] },
+    { id: "service", critical: false, text: "你希望 Ozwood 提供到哪一步？", options: ["供货 + 安装", "只需要供货", "先寄样板", "先到展厅看看"] }
   ]
 };

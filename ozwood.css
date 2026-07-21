@@ -171,6 +171,9 @@ button:focus-visible, input:focus-visible, a:focus-visible { outline: 2px solid 
 .style-explainer b { color: var(--forest); font-size: 8px; }
 .style-explainer span { color: #697069; font-size: 8px; line-height: 1.45; }
 .question-resume { margin-top: 7px; color: #8a6040; font-size: 8px; font-weight: 700; }
+.conversation-bridge { display: block; padding-left: 8px; border-left: 2px solid #c6a47d; color: #6d5947; }
+.answer-sources { display: block; margin-top: 6px; font-size: 8px; }
+.answer-sources a { color: #53705c; text-decoration: underline; text-underline-offset: 2px; }
 
 .consultant-panel { width: 405px; flex: 0 0 405px; min-height: 0; display: flex; flex-direction: column; margin: 14px; overflow: hidden; background: var(--paper); border: 1px solid rgba(255,255,255,.7); border-radius: 4px 24px 4px 4px; box-shadow: var(--shadow); }
 .consultant-head { height: 70px; flex: 0 0 70px; display: flex; align-items: center; gap: 11px; padding: 0 15px; color: #fff; background: var(--forest); }
@@ -200,6 +203,19 @@ button:focus-visible, input:focus-visible, a:focus-visible { outline: 2px solid 
 .typing-dots i:nth-child(3) { animation-delay: .3s; }
 @keyframes dots { 0%,70%,100% { opacity: .25; transform: translateY(0); } 35% { opacity: 1; transform: translateY(-2px); } }
 .recommendation-card { margin: 2px 0 15px 32px; overflow: hidden; border: 1px solid #d7d4ca; border-radius: 3px 16px 3px 3px; background: #fff; box-shadow: 0 12px 28px rgba(27,39,31,.11); animation: messageIn .32s ease both; }
+.recommendation-stack { display: flex; flex-direction: column; gap: 0; }
+.recommendation-stack .recommendation-card { margin-bottom: 10px; }
+.recommendation-alts-label {
+  margin: 2px 0 8px 32px;
+  color: #6d736c;
+  font-size: 8px;
+  font-weight: 800;
+  letter-spacing: .08em;
+}
+.recommendation-card.is-alt { box-shadow: 0 8px 18px rgba(27,39,31,.08); }
+.recommendation-card.is-alt .recommendation-cover { height: 78px; }
+.recommendation-card.is-alt .recommendation-cover span { background: #6b7a6e; }
+.recommendation-card.is-alt h3 { font-size: 15px; }
 .recommendation-cover { position: relative; height: 105px; overflow: hidden; }
 .recommendation-cover img { width: 100%; height: 100%; object-fit: cover; }
 .recommendation-cover span { position: absolute; left: 9px; top: 9px; padding: 4px 7px; color: #fff; background: var(--forest); border-radius: 999px; font-size: 6px; font-weight: 800; letter-spacing: .1em; }

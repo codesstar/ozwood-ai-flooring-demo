@@ -36,6 +36,9 @@ let currentQuestionIdx = 0;
 let lastInteractionTime = Date.now();
 let idleTimer = null;
 let idlePromptIdx = 0;
+let idleNudgeCount = 0;
+const IDLE_DELAY_MS = 60_000;
+const IDLE_MAX_NUDGES = 1;
 let selectedProduct = null;
 let currentRoom = 'living';
 let lastRecommended = [];
@@ -44,6 +47,9 @@ let voiceOn = false;
 let liveAIProfile = {};
 let liveAIHistory = [];
 let liveAIRequestPending = false;
+let liveConversationMode = 'open';
+let liveDidPullback = false;
+let liveMissingField = null;
 
 const ROOM_NAMES = { living: '客厅', bedroom: '卧室', study: '书房', hallway: '走廊' };
 const INSTALL_FEE = p => p.category === '实木' ? 70 : 35;
@@ -942,6 +948,35 @@ function setLiveInputBusy(isBusy) {
   if (send) send.disabled = isBusy;
 }
 
+function extractDemoAreaM2(text) {
+  if (/(还没测量|暂时不清楚|不清楚面积|不确定面积)/.test(text)) return undefined;
+  if (/(?:30\s*平?\s*以内|小于\s*30\s*平)/.test(text)) return 25;
+  if (/30\s*[–—\-到至]\s*70/.test(text)) return 50;
+  if (/70\s*[–—\-到至]\s*120/.test(text)) return 95;
+  if (/(?:120\s*平?\s*以上|大于\s*120\s*平)/.test(text)) return 150;
+  const area = text.match(/(\d+(?:\.\d+)?)\s*(?:平方米|平米|平方|㎡|m²|平)/i);
+  if (!area) return undefined;
+  if (/(预算|每平|单价)/.test(text.slice(Math.max(0, area.index - 8), area.index + area[0].length + 4))) return undefined;
+  const around = text.slice(Math.max(0, area.index - 6), area.index);
+  if (/(?:元|¥|￥|\/)\s*$/.test(around)) return undefined;
+  const value = Number(area[1]);
+  return Number.isFinite(value) && value >= 5 && value <= 3000 ? value : undefined;
+}
+
+function extractDemoBudgetPerM2(text) {
+  if (/(先看方案再定|先看方案|预算未定)/.test(text)) return undefined;
+  let match = text.match(/(\d+(?:\.\d+)?)\s*元\s*(?:以内|以下|左右|以上)/);
+  if (match) return Number(match[1]);
+  // 必须带「元」，避免「70–120平」被当成预算区间。
+  match = text.match(/(\d+(?:\.\d+)?)\s*[–—\-到至]\s*(\d+(?:\.\d+)?)\s*元(?:\s*\/?\s*(?:平|m²|㎡))?/);
+  if (match) return (Number(match[1]) + Number(match[2])) / 2;
+  match = text.match(/(?:¥|￥)?\s*(\d+(?:\.\d+)?)\s*(?:元)?\s*\/\s*(?:m²|㎡|平)/i);
+  if (match) return Number(match[1]);
+  match = text.match(/(?:预算|每平(?:米|方米)?|单价)[^\d]{0,10}(\d+(?:\.\d+)?)/);
+  if (match) return Number(match[1]);
+  return undefined;
+}
+
 function extractDemoProfile(text) {
   const patch = {};
   if (/(公司|办公室|门店|商铺|展厅|工作室|商业)/.test(text)) patch.usage_type = 'business';
@@ -949,18 +984,16 @@ function extractDemoProfile(text) {
 
   const rooms = ['客厅', '卧室', '书房', '儿童房', '玄关', '办公室', '门店', '工作室', '全屋'].filter(room => text.includes(room));
   if (rooms.length) patch.rooms = rooms;
-  const area = text.match(/(\d+(?:\.\d+)?)\s*(?:平方米|平米|平方|㎡|m²|平)/i);
-  if (area && !/(预算|每平|单价)/.test(text.slice(Math.max(0, area.index - 8), area.index + area[0].length + 4))) patch.area_m2 = Number(area[1]);
-  const budget = text.match(/(?:预算|每平|单价)[^\d]{0,8}(\d+(?:\.\d+)?)/)
-    || text.match(/(\d+(?:\.\d+)?)\s*元\s*(?:以内|以下|左右|以上)/);
-  if (budget) patch.budget_per_m2 = Number(budget[1]);
-
-  if (/(采光差|比较暗|昏暗|暗房)/.test(text)) patch.lighting = 'dim';
-  else if (/(采光很好|采光好|很亮|明亮)/.test(text)) patch.lighting = 'bright';
-  else if (/(采光一般|采光中等)/.test(text)) patch.lighting = 'medium';
-  if (/(暖色|偏暖|温馨|暖调)/.test(text)) patch.temperature = 'warm';
-  else if (/(冷色|偏冷|冷调)/.test(text)) patch.temperature = 'cool';
-  else if (/(浅色显大|风格.*不确定|冷暖都可以)/.test(text)) patch.temperature = 'neutral';
+  const area = extractDemoAreaM2(text);
+  if (area !== undefined) patch.area_m2 = area;
+  const budget = extractDemoBudgetPerM2(text);
+  if (budget !== undefined && Number.isFinite(budget) && budget > 0) patch.budget_per_m2 = budget;
+  if (/(采光差|比较暗|昏暗|暗房|采光比较暗|光线\s*(暗|不足|差))/.test(text)) patch.lighting = 'dim';
+  else if (/(采光\s*(很好|不错|可以|充足|好)|光线\s*(很好|不错|可以|充足|好|亮)|采光充足)/.test(text)) patch.lighting = 'bright';
+  else if (/(采光\s*(一般|中等|还行)|光线\s*(一般|中等))/.test(text)) patch.lighting = 'medium';
+  if (/(暖色|偏暖|温馨|暖调|温暖自然|喜欢暖)/.test(text)) patch.temperature = 'warm';
+  else if (/(冷色|偏冷|冷调|冷灰现代|喜欢冷)/.test(text)) patch.temperature = 'cool';
+  else if (/(浅色显大|浅色系|明亮浅色|冷暖都可以|风格还不确定)/.test(text)) patch.temperature = 'neutral';
 
   const styles = ['现代简约', '北欧', '日式', '奶油风', '原木风', '轻奢', '法式', '复古', '工业风', '新中式'].filter(style => text.includes(style));
   if (styles.length) patch.style = styles;
@@ -983,7 +1016,7 @@ function extractDemoProfile(text) {
   else if (/(有地暖|装地暖|地暖房)/.test(text)) patch.floor_heating = true;
   else if (/(地暖.*不确定|不确定.*地暖)/.test(text)) patch.floor_heating = null;
   if (/(明水|经常泡水|直接遇水)/.test(text)) patch.moisture = 'direct_water';
-  else if (/(潮湿|返潮)/.test(text)) patch.moisture = 'damp';
+  else if (/(潮湿|返潮|偶尔有水)/.test(text)) patch.moisture = 'damp';
   else if (/(普通干燥|正常干燥|没有潮湿|不潮湿|不是明水)/.test(text)) patch.moisture = 'normal';
   return patch;
 }
@@ -1045,13 +1078,65 @@ function buildOfflineRecommendation(profile) {
 
 function buildOfflineDemoResponse(text) {
   liveAIProfile = { ...liveAIProfile, ...extractDemoProfile(text) };
+  // 清理「面积中值被误写入预算」的历史污染，例如 70–120平 → area=95 且 budget=95。
+  const areaMidpoints = new Set([25, 50, 95, 150]);
+  if (
+    liveAIProfile.area_m2 != null
+    && liveAIProfile.budget_per_m2 != null
+    && Number(liveAIProfile.budget_per_m2) === Number(liveAIProfile.area_m2)
+    && areaMidpoints.has(Number(liveAIProfile.area_m2))
+    && !/(?:预算|单价|材料价|\d+\s*元|\/\s*(?:m²|㎡|平))/.test(text)
+  ) {
+    delete liveAIProfile.budget_per_m2;
+  }
   const step = demoNextStep(liveAIProfile);
   if (step) return { reply: step[0], quickReplies: step[1], recommendation: null };
   return buildOfflineRecommendation(liveAIProfile);
 }
 
+function lastAssistantContent() {
+  for (let i = liveAIHistory.length - 1; i >= 0; i -= 1) {
+    if (liveAIHistory[i]?.role === 'assistant') return String(liveAIHistory[i].content || '');
+  }
+  return '';
+}
+
+function shouldResumeDiscovery() {
+  if (Object.keys(liveAIProfile).length > 0) return true;
+  return /使用场景|铺装面积|采光|地暖|预算|家里用|公司|门店|风格|空间感觉|水分情况|现在推荐/.test(lastAssistantContent());
+}
+
+function resumeDiscoveryLocally(userText) {
+  const step = demoNextStep(liveAIProfile);
+  if (!step) return false;
+  const reply = Object.keys(liveAIProfile).length
+    ? `好的，我们继续了解需求。${step[0]}`
+    : `好的，我们接着聊。${step[0]}`;
+  liveAIHistory.push({ role: 'user', content: userText });
+  liveAIHistory.push({ role: 'assistant', content: reply });
+  liveAIHistory = liveAIHistory.slice(-16);
+  addMessage(escapeHTML(reply).replace(/\n/g, '<br>'));
+  setLiveQuickReplies(step[1] || []);
+  document.getElementById('chatInput')?.focus();
+  return true;
+}
+
 async function processLiveAI(text) {
   if (liveAIRequestPending) return;
+  let apiMessage = text;
+  if (text === '开始装修咨询' || text === '开始需求匹配') {
+    apiMessage = '我想开始地板装修需求匹配';
+    liveConversationMode = 'discovery';
+  } else if (text === '继续当前话题' || text === '继续了解这个问题') {
+    // 旧逻辑只聚焦输入框、不回复，看起来像卡死；这里必须给出下一句。
+    if (text === '继续当前话题' && shouldResumeDiscovery() && resumeDiscoveryLocally(text)) {
+      liveConversationMode = 'discovery';
+      return;
+    }
+    apiMessage = text === '继续了解这个问题'
+      ? '请就你上一条回答再展开说明，补充更具体、可执行的建议。'
+      : '请继续刚才的话题，把重点说清楚。';
+  }
   if (/预约.*量房|量房.*预约/.test(text)) {
     openBooking();
     return;
@@ -1064,41 +1149,79 @@ async function processLiveAI(text) {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
-        message: text,
+        message: apiMessage,
         messages: liveAIHistory.slice(-12),
-        profile: liveAIProfile
+        profile: liveAIProfile,
+        conversationMode: liveConversationMode,
+        missingField: liveMissingField
       })
     });
     const data = await response.json().catch(() => ({}));
     if (!response.ok) throw new Error(data.error || `AI 服务返回 ${response.status}`);
 
-    liveAIProfile = data.profile || liveAIProfile;
+    // 服务端画像为准，同时用本地解析兜底，避免“约100平”等短答未被写入后反复追问。
+    const localPatch = extractDemoProfile(apiMessage);
+    liveAIProfile = { ...(data.profile || liveAIProfile), ...localPatch };
+    if (['open', 'discovery', 'paused'].includes(data.conversationMode)) {
+      liveConversationMode = data.conversationMode;
+    }
+    liveMissingField = data.missingField || null;
+    liveDidPullback = Boolean(data.pullback) || (
+      data.type === 'answer'
+      && !data.recommendation
+      && /对了，|玩回来|顺带确认一下/.test(data.reply || '')
+    );
+    idleNudgeCount = 0;
+    armIdleTimer();
     liveAIHistory.push({ role: 'user', content: text });
     liveAIHistory.push({ role: 'assistant', content: data.reply || '' });
     liveAIHistory = liveAIHistory.slice(-16);
 
-    if (data.recommendation?.primarySku) {
+    // 仅在服务端明确返回推荐时选品，避免离题回答误触发。
+    if (data.type === 'recommendation' && data.recommendation?.primarySku) {
       const product = findProduct(data.recommendation.primarySku);
       if (product) selectProduct(product.id);
       lastRecommended = [data.recommendation.primarySku, data.recommendation.backupSku].filter(Boolean);
     }
 
-    const safeReply = escapeHTML(data.reply || '我再了解一下您的需求。').replace(/\n/g, '<br>');
+    let replyText = data.reply || '我再了解一下您的需求。';
+    let quickReplies = data.quickReplies || [];
+    // 若服务端仍卡在面积题，但本地已抽出面积，则直接推进到下一问。
+    if (data.type !== 'answer' && localPatch.area_m2 && /铺装面积大约多少平方米/.test(replyText)) {
+      const offline = buildOfflineDemoResponse('');
+      replyText = `好的，大约 ${liveAIProfile.area_m2}m² 我记下了。${offline.reply}`;
+      quickReplies = offline.quickReplies || [];
+      if (offline.recommendation?.primarySku) {
+        const product = findProduct(offline.recommendation.primarySku);
+        if (product) selectProduct(product.id);
+      }
+    }
+
+    const safeReply = escapeHTML(replyText).replace(/\n/g, '<br>');
     removeTyping();
     addMessage(safeReply);
-    setLiveQuickReplies(data.quickReplies || []);
+    setLiveQuickReplies(quickReplies);
   } catch (error) {
     removeTyping();
-    const data = buildOfflineDemoResponse(text);
-    liveAIHistory.push({ role: 'user', content: text }, { role: 'assistant', content: data.reply });
-    liveAIHistory = liveAIHistory.slice(-16);
-    if (data.recommendation?.primarySku) {
-      const product = findProduct(data.recommendation.primarySku);
-      if (product) selectProduct(product.id);
-      lastRecommended = [data.recommendation.primarySku, data.recommendation.backupSku].filter(Boolean);
+    if ((text === '继续当前话题' || text === '继续了解这个问题') && resumeDiscoveryLocally(text)) {
+      liveConversationMode = 'discovery';
+      return;
     }
-    addMessage(data.reply);
-    setLiveQuickReplies(data.quickReplies);
+    const localPatch = extractDemoProfile(apiMessage);
+    if (Object.keys(localPatch).length) {
+      const offline = buildOfflineDemoResponse(apiMessage);
+      liveAIHistory.push({ role: 'user', content: text }, { role: 'assistant', content: offline.reply });
+      liveAIHistory = liveAIHistory.slice(-16);
+      liveConversationMode = 'discovery';
+      addMessage(escapeHTML(offline.reply).replace(/\n/g, '<br>'));
+      setLiveQuickReplies(offline.quickReplies || []);
+    } else {
+      const reply = '抱歉，刚才服务暂时没有成功返回内容。请再发送一次，我会直接回答当前问题，不会把它当成地板选购条件。';
+      liveAIHistory.push({ role: 'user', content: text }, { role: 'assistant', content: reply });
+      liveAIHistory = liveAIHistory.slice(-16);
+      addMessage(reply);
+      setLiveQuickReplies([]);
+    }
   } finally {
     setLiveInputBusy(false);
     document.getElementById('chatInput')?.focus();
@@ -1466,29 +1589,43 @@ function closeCompare() {
 }
 
 // ===================== 冷场处理 =====================
-function resetIdleTimer() {
+function armIdleTimer() {
   lastInteractionTime = Date.now();
   if (idleTimer) clearTimeout(idleTimer);
-  idleTimer = setTimeout(handleIdle, 25000);
+  idleTimer = setTimeout(handleIdle, IDLE_DELAY_MS);
+}
+
+function resetIdleTimer() {
+  idleNudgeCount = 0;
+  liveDidPullback = false;
+  armIdleTimer();
 }
 
 function handleIdle() {
-  if (Date.now() - lastInteractionTime >= 24000) {
-    if (LIVE_AI) {
-      addMessage('您可以直接告诉我：用在哪里、喜欢暖色还是冷色、家里有没有孩子宠物，以及每平方米预算，我会边聊边帮您筛选。');
-      setLiveQuickReplies(['家里用', '公司或门店用', '我还不确定风格']);
-      resetIdleTimer();
-      return;
-    }
-    const prompt = IDLE_PROMPTS[idlePromptIdx % IDLE_PROMPTS.length];
-    idlePromptIdx++;
-    showTyping();
-    setTimeout(() => {
-      removeTyping();
-      addMessage(prompt);
-      resetIdleTimer();
-    }, 600);
+  idleTimer = null;
+  if (Date.now() - lastInteractionTime < IDLE_DELAY_MS - 1000) return;
+  // 用户没理就不反复催：每个空闲周期最多提醒一次。
+  if (idleNudgeCount >= IDLE_MAX_NUDGES) return;
+  // 本轮已做过主动反问拉回，就不要再甩清单催促。
+  if (liveDidPullback) return;
+  idleNudgeCount += 1;
+
+  if (LIVE_AI) {
+    const step = demoNextStep(liveAIProfile) || [
+      '对了，要是也在看地板，这次主要是家里用，还是公司门店用？',
+      ['家里用', '公司或门店用', '还没确定']
+    ];
+    addMessage(step[0]);
+    setLiveQuickReplies(step[1] || []);
+    return;
   }
+  const prompt = IDLE_PROMPTS[idlePromptIdx % IDLE_PROMPTS.length];
+  idlePromptIdx++;
+  showTyping();
+  setTimeout(() => {
+    removeTyping();
+    addMessage(prompt);
+  }, 600);
 }
 
 // ===================== 弹窗注入 =====================
@@ -1559,6 +1696,9 @@ function init() {
       const greeting = '您好，我是 AI 地板顾问小木。您可以像和店员聊天一样告诉我需求，我会逐步了解使用场景、风格、耐磨耐脏、地暖和预算，最后从当前 5 款里推荐最合适的一款。';
       addMessage(greeting);
       liveAIHistory = [{ role: 'assistant', content: greeting }];
+      liveAIProfile = {};
+      liveConversationMode = 'open';
+      liveMissingField = null;
       setLiveQuickReplies(['家里用', '公司或门店用', '我还不确定风格']);
       resetIdleTimer();
     }, 500);
