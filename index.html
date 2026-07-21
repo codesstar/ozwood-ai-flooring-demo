@@ -2,12 +2,25 @@
 <html lang="zh-CN">
 <head>
   <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="Ozwood AI 地板顾问与一键换地板概念演示">
   <meta http-equiv="refresh" content="0; url=ozwood-demo.html">
-  <link rel="canonical" href="ozwood-demo.html">
-  <title>Ozwood · AI 地板顾问</title>
-  <script>location.replace('ozwood-demo.html');</script>
+  <title>Ozwood · AI 地板顾问演示</title>
+  <style>
+    * { box-sizing: border-box; }
+    body { min-height: 100vh; margin: 0; display: grid; place-items: center; background: #f5f0e8; color: #44372c; font-family: -apple-system, BlinkMacSystemFont, "PingFang SC", sans-serif; }
+    a { display: grid; gap: 16px; justify-items: center; color: inherit; text-decoration: none; }
+    img { width: 112px; height: 112px; object-fit: contain; }
+    span { font-size: 14px; }
+  </style>
 </head>
 <body>
-  <p>正在进入 <a href="ozwood-demo.html">Ozwood AI 地板顾问</a>…</p>
+  <a href="ozwood-demo.html">
+    <img src="assets/ozwood/official/ozwood-logo.png" alt="Ozwood Australia 官方标志">
+    <span>正在进入 Ozwood AI 地板顾问演示…</span>
+  </a>
+  <script>
+    window.location.replace(`ozwood-demo.html${window.location.search}${window.location.hash}`);
+  </script>
 </body>
 </html>
