@@ -5,20 +5,29 @@ import sharp from 'sharp';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
-const ASSETS_DIR = join(__dirname, '..', 'assets');
+const TEXTURES_DIR = join(__dirname, '..', 'assets', 'ozwood', 'textures');
 
 const API_BASE = (process.env.IMAGE_BASE_URL || 'https://dashscope.aliyuncs.com').replace(/\/$/, '');
 const MODEL = process.env.IMAGE_MODEL || 'qwen-image-2.0-pro-2026-06-22';
 const API_URL = `${API_BASE}/api/v1/services/aigc/multimodal-generation/generation`;
 const MAX_IMAGE_SIZE = 2048;
 
-const FLOOR_TEXTURE_MAP = {
-  'european-oak': 'product-european-oak.jpg',
-  'spotted-gum': 'product-spotted-gum.jpg',
-  'herringbone': 'product-herringbone.jpg',
-  'white-oak': 'product-white-oak.jpg',
-  'hybrid-grey': 'product-hybrid-grey.jpg',
-};
+// 加载产品目录，标记图片已退化到 logo 的产品
+const catalogRaw = readFileSync(join(__dirname, '..', 'ozwood-catalog.js'), 'utf8');
+const catalog = JSON.parse(catalogRaw.slice(catalogRaw.indexOf('{'), catalogRaw.lastIndexOf('}') + 1));
+const LOGO_FALLBACK_KEYS = new Set(
+  catalog.products.filter(p => p.officialImage?.includes('logo')).map(p => p.key)
+);
+
+function resolveTexturePath(floorKey) {
+  if (LOGO_FALLBACK_KEYS.has(floorKey)) return null;
+  const candidates = [`${floorKey}.jpg`, `product-${floorKey}.jpg`, `${floorKey}.png`, `product-${floorKey}.png`];
+  for (const name of candidates) {
+    const p = join(TEXTURES_DIR, name);
+    if (existsSync(p)) return p;
+  }
+  return null;
+}
 
 const PROMPT = `Completely remove the original floor from the first image and replace it with the floor texture and color from the second reference image (regardless of whether the original floor is wood, tile, cement, or any other material, forcibly replace it with the reference flooring material).
 
@@ -70,10 +79,8 @@ async function compressImage(base64Input) {
 
 
 function readTextureBytes(floorKey) {
-  const filename = FLOOR_TEXTURE_MAP[floorKey];
-  if (!filename) return null;
-  const filepath = join(ASSETS_DIR, 'ozwood', 'official', filename);
-  if (!existsSync(filepath)) return null;
+  const filepath = resolveTexturePath(floorKey);
+  if (!filepath) return null;
   return readFileSync(filepath);
 }
 
@@ -92,11 +99,10 @@ export default async function handler(req, res) {
 
   const { image, floorKey } = req.body || {};
   if (!image || typeof image !== 'string') return res.status(400).json({ error: '请提供 base64 图片' });
-  if (!floorKey || !FLOOR_TEXTURE_MAP[floorKey]) return res.status(400).json({ error: '无效的 floorKey' });
 
   // 读取地板参考图
   const textureBytes = readTextureBytes(floorKey);
-  if (!textureBytes) return res.status(500).json({ error: '地板参考图文件不存在' });
+  if (!textureBytes) return res.status(400).json({ error: '该产品暂不支持 AI 换地板' });
 
   const textureBase64 = textureBytes.toString('base64');
   const textureMime = floorKey === 'herringbone' ? 'image/jpeg' : 'image/jpeg';
