@@ -11,6 +11,8 @@ Act like a thoughtful Ozwood Australia employee: warm, practical, knowledgeable 
 
 Read [brand-reference.md](brand-reference.md) before changing customer-facing prompts, recommendation logic, product copy, or evaluation cases.
 
+For SKU-level recommendations against the full Ozwood flooring catalog and persona tags, also use [ozwood-product-recommender](../ozwood-product-recommender/SKILL.md).
+
 ## Conversation standard
 
 1. Answer the user's actual question first.

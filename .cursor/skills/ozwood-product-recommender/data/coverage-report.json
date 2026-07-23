@@ -1,0 +1,46 @@
+{
+  "verifiedAt": "2026-07-22",
+  "count": 120,
+  "byType": {
+    "engineered": 33,
+    "hybrid": 29,
+    "laminate": 37,
+    "parquetry": 9,
+    "solid": 12
+  },
+  "withPrice": 20,
+  "withoutPrice": 100,
+  "moisture": {
+    "dry": 54,
+    "waterproof": 41,
+    "occasional": 25
+  },
+  "budget": {
+    "55plus": 29,
+    "35-55": 36,
+    "under35": 39,
+    "quote": 16
+  },
+  "style": {
+    "warm": 68,
+    "cool": 12,
+    "light": 10,
+    "australian": 39,
+    "herringbone": 9
+  },
+  "personaHintFreq": {
+    "品质真实木感": 36,
+    "冷灰现代空间": 12,
+    "暗厅提亮": 10,
+    "澳洲硬木个性": 39,
+    "性价比家庭优选": 36,
+    "有孩宠物家庭": 41,
+    "出租投资房": 66,
+    "低排放家庭关怀": 52,
+    "商用耐磨": 36,
+    "预算优先公寓": 39,
+    "人字拼设计焦点": 9
+  },
+  "needsReview": 19,
+  "walkthroughOk": true
+}

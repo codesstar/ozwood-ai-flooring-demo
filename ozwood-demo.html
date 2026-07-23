@@ -8,7 +8,7 @@
   <meta http-equiv="Pragma" content="no-cache">
   <link rel="icon" href="data:,">
   <title>Ozwood · AI 地板顾问演示</title>
-  <link rel="stylesheet" href="ozwood.css?v=8">
+  <link rel="stylesheet" href="ozwood.css?v=13">
 </head>
 <body>
   <div class="desktop-shell">
@@ -98,9 +98,10 @@
 
         <div class="product-strip-section">
           <div class="product-strip-heading">
-            <div><small>官网产品精选</small><h2>探索五种地板方向</h2></div>
-            <span id="productStripHint">点击任意产品即可查看铺装效果</span>
+            <div><small>官网地板目录</small><h2 id="productStripTitle">已加载目录</h2></div>
+            <span id="productStripHint">按分类浏览；有概念铺装效果的产品显示房间预览，其余显示官网实拍</span>
           </div>
+          <div class="catalog-filters" id="catalogFilters" role="tablist" aria-label="地板类型筛选"></div>
           <div class="product-strip" id="productStrip"></div>
         </div>
       </section>
@@ -115,7 +116,7 @@
         </header>
 
         <div class="consultant-intro">
-          <span>自由对话 · 完整画像后再推荐</span>
+          <span>自由对话 · 条件齐了再推荐</span>
           <b id="progressLabel">0 / 9</b>
           <div class="progress-track"><i id="progressBar"></i></div>
         </div>
@@ -123,8 +124,17 @@
         <div class="chat-stream" id="chatStream" aria-live="polite"></div>
         <div class="quick-options" id="quickOptions"></div>
 
+        <div class="focused-product-bar" id="focusedProductBar">
+          <div class="focused-product-meta">
+            <span class="focused-product-label">正在查看</span>
+            <strong id="focusedProductName">—</strong>
+            <button type="button" id="focusedProductDetail" class="focused-product-link">详情</button>
+          </div>
+          <div class="product-ask-options" id="productAskOptions" aria-label="针对当前木板的快捷提问"></div>
+        </div>
+
         <div class="chat-compose">
-          <input id="chatInput" type="text" autocomplete="off" placeholder="直接提问，或描述：60㎡公寓，有猫，喜欢浅色…">
+          <input id="chatInput" type="text" autocomplete="off" placeholder="可问当前木板：这款防水吗？或描述需求…">
           <button id="chatSend" type="button" aria-label="发送消息">
             <svg viewBox="0 0 24 24" aria-hidden="true"><path d="m22 2-7 20-4-9-9-4z"></path><path d="M22 2 11 13"></path></svg>
           </button>
@@ -167,8 +177,9 @@
 
   <div class="toast" id="toast" role="status"></div>
 
-  <script src="ozwood-data.js?v=18"></script>
-  <script src="ozwood-app.js?v=18"></script>
+  <script src="ozwood-data.js?v=29"></script>
+  <script src="ozwood-catalog.js?v=29"></script>
+  <script src="ozwood-app.js?v=29"></script>
   <script>
   (function() {
     // ── 元素 ──

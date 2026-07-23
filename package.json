@@ -4,7 +4,14 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "start": "node server.mjs"
+    "start": "node server.mjs",
+    "scrape:ozwood-products": "node scripts/ozwood-scrape-products.mjs",
+    "retag:ozwood-products": "node scripts/ozwood-retag-products.mjs",
+    "validate:ozwood-products": "node scripts/ozwood-validate-products.mjs",
+    "score:ozwood-walkthrough": "node scripts/ozwood-score-walkthrough.mjs",
+    "build:ozwood-demo-catalog": "node scripts/ozwood-build-demo-catalog.mjs",
+    "render:ozwood-rooms": "node scripts/ozwood-render-room-scenes.mjs",
+    "render:ozwood-rooms:test": "node scripts/ozwood-render-room-scenes.mjs --limit 1 --concurrency 1 --rooms living"
   },
   "dependencies": {
     "sharp": "^0.33.5"

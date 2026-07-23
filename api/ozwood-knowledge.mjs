@@ -36,13 +36,22 @@ export const OZWOOD_KNOWLEDGE = [
     text: '官网列出 Auburn 总部展厅：D2 / 290 Parramatta Road, Auburn NSW 2144，电话 (02) 9648 0070 / 0040；Castle Hill 门店：8/9 Salisbury Road, Castle Hill NSW 2154，电话 (02) 9899 9118。营业时间和联系方式可能变化，来访前应通过官网或电话确认。'
   },
   {
+    id: 'demo-catalog-coverage',
+    topics: ['product', 'selection', 'flooring'],
+    keywords: ['目录', '多少款', '产品库', '推荐', '混合', '强化', '工程木', '实木', '拼花', 'hybrid', 'laminate', 'catalog'],
+    stable: true,
+    source: 'https://ozwoodaustralia.com.au/shop/',
+    verifiedAt: '2026-07-21',
+    text: '演示顾问的产品库已接入 Ozwood 官网地板目录（约 120 款），按五大类划分：hybrid 混合、laminate 强化、engineered 工程木、solid 实木、parquetry 拼花。客户端会按用户画像（防潮、预算、风格、家庭与使用强度等）在全库中排序，给出主推与备选。价格与库存仍属易变信息，正式报价需确认官网或展厅。楼梯、配件与特征墙未纳入本地板推荐池。'
+  },
+  {
     id: 'floor-types',
     topics: ['product', 'selection', 'flooring'],
     keywords: ['工程木', '实木', '强化', '混合', 'hybrid', 'laminate', 'engineered', 'solid timber', '区别', '怎么选'],
     stable: true,
     source: 'https://ozwoodaustralia.com.au/products/',
-    verifiedAt: '2026-07-19',
-    text: 'OZWOOD 的主要地板类型包括 laminate 强化地板、hybrid 混合地板、engineered 工程木、solid timber 实木与 parquetry 拼花。工程木强调真实木材观感与结构稳定；实木强调天然厚重与可翻新潜力；强化通常耐磨且预算友好；混合地板重视防水与易打理。具体性能以对应产品技术资料为准。'
+    verifiedAt: '2026-07-21',
+    text: 'OZWOOD 的主要地板类型包括 laminate 强化地板、hybrid 混合地板、engineered 工程木、solid timber 实木与 parquetry 拼花。工程木强调真实木材观感与结构稳定；实木强调天然厚重与可翻新潜力；强化通常耐磨且预算友好；混合地板重视防水与易打理。具体性能以对应产品技术资料为准。演示目录已覆盖上述五类，可按类型筛选后再结合画像匹配。'
   },
   {
     id: 'style-guidance',
