@@ -34,6 +34,15 @@ const BASE_URL = (process.env.DEEPSEEK_BASE_URL || 'https://api.deepseek.com').r
 const MODEL = process.env.DEEPSEEK_MODEL || 'deepseek-v4-flash';
 const catalog = JSON.parse(await readFile(path.join(ROOT, 'ai-recommendation-data.json'), 'utf8'));
 
+// 加载产品目录，标记图片已退化到 logo 的产品（不支持 AI 换地板）
+const ozwoodCatalogRaw = await readFile(path.join(ROOT, 'ozwood-catalog.js'), 'utf8');
+const ozwoodCatalog = JSON.parse(ozwoodCatalogRaw.slice(ozwoodCatalogRaw.indexOf('{'), ozwoodCatalogRaw.lastIndexOf('}') + 1));
+const LOGO_FALLBACK_KEYS = new Set(
+  ozwoodCatalog.products
+    .filter(p => p.officialImage?.includes('logo'))
+    .map(p => p.key)
+);
+
 const OZWOOD_KNOWLEDGE = `你是 Ozwood Australia 的中文地板顾问，也是允许用户随时插问、修改需求或跳过流程的销售助手。固定问题流程只是辅助，绝不能强迫用户按顺序回答。先判断用户是在提问、提供需求、二者都有、要求直接推荐，还是明显跑题；问题必须先回答，绝不能把问题或插话误填进当前字段。
 
 只输出 JSON：{"intent":"question|requirements|mixed|direct_recommend|off_topic","answer":"自然中文回答","profilePatch":{}}。requirements 只用一句话确认，不要提前给正式推荐；mixed 必须同时存在明确问题，没有疑问意图时不要判为 mixed。profilePatch 只填写用户明确表达的条件，没有明确表达就不要猜。允许字段和值：space=house|apartment|commercial|unknown；room=living|bedroom|study|whole|unknown；area=5–3000 的数字或 unknown；lighting=bright|medium|dim|unknown；style=light|warm|australian|herringbone|cool|unknown；household=kids|pregnant|elderly|pets|mixed|none|unknown；lifestyle=kids-pets|heavy|quiet|rental|unknown；subfloor=concrete|tiles|timber|unknown；moisture=waterproof|occasional|dry|unknown；service=supply-install|supply-only|sample|showroom|unknown；budget=under35|35-55|55plus|quote|unknown。关键画像未齐时若用户催促推荐，只给方向性建议，不要点名具体型号。
@@ -1117,14 +1126,19 @@ const IMAGE_BASE = (process.env.IMAGE_BASE_URL || 'https://dashscope.aliyuncs.co
 const IMAGE_MODEL = process.env.IMAGE_MODEL || 'qwen-image-2.0-pro-2026-06-22';
 const IMAGE_API_KEY = process.env.IMAGE_API_KEY || '';
 const IMAGE_API_URL = `${IMAGE_BASE}/api/v1/services/aigc/multimodal-generation/generation`;
+const TEXTURES_DIR = path.join(ROOT, 'assets', 'ozwood', 'textures');
 const MAX_IMAGE_SIZE = 2048;
-const FLOOR_TEXTURE_MAP = {
-  'european-oak': 'product-european-oak.jpg',
-  'spotted-gum': 'product-spotted-gum.jpg',
-  'herringbone': 'product-herringbone.jpg',
-  'white-oak': 'product-white-oak.jpg',
-  'hybrid-grey': 'product-hybrid-grey.jpg',
-};
+
+function resolveTexturePath(floorKey) {
+  if (LOGO_FALLBACK_KEYS.has(floorKey)) return null;
+  const candidates = [`${floorKey}.jpg`, `product-${floorKey}.jpg`, `${floorKey}.png`, `product-${floorKey}.png`];
+  for (const name of candidates) {
+    const p = path.join(TEXTURES_DIR, name);
+    if (existsSync(p)) return p;
+  }
+  return null;
+}
+
 const FLOOR_SWAP_PROMPT = `Completely remove the original floor from the first image and replace it with the floor texture and color from the second reference image (regardless of whether the original floor is wood, tile, cement, or any other material, forcibly replace it with the reference flooring material).
 
 Key Material Constraints:
@@ -1176,10 +1190,8 @@ async function handleFloorSwap(req, res) {
   const body = await readJson(req, 5_000_000);
   const { image, floorKey } = body || {};
   if (!image || typeof image !== 'string') return sendJson(res, 400, { error: '请提供 base64 图片' });
-  if (!floorKey || !FLOOR_TEXTURE_MAP[floorKey]) return sendJson(res, 400, { error: '无效的 floorKey' });
-
-  const texturePath = path.join(ROOT, 'assets', 'ozwood', 'official', FLOOR_TEXTURE_MAP[floorKey]);
-  if (!existsSync(texturePath)) return sendJson(res, 500, { error: '地板参考图文件不存在' });
+  const texturePath = resolveTexturePath(floorKey);
+  if (!texturePath) return sendJson(res, 400, { error: '该产品暂不支持 AI 换地板' });
 
   try {
     const textureBase64 = readFileSync(texturePath).toString('base64');

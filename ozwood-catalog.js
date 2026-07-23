@@ -51,7 +51,7 @@ window.OZWOOD_CATALOG = {
       "why": "更契合「有孩宠物家庭、性价比家庭优选、出租投资房」这类需求；选择前建议结合样板与现场条件确认。",
       "install": "楼板需干燥、清洁、平整，并按产品要求保留伸缩缝、地垫与周边密封。",
       "care": "定期吸尘与微湿拖地；避免磨蚀性清洁剂；遵循产品保养说明。",
-      "officialImage": "https://ozwoodaustralia.com.au/wp-content/uploads/2021/09/V6501.jpg",
+      "officialImage": "assets/ozwood/textures/6501.jpg",
       "source": "https://ozwoodaustralia.com.au/product/6501/",
       "hasRoomScene": true,
       "fit": {
@@ -137,7 +137,7 @@ window.OZWOOD_CATALOG = {
       "why": "更契合「有孩宠物家庭、性价比家庭优选、出租投资房」这类需求；选择前建议结合样板与现场条件确认。",
       "install": "楼板需干燥、清洁、平整，并按产品要求保留伸缩缝、地垫与周边密封。",
       "care": "定期吸尘与微湿拖地；避免磨蚀性清洁剂；遵循产品保养说明。",
-      "officialImage": "https://ozwoodaustralia.com.au/wp-content/uploads/2021/09/V6502.jpg",
+      "officialImage": "assets/ozwood/textures/6502.jpg",
       "source": "https://ozwoodaustralia.com.au/product/6502/",
       "hasRoomScene": true,
       "fit": {
@@ -223,7 +223,7 @@ window.OZWOOD_CATALOG = {
       "why": "更契合「有孩宠物家庭、性价比家庭优选、出租投资房」这类需求；选择前建议结合样板与现场条件确认。",
       "install": "楼板需干燥、清洁、平整，并按产品要求保留伸缩缝、地垫与周边密封。",
       "care": "定期吸尘与微湿拖地；避免磨蚀性清洁剂；遵循产品保养说明。",
-      "officialImage": "https://ozwoodaustralia.com.au/wp-content/uploads/2021/09/V6503.jpg",
+      "officialImage": "assets/ozwood/textures/6503.jpg",
       "source": "https://ozwoodaustralia.com.au/product/6503/",
       "hasRoomScene": true,
       "fit": {
@@ -309,7 +309,7 @@ window.OZWOOD_CATALOG = {
       "why": "更契合「有孩宠物家庭、性价比家庭优选、出租投资房」这类需求；选择前建议结合样板与现场条件确认。",
       "install": "楼板需干燥、清洁、平整，并按产品要求保留伸缩缝、地垫与周边密封。",
       "care": "定期吸尘与微湿拖地；避免磨蚀性清洁剂；遵循产品保养说明。",
-      "officialImage": "https://ozwoodaustralia.com.au/wp-content/uploads/2021/09/V6504.jpg",
+      "officialImage": "assets/ozwood/textures/6504.jpg",
       "source": "https://ozwoodaustralia.com.au/product/6504/",
       "hasRoomScene": true,
       "fit": {
@@ -395,7 +395,7 @@ window.OZWOOD_CATALOG = {
       "why": "更契合「有孩宠物家庭、性价比家庭优选、出租投资房」这类需求；选择前建议结合样板与现场条件确认。",
       "install": "楼板需干燥、清洁、平整，并按产品要求保留伸缩缝、地垫与周边密封。",
       "care": "定期吸尘与微湿拖地；避免磨蚀性清洁剂；遵循产品保养说明。",
-      "officialImage": "https://ozwoodaustralia.com.au/wp-content/uploads/2021/09/V6505.jpg",
+      "officialImage": "assets/ozwood/textures/6505.jpg",
       "source": "https://ozwoodaustralia.com.au/product/6505/",
       "hasRoomScene": true,
       "fit": {
@@ -481,7 +481,7 @@ window.OZWOOD_CATALOG = {
       "why": "更契合「有孩宠物家庭、性价比家庭优选、出租投资房」这类需求；选择前建议结合样板与现场条件确认。",
       "install": "楼板需干燥、清洁、平整，并按产品要求保留伸缩缝、地垫与周边密封。",
       "care": "定期吸尘与微湿拖地；避免磨蚀性清洁剂；遵循产品保养说明。",
-      "officialImage": "https://ozwoodaustralia.com.au/wp-content/uploads/2021/09/V6506.jpg",
+      "officialImage": "assets/ozwood/textures/6506.jpg",
       "source": "https://ozwoodaustralia.com.au/product/6506/",
       "hasRoomScene": true,
       "fit": {
@@ -567,7 +567,7 @@ window.OZWOOD_CATALOG = {
       "why": "更契合「有孩宠物家庭、性价比家庭优选、出租投资房」这类需求；选择前建议结合样板与现场条件确认。",
       "install": "楼板需干燥、清洁、平整，并按产品要求保留伸缩缝、地垫与周边密封。",
       "care": "定期吸尘与微湿拖地；避免磨蚀性清洁剂；遵循产品保养说明。",
-      "officialImage": "https://ozwoodaustralia.com.au/wp-content/uploads/2021/09/V6507.jpg",
+      "officialImage": "assets/ozwood/textures/6507.jpg",
       "source": "https://ozwoodaustralia.com.au/product/6507/",
       "hasRoomScene": true,
       "fit": {
@@ -653,7 +653,7 @@ window.OZWOOD_CATALOG = {
       "why": "更契合「有孩宠物家庭、性价比家庭优选、出租投资房」这类需求；选择前建议结合样板与现场条件确认。",
       "install": "楼板需干燥、清洁、平整，并按产品要求保留伸缩缝、地垫与周边密封。",
       "care": "定期吸尘与微湿拖地；避免磨蚀性清洁剂；遵循产品保养说明。",
-      "officialImage": "https://ozwoodaustralia.com.au/wp-content/uploads/2021/09/V6508.jpg",
+      "officialImage": "assets/ozwood/textures/6508.jpg",
       "source": "https://ozwoodaustralia.com.au/product/6508/",
       "hasRoomScene": true,
       "fit": {
@@ -739,7 +739,7 @@ window.OZWOOD_CATALOG = {
       "why": "更契合「澳洲硬木个性、有孩宠物家庭、性价比家庭优选」这类需求；选择前建议结合样板与现场条件确认。",
       "install": "楼板需干燥、清洁、平整，并按产品要求保留伸缩缝、地垫与周边密封。",
       "care": "定期吸尘与微湿拖地；避免磨蚀性清洁剂；遵循产品保养说明。",
-      "officialImage": "https://ozwoodaustralia.com.au/wp-content/uploads/2021/09/V704.jpg",
+      "officialImage": "assets/ozwood/textures/ov704-blackbutt.jpg",
       "source": "https://ozwoodaustralia.com.au/product/ov704-blackbutt/",
       "hasRoomScene": true,
       "fit": {
@@ -826,7 +826,7 @@ window.OZWOOD_CATALOG = {
       "why": "更契合「冷灰现代空间、有孩宠物家庭、性价比家庭优选」这类需求；选择前建议结合样板与现场条件确认。",
       "install": "楼板需干燥、清洁、平整，并按产品要求保留伸缩缝、地垫与周边密封。",
       "care": "定期吸尘与微湿拖地；避免磨蚀性清洁剂；遵循产品保养说明。",
-      "officialImage": "https://ozwoodaustralia.com.au/wp-content/uploads/2021/09/V708.jpg",
+      "officialImage": "assets/ozwood/textures/ov708-grey-oak.jpg",
       "source": "https://ozwoodaustralia.com.au/product/ov708-grey-oak/",
       "hasRoomScene": true,
       "fit": {
@@ -912,7 +912,7 @@ window.OZWOOD_CATALOG = {
       "why": "更契合「澳洲硬木个性、有孩宠物家庭、性价比家庭优选」这类需求；选择前建议结合样板与现场条件确认。",
       "install": "楼板需干燥、清洁、平整，并按产品要求保留伸缩缝、地垫与周边密封。",
       "care": "定期吸尘与微湿拖地；避免磨蚀性清洁剂；遵循产品保养说明。",
-      "officialImage": "https://ozwoodaustralia.com.au/wp-content/uploads/2021/09/V703.jpg",
+      "officialImage": "assets/ozwood/textures/ov703-spotted-gum.jpg",
       "source": "https://ozwoodaustralia.com.au/product/ov703-spotted-gum/",
       "hasRoomScene": true,
       "fit": {
@@ -999,7 +999,7 @@ window.OZWOOD_CATALOG = {
       "why": "更契合「澳洲硬木个性、有孩宠物家庭、性价比家庭优选」这类需求；选择前建议结合样板与现场条件确认。",
       "install": "楼板需干燥、清洁、平整，并按产品要求保留伸缩缝、地垫与周边密封。",
       "care": "定期吸尘与微湿拖地；避免磨蚀性清洁剂；遵循产品保养说明。",
-      "officialImage": "https://ozwoodaustralia.com.au/wp-content/uploads/2022/02/OV904.jpg",
+      "officialImage": "assets/ozwood/textures/ov904-blackbutt.jpg",
       "source": "https://ozwoodaustralia.com.au/product/ov904-blackbutt/",
       "hasRoomScene": true,
       "fit": {
@@ -1086,7 +1086,7 @@ window.OZWOOD_CATALOG = {
       "why": "更契合「有孩宠物家庭、性价比家庭优选、出租投资房」这类需求；选择前建议结合样板与现场条件确认。",
       "install": "楼板需干燥、清洁、平整，并按产品要求保留伸缩缝、地垫与周边密封。",
       "care": "定期吸尘与微湿拖地；避免磨蚀性清洁剂；遵循产品保养说明。",
-      "officialImage": "https://ozwoodaustralia.com.au/wp-content/uploads/2022/02/OV906.jpg",
+      "officialImage": "assets/ozwood/textures/ov906-bordeaux-oak.jpg",
       "source": "https://ozwoodaustralia.com.au/product/ov906-bordeaux-oak/",
       "hasRoomScene": true,
       "fit": {
@@ -1172,7 +1172,7 @@ window.OZWOOD_CATALOG = {
       "why": "更契合「冷灰现代空间、有孩宠物家庭、性价比家庭优选」这类需求；选择前建议结合样板与现场条件确认。",
       "install": "楼板需干燥、清洁、平整，并按产品要求保留伸缩缝、地垫与周边密封。",
       "care": "定期吸尘与微湿拖地；避免磨蚀性清洁剂；遵循产品保养说明。",
-      "officialImage": "https://ozwoodaustralia.com.au/wp-content/uploads/2022/02/OV903.jpg",
+      "officialImage": "assets/ozwood/textures/ov903-grey-oak-2.jpg",
       "source": "https://ozwoodaustralia.com.au/product/ov903-grey-oak-2/",
       "hasRoomScene": true,
       "fit": {
@@ -1258,7 +1258,7 @@ window.OZWOOD_CATALOG = {
       "why": "更契合「有孩宠物家庭、性价比家庭优选、出租投资房」这类需求；选择前建议结合样板与现场条件确认。",
       "install": "楼板需干燥、清洁、平整，并按产品要求保留伸缩缝、地垫与周边密封。",
       "care": "定期吸尘与微湿拖地；避免磨蚀性清洁剂；遵循产品保养说明。",
-      "officialImage": "https://ozwoodaustralia.com.au/wp-content/uploads/2021/09/V701.jpg",
+      "officialImage": "assets/ozwood/textures/ov701-hickory.jpg",
       "source": "https://ozwoodaustralia.com.au/product/ov701-hickory/",
       "hasRoomScene": true,
       "fit": {
@@ -1345,7 +1345,7 @@ window.OZWOOD_CATALOG = {
       "why": "更契合「澳洲硬木个性、有孩宠物家庭、性价比家庭优选」这类需求；选择前建议结合样板与现场条件确认。",
       "install": "楼板需干燥、清洁、平整，并按产品要求保留伸缩缝、地垫与周边密封。",
       "care": "定期吸尘与微湿拖地；避免磨蚀性清洁剂；遵循产品保养说明。",
-      "officialImage": "https://ozwoodaustralia.com.au/wp-content/uploads/2021/09/V706.jpg",
+      "officialImage": "assets/ozwood/textures/ov706-jarrah.jpg",
       "source": "https://ozwoodaustralia.com.au/product/ov706-jarrah/",
       "hasRoomScene": true,
       "fit": {
@@ -1433,7 +1433,7 @@ window.OZWOOD_CATALOG = {
       "why": "更契合「澳洲硬木个性、有孩宠物家庭、性价比家庭优选」这类需求；选择前建议结合样板与现场条件确认。",
       "install": "楼板需干燥、清洁、平整，并按产品要求保留伸缩缝、地垫与周边密封。",
       "care": "定期吸尘与微湿拖地；避免磨蚀性清洁剂；遵循产品保养说明。",
-      "officialImage": "https://ozwoodaustralia.com.au/wp-content/uploads/2021/09/V705.jpg",
+      "officialImage": "assets/ozwood/textures/ov705-marri.jpg",
       "source": "https://ozwoodaustralia.com.au/product/ov705-marri/",
       "hasRoomScene": true,
       "fit": {
@@ -1520,7 +1520,7 @@ window.OZWOOD_CATALOG = {
       "why": "更契合「有孩宠物家庭、性价比家庭优选、出租投资房」这类需求；选择前建议结合样板与现场条件确认。",
       "install": "楼板需干燥、清洁、平整，并按产品要求保留伸缩缝、地垫与周边密封。",
       "care": "定期吸尘与微湿拖地；避免磨蚀性清洁剂；遵循产品保养说明。",
-      "officialImage": "https://ozwoodaustralia.com.au/wp-content/uploads/2021/09/OV907-600x400-1.jpg",
+      "officialImage": "assets/ozwood/textures/ov902-pebble-beach.jpg",
       "source": "https://ozwoodaustralia.com.au/product/ov902-pebble-beach/",
       "hasRoomScene": true,
       "fit": {
@@ -1606,7 +1606,7 @@ window.OZWOOD_CATALOG = {
       "why": "更契合「澳洲硬木个性、有孩宠物家庭、性价比家庭优选」这类需求；选择前建议结合样板与现场条件确认。",
       "install": "楼板需干燥、清洁、平整，并按产品要求保留伸缩缝、地垫与周边密封。",
       "care": "定期吸尘与微湿拖地；避免磨蚀性清洁剂；遵循产品保养说明。",
-      "officialImage": "https://ozwoodaustralia.com.au/wp-content/uploads/2021/08/OV04.jpg",
+      "officialImage": "assets/ozwood/textures/ov04.jpg",
       "source": "https://ozwoodaustralia.com.au/product/ov04/",
       "hasRoomScene": true,
       "fit": {
@@ -1693,7 +1693,7 @@ window.OZWOOD_CATALOG = {
       "why": "更契合「有孩宠物家庭、性价比家庭优选、出租投资房」这类需求；选择前建议结合样板与现场条件确认。",
       "install": "楼板需干燥、清洁、平整，并按产品要求保留伸缩缝、地垫与周边密封。",
       "care": "定期吸尘与微湿拖地；避免磨蚀性清洁剂；遵循产品保养说明。",
-      "officialImage": "https://ozwoodaustralia.com.au/wp-content/uploads/2020/04/OV05.jpg",
+      "officialImage": "assets/ozwood/textures/ov05.jpg",
       "source": "https://ozwoodaustralia.com.au/product/ov05/",
       "hasRoomScene": true,
       "fit": {
@@ -1779,7 +1779,7 @@ window.OZWOOD_CATALOG = {
       "why": "更契合「有孩宠物家庭、性价比家庭优选、出租投资房」这类需求；选择前建议结合样板与现场条件确认。",
       "install": "楼板需干燥、清洁、平整，并按产品要求保留伸缩缝、地垫与周边密封。",
       "care": "定期吸尘与微湿拖地；避免磨蚀性清洁剂；遵循产品保养说明。",
-      "officialImage": "https://ozwoodaustralia.com.au/wp-content/uploads/2020/04/OV06.jpg",
+      "officialImage": "assets/ozwood/textures/ov06.jpg",
       "source": "https://ozwoodaustralia.com.au/product/ov06/",
       "hasRoomScene": true,
       "fit": {
@@ -1865,7 +1865,7 @@ window.OZWOOD_CATALOG = {
       "why": "更契合「有孩宠物家庭、性价比家庭优选、出租投资房」这类需求；选择前建议结合样板与现场条件确认。",
       "install": "楼板需干燥、清洁、平整，并按产品要求保留伸缩缝、地垫与周边密封。",
       "care": "定期吸尘与微湿拖地；避免磨蚀性清洁剂；遵循产品保养说明。",
-      "officialImage": "https://ozwoodaustralia.com.au/wp-content/uploads/2020/04/OV07-2.jpg",
+      "officialImage": "assets/ozwood/textures/ov07.jpg",
       "source": "https://ozwoodaustralia.com.au/product/ov07/",
       "hasRoomScene": true,
       "fit": {
@@ -1951,7 +1951,7 @@ window.OZWOOD_CATALOG = {
       "why": "更契合「有孩宠物家庭、性价比家庭优选、出租投资房」这类需求；选择前建议结合样板与现场条件确认。",
       "install": "楼板需干燥、清洁、平整，并按产品要求保留伸缩缝、地垫与周边密封。",
       "care": "定期吸尘与微湿拖地；避免磨蚀性清洁剂；遵循产品保养说明。",
-      "officialImage": "https://ozwoodaustralia.com.au/wp-content/uploads/2020/04/OV08-1.jpg",
+      "officialImage": "assets/ozwood/textures/ov08.jpg",
       "source": "https://ozwoodaustralia.com.au/product/ov08/",
       "hasRoomScene": true,
       "fit": {
@@ -2123,7 +2123,7 @@ window.OZWOOD_CATALOG = {
       "why": "更契合「暗厅提亮、有孩宠物家庭、性价比家庭优选」这类需求；选择前建议结合样板与现场条件确认。",
       "install": "楼板需干燥、清洁、平整，并按产品要求保留伸缩缝、地垫与周边密封。",
       "care": "定期吸尘与微湿拖地；避免磨蚀性清洁剂；遵循产品保养说明。",
-      "officialImage": "https://ozwoodaustralia.com.au/wp-content/uploads/2022/02/OV901.jpg",
+      "officialImage": "assets/ozwood/textures/ov901-pearl-oakcopy.jpg",
       "source": "https://ozwoodaustralia.com.au/product/ov901-pearl-oakcopy/",
       "hasRoomScene": true,
       "fit": {
@@ -2210,7 +2210,7 @@ window.OZWOOD_CATALOG = {
       "why": "更契合「暗厅提亮、有孩宠物家庭、性价比家庭优选」这类需求；选择前建议结合样板与现场条件确认。",
       "install": "楼板需干燥、清洁、平整，并按产品要求保留伸缩缝、地垫与周边密封。",
       "care": "定期吸尘与微湿拖地；避免磨蚀性清洁剂；遵循产品保养说明。",
-      "officialImage": "https://ozwoodaustralia.com.au/wp-content/uploads/2022/02/OV902-1.jpg",
+      "officialImage": "assets/ozwood/textures/ov902-pebble-beach-2.jpg",
       "source": "https://ozwoodaustralia.com.au/product/ov902-pebble-beach-2/",
       "hasRoomScene": true,
       "fit": {
@@ -2297,7 +2297,7 @@ window.OZWOOD_CATALOG = {
       "why": "更契合「冷灰现代空间、有孩宠物家庭、性价比家庭优选」这类需求；选择前建议结合样板与现场条件确认。",
       "install": "楼板需干燥、清洁、平整，并按产品要求保留伸缩缝、地垫与周边密封。",
       "care": "定期吸尘与微湿拖地；避免磨蚀性清洁剂；遵循产品保养说明。",
-      "officialImage": "https://ozwoodaustralia.com.au/wp-content/uploads/2021/09/OV908-600x400-1.jpg",
+      "officialImage": "assets/ozwood/textures/ov901-pearl-oak.jpg",
       "source": "https://ozwoodaustralia.com.au/product/ov901-pearl-oak/",
       "hasRoomScene": true,
       "fit": {
@@ -2383,7 +2383,7 @@ window.OZWOOD_CATALOG = {
       "why": "更契合「澳洲硬木个性、有孩宠物家庭、性价比家庭优选」这类需求；选择前建议结合样板与现场条件确认。",
       "install": "楼板需干燥、清洁、平整，并按产品要求保留伸缩缝、地垫与周边密封。",
       "care": "定期吸尘与微湿拖地；避免磨蚀性清洁剂；遵循产品保养说明。",
-      "officialImage": "https://ozwoodaustralia.com.au/wp-content/uploads/2021/09/OV905-1.jpg",
+      "officialImage": "assets/ozwood/textures/ov903-grey-oak.jpg",
       "source": "https://ozwoodaustralia.com.au/product/ov903-grey-oak/",
       "hasRoomScene": true,
       "fit": {
@@ -2471,7 +2471,7 @@ window.OZWOOD_CATALOG = {
       "why": "面对水渍、宠物、高频使用和较紧的材料预算，它是最稳妥的演示推荐；安静的冷灰色也适合现代空间。",
       "install": "楼板需干燥、清洁、平整，并按产品要求保留伸缩缝、地垫与周边密封。",
       "care": "定期吸尘与微湿拖地；避免磨蚀性清洁剂；遵循产品保养说明。",
-      "officialImage": "assets/ozwood/official/product-hybrid-grey.jpg",
+      "officialImage": "assets/ozwood/textures/product-hybrid-grey.jpg",
       "source": "https://ozwoodaustralia.com.au/product/hybrid-grey-oak/",
       "hasRoomScene": true,
       "fit": {
@@ -2555,7 +2555,7 @@ window.OZWOOD_CATALOG = {
       "why": "更契合「暗厅提亮、预算优先公寓、出租投资房」这类需求；选择前建议结合样板与现场条件确认。",
       "install": "检查基层平整度与含水率，使用指定地垫，正确错缝并保留伸缩缝。",
       "care": "经常吸尘，微湿拖布清洁，避免蒸汽拖把，及时处理水渍。",
-      "officialImage": "https://ozwoodaustralia.com.au/wp-content/uploads/2024/12/IMG20241206114008-1.jpg",
+      "officialImage": "assets/ozwood/textures/12m05-champagne-oak.jpg",
       "source": "https://ozwoodaustralia.com.au/product/12m05-champagne-oak/",
       "hasRoomScene": true,
       "fit": {
@@ -2635,7 +2635,7 @@ window.OZWOOD_CATALOG = {
       "why": "更契合「澳洲硬木个性、预算优先公寓、出租投资房」这类需求；选择前建议结合样板与现场条件确认。",
       "install": "检查基层平整度与含水率，使用指定地垫，正确错缝并保留伸缩缝。",
       "care": "经常吸尘，微湿拖布清洁，避免蒸汽拖把，及时处理水渍。",
-      "officialImage": "https://ozwoodaustralia.com.au/wp-content/uploads/2020/04/3-OZ2705.jpg",
+      "officialImage": "assets/ozwood/textures/jarrah-laminate-25-8-m2.jpg",
       "source": "https://ozwoodaustralia.com.au/product/jarrah-laminate-25-8-m2/",
       "hasRoomScene": true,
       "fit": {
@@ -2719,7 +2719,7 @@ window.OZWOOD_CATALOG = {
       "why": "更契合「澳洲硬木个性、预算优先公寓、出租投资房」这类需求；选择前建议结合样板与现场条件确认。",
       "install": "检查基层平整度与含水率，使用指定地垫，正确错缝并保留伸缩缝。",
       "care": "经常吸尘，微湿拖布清洁，避免蒸汽拖把，及时处理水渍。",
-      "officialImage": "https://ozwoodaustralia.com.au/wp-content/uploads/2021/09/Image_20240712141749.jpg",
+      "officialImage": "assets/ozwood/textures/bfl8201-jarrah-on-sale-laminate.jpg",
       "source": "https://ozwoodaustralia.com.au/product/bfl8201-jarrah-on-sale-laminate/",
       "hasRoomScene": true,
       "fit": {
@@ -2803,7 +2803,7 @@ window.OZWOOD_CATALOG = {
       "why": "更契合「预算优先公寓、出租投资房」这类需求；选择前建议结合样板与现场条件确认。",
       "install": "检查基层平整度与含水率，使用指定地垫，正确错缝并保留伸缩缝。",
       "care": "经常吸尘，微湿拖布清洁，避免蒸汽拖把，及时处理水渍。",
-      "officialImage": "https://ozwoodaustralia.com.au/wp-content/uploads/2025/07/IMG20250701145501.jpg",
+      "officialImage": "assets/ozwood/textures/american-black-walnut.jpg",
       "source": "https://ozwoodaustralia.com.au/product/american-black-walnut/",
       "hasRoomScene": true,
       "fit": {
@@ -2879,7 +2879,7 @@ window.OZWOOD_CATALOG = {
       "why": "更契合「澳洲硬木个性、预算优先公寓、出租投资房」这类需求；选择前建议结合样板与现场条件确认。",
       "install": "检查基层平整度与含水率，使用指定地垫，正确错缝并保留伸缩缝。",
       "care": "经常吸尘，微湿拖布清洁，避免蒸汽拖把，及时处理水渍。",
-      "officialImage": "https://ozwoodaustralia.com.au/wp-content/uploads/2025/07/IMG20250701145521.jpg",
+      "officialImage": "assets/ozwood/textures/sg1443-185-jw.jpg",
       "source": "https://ozwoodaustralia.com.au/product/sg1443-185-jw/",
       "hasRoomScene": true,
       "fit": {
@@ -2958,7 +2958,7 @@ window.OZWOOD_CATALOG = {
       "why": "更契合「澳洲硬木个性、预算优先公寓、出租投资房」这类需求；选择前建议结合样板与现场条件确认。",
       "install": "检查基层平整度与含水率，使用指定地垫，正确错缝并保留伸缩缝。",
       "care": "经常吸尘，微湿拖布清洁，避免蒸汽拖把，及时处理水渍。",
-      "officialImage": "https://ozwoodaustralia.com.au/wp-content/uploads/2022/10/BFL-blackbutt-matt-new.jpg",
+      "officialImage": "assets/ozwood/textures/bfl8604-blackbutt-matt.jpg",
       "source": "https://ozwoodaustralia.com.au/product/bfl8604-blackbutt-matt/",
       "hasRoomScene": true,
       "fit": {
@@ -3042,7 +3042,7 @@ window.OZWOOD_CATALOG = {
       "why": "更契合「澳洲硬木个性、预算优先公寓、出租投资房」这类需求；选择前建议结合样板与现场条件确认。",
       "install": "检查基层平整度与含水率，使用指定地垫，正确错缝并保留伸缩缝。",
       "care": "经常吸尘，微湿拖布清洁，避免蒸汽拖把，及时处理水渍。",
-      "officialImage": "https://ozwoodaustralia.com.au/wp-content/uploads/2020/04/6-OZ2504.jpg",
+      "officialImage": "assets/ozwood/textures/oz2504-blackbutt.jpg",
       "source": "https://ozwoodaustralia.com.au/product/oz2504-blackbutt/",
       "hasRoomScene": true,
       "fit": {
@@ -3120,7 +3120,7 @@ window.OZWOOD_CATALOG = {
       "why": "更契合「澳洲硬木个性、预算优先公寓、出租投资房」这类需求；选择前建议结合样板与现场条件确认。",
       "install": "检查基层平整度与含水率，使用指定地垫，正确错缝并保留伸缩缝。",
       "care": "经常吸尘，微湿拖布清洁，避免蒸汽拖把，及时处理水渍。",
-      "officialImage": "https://ozwoodaustralia.com.au/wp-content/uploads/2025/07/IMG20250701150631.jpg",
+      "officialImage": "assets/ozwood/textures/blackbutt-bbt143-190.jpg",
       "source": "https://ozwoodaustralia.com.au/product/blackbutt-bbt143-190/",
       "hasRoomScene": true,
       "fit": {
@@ -3198,7 +3198,7 @@ window.OZWOOD_CATALOG = {
       "why": "更契合「预算优先公寓、出租投资房、低排放家庭关怀」这类需求；选择前建议结合样板与现场条件确认。",
       "install": "检查基层平整度与含水率，使用指定地垫，正确错缝并保留伸缩缝。",
       "care": "经常吸尘，微湿拖布清洁，避免蒸汽拖把，及时处理水渍。",
-      "officialImage": "https://ozwoodaustralia.com.au/wp-content/uploads/2022/10/BFL8026-cambridge-oak.jpg",
+      "officialImage": "assets/ozwood/textures/bfl8026-cambridge-oak.jpg",
       "source": "https://ozwoodaustralia.com.au/product/bfl8026-cambridge-oak/",
       "hasRoomScene": true,
       "fit": {
@@ -3281,7 +3281,7 @@ window.OZWOOD_CATALOG = {
       "why": "更契合「有孩宠物家庭、预算优先公寓、出租投资房」这类需求；选择前建议结合样板与现场条件确认。",
       "install": "检查基层平整度与含水率，使用指定地垫，正确错缝并保留伸缩缝。",
       "care": "经常吸尘，微湿拖布清洁，避免蒸汽拖把，及时处理水渍。",
-      "officialImage": "https://ozwoodaustralia.com.au/wp-content/uploads/2024/06/Chestnut-1.jpg",
+      "officialImage": "assets/ozwood/textures/wpl-1205-chestnut.jpg",
       "source": "https://ozwoodaustralia.com.au/product/wpl-1205-chestnut/",
       "hasRoomScene": true,
       "fit": {
@@ -3363,7 +3363,7 @@ window.OZWOOD_CATALOG = {
       "why": "更契合「预算优先公寓、出租投资房、低排放家庭关怀」这类需求；选择前建议结合样板与现场条件确认。",
       "install": "检查基层平整度与含水率，使用指定地垫，正确错缝并保留伸缩缝。",
       "care": "经常吸尘，微湿拖布清洁，避免蒸汽拖把，及时处理水渍。",
-      "officialImage": "https://ozwoodaustralia.com.au/wp-content/uploads/2021/09/Image_20240712141725.jpg",
+      "officialImage": "assets/ozwood/textures/bfl8096-coastal-oak.jpg",
       "source": "https://ozwoodaustralia.com.au/product/bfl8096-coastal-oak/",
       "hasRoomScene": true,
       "fit": {
@@ -3447,7 +3447,7 @@ window.OZWOOD_CATALOG = {
       "why": "更契合「有孩宠物家庭、预算优先公寓、出租投资房」这类需求；选择前建议结合样板与现场条件确认。",
       "install": "检查基层平整度与含水率，使用指定地垫，正确错缝并保留伸缩缝。",
       "care": "经常吸尘，微湿拖布清洁，避免蒸汽拖把，及时处理水渍。",
-      "officialImage": "https://ozwoodaustralia.com.au/wp-content/uploads/2021/09/Image_20240712141713.jpg",
+      "officialImage": "assets/ozwood/textures/bfl8804-finer-davis-oak-copy.jpg",
       "source": "https://ozwoodaustralia.com.au/product/bfl8804-finer-davis-oak-copy/",
       "hasRoomScene": true,
       "fit": {
@@ -3532,7 +3532,7 @@ window.OZWOOD_CATALOG = {
       "why": "更契合「预算优先公寓、出租投资房、低排放家庭关怀」这类需求；选择前建议结合样板与现场条件确认。",
       "install": "检查基层平整度与含水率，使用指定地垫，正确错缝并保留伸缩缝。",
       "care": "经常吸尘，微湿拖布清洁，避免蒸汽拖把，及时处理水渍。",
-      "officialImage": "https://ozwoodaustralia.com.au/wp-content/uploads/2021/09/Image_20240712141717.jpg",
+      "officialImage": "assets/ozwood/textures/bfl8164-natural-oak.jpg",
       "source": "https://ozwoodaustralia.com.au/product/bfl8164-natural-oak/",
       "hasRoomScene": true,
       "fit": {
@@ -3616,7 +3616,7 @@ window.OZWOOD_CATALOG = {
       "why": "更契合「冷灰现代空间、暗厅提亮、有孩宠物家庭」这类需求；选择前建议结合样板与现场条件确认。",
       "install": "检查基层平整度与含水率，使用指定地垫，正确错缝并保留伸缩缝。",
       "care": "经常吸尘，微湿拖布清洁，避免蒸汽拖把，及时处理水渍。",
-      "officialImage": "https://ozwoodaustralia.com.au/wp-content/uploads/2021/09/Image_20240712130357.jpg",
+      "officialImage": "assets/ozwood/textures/bfl8801-finer-light-grey.jpg",
       "source": "https://ozwoodaustralia.com.au/product/bfl8801-finer-light-grey/",
       "hasRoomScene": true,
       "fit": {
@@ -3705,7 +3705,7 @@ window.OZWOOD_CATALOG = {
       "why": "更契合「有孩宠物家庭、预算优先公寓、出租投资房」这类需求；选择前建议结合样板与现场条件确认。",
       "install": "检查基层平整度与含水率，使用指定地垫，正确错缝并保留伸缩缝。",
       "care": "经常吸尘，微湿拖布清洁，避免蒸汽拖把，及时处理水渍。",
-      "officialImage": "https://ozwoodaustralia.com.au/wp-content/uploads/2021/09/Image_20240712141708.jpg",
+      "officialImage": "assets/ozwood/textures/bfl8805-finer-natural-oak.jpg",
       "source": "https://ozwoodaustralia.com.au/product/bfl8805-finer-natural-oak/",
       "hasRoomScene": true,
       "fit": {
@@ -3792,7 +3792,7 @@ window.OZWOOD_CATALOG = {
       "why": "更契合「有孩宠物家庭、预算优先公寓、出租投资房」这类需求；选择前建议结合样板与现场条件确认。",
       "install": "检查基层平整度与含水率，使用指定地垫，正确错缝并保留伸缩缝。",
       "care": "经常吸尘，微湿拖布清洁，避免蒸汽拖把，及时处理水渍。",
-      "officialImage": "https://ozwoodaustralia.com.au/wp-content/uploads/2025/09/BFL8803WPL8803.jpg",
+      "officialImage": "assets/ozwood/textures/finer-walnut.jpg",
       "source": "https://ozwoodaustralia.com.au/product/finer-walnut/",
       "hasRoomScene": true,
       "fit": {
@@ -3877,7 +3877,7 @@ window.OZWOOD_CATALOG = {
       "why": "更契合「冷灰现代空间、预算优先公寓、出租投资房」这类需求；选择前建议结合样板与现场条件确认。",
       "install": "检查基层平整度与含水率，使用指定地垫，正确错缝并保留伸缩缝。",
       "care": "经常吸尘，微湿拖布清洁，避免蒸汽拖把，及时处理水渍。",
-      "officialImage": "https://ozwoodaustralia.com.au/wp-content/uploads/2021/09/Image_20240712141754.jpg",
+      "officialImage": "assets/ozwood/textures/bfl8117-grey-oak.jpg",
       "source": "https://ozwoodaustralia.com.au/product/bfl8117-grey-oak/",
       "hasRoomScene": true,
       "fit": {
@@ -3961,7 +3961,7 @@ window.OZWOOD_CATALOG = {
       "why": "更契合「冷灰现代空间、有孩宠物家庭、预算优先公寓」这类需求；选择前建议结合样板与现场条件确认。",
       "install": "检查基层平整度与含水率，使用指定地垫，正确错缝并保留伸缩缝。",
       "care": "经常吸尘，微湿拖布清洁，避免蒸汽拖把，及时处理水渍。",
-      "officialImage": "https://ozwoodaustralia.com.au/wp-content/uploads/2024/06/Ironstone-grey-1.jpg",
+      "officialImage": "assets/ozwood/textures/wpl-1206-ironstone-grey.jpg",
       "source": "https://ozwoodaustralia.com.au/product/wpl-1206-ironstone-grey/",
       "hasRoomScene": true,
       "fit": {
@@ -4046,7 +4046,7 @@ window.OZWOOD_CATALOG = {
       "why": "更契合「澳洲硬木个性、预算优先公寓、出租投资房」这类需求；选择前建议结合样板与现场条件确认。",
       "install": "检查基层平整度与含水率，使用指定地垫，正确错缝并保留伸缩缝。",
       "care": "经常吸尘，微湿拖布清洁，避免蒸汽拖把，及时处理水渍。",
-      "officialImage": "https://ozwoodaustralia.com.au/wp-content/uploads/2022/10/BFL8201-Jarrah.jpg",
+      "officialImage": "assets/ozwood/textures/bfl8201-jarrah.jpg",
       "source": "https://ozwoodaustralia.com.au/product/bfl8201-jarrah/",
       "hasRoomScene": true,
       "fit": {
@@ -4132,7 +4132,7 @@ window.OZWOOD_CATALOG = {
       "why": "更契合「澳洲硬木个性、预算优先公寓、出租投资房」这类需求；选择前建议结合样板与现场条件确认。",
       "install": "检查基层平整度与含水率，使用指定地垫，正确错缝并保留伸缩缝。",
       "care": "经常吸尘，微湿拖布清洁，避免蒸汽拖把，及时处理水渍。",
-      "officialImage": "https://ozwoodaustralia.com.au/wp-content/uploads/2025/07/IMG20250701145551.jpg",
+      "officialImage": "assets/ozwood/textures/jarrah-503-190.jpg",
       "source": "https://ozwoodaustralia.com.au/product/jarrah-503-190/",
       "hasRoomScene": true,
       "fit": {
@@ -4212,7 +4212,7 @@ window.OZWOOD_CATALOG = {
       "why": "更契合「有孩宠物家庭、预算优先公寓、出租投资房」这类需求；选择前建议结合样板与现场条件确认。",
       "install": "检查基层平整度与含水率，使用指定地垫，正确错缝并保留伸缩缝。",
       "care": "经常吸尘，微湿拖布清洁，避免蒸汽拖把，及时处理水渍。",
-      "officialImage": "https://ozwoodaustralia.com.au/wp-content/uploads/2024/06/LIGHT-OAK-1.jpg",
+      "officialImage": "assets/ozwood/textures/wpl-1203-light-oak.jpg",
       "source": "https://ozwoodaustralia.com.au/product/wpl-1203-light-oak/",
       "hasRoomScene": true,
       "fit": {
@@ -4294,7 +4294,7 @@ window.OZWOOD_CATALOG = {
       "why": "更契合「暗厅提亮、预算优先公寓、出租投资房」这类需求；选择前建议结合样板与现场条件确认。",
       "install": "检查基层平整度与含水率，使用指定地垫，正确错缝并保留伸缩缝。",
       "care": "经常吸尘，微湿拖布清洁，避免蒸汽拖把，及时处理水渍。",
-      "officialImage": "https://ozwoodaustralia.com.au/wp-content/uploads/2021/09/Image_20240712141732.jpg",
+      "officialImage": "assets/ozwood/textures/bfl8613-lime-wash-oak.jpg",
       "source": "https://ozwoodaustralia.com.au/product/bfl8613-lime-wash-oak/",
       "hasRoomScene": true,
       "fit": {
@@ -4377,7 +4377,7 @@ window.OZWOOD_CATALOG = {
       "why": "更契合「预算优先公寓、出租投资房」这类需求；选择前建议结合样板与现场条件确认。",
       "install": "检查基层平整度与含水率，使用指定地垫，正确错缝并保留伸缩缝。",
       "care": "经常吸尘，微湿拖布清洁，避免蒸汽拖把，及时处理水渍。",
-      "officialImage": "https://ozwoodaustralia.com.au/wp-content/uploads/2020/04/2-OZ2336.jpg",
+      "officialImage": "assets/ozwood/textures/oz2336-lunar-oak.jpg",
       "source": "https://ozwoodaustralia.com.au/product/oz2336-lunar-oak/",
       "hasRoomScene": true,
       "fit": {
@@ -4454,7 +4454,7 @@ window.OZWOOD_CATALOG = {
       "why": "更契合「有孩宠物家庭、预算优先公寓、出租投资房」这类需求；选择前建议结合样板与现场条件确认。",
       "install": "检查基层平整度与含水率，使用指定地垫，正确错缝并保留伸缩缝。",
       "care": "经常吸尘，微湿拖布清洁，避免蒸汽拖把，及时处理水渍。",
-      "officialImage": "https://ozwoodaustralia.com.au/wp-content/uploads/2024/06/Mohogany-Oak-1-1.jpg",
+      "officialImage": "assets/ozwood/textures/wpl-1204-mahogany-oak.jpg",
       "source": "https://ozwoodaustralia.com.au/product/wpl-1204-mahogany-oak/",
       "hasRoomScene": true,
       "fit": {
@@ -4535,7 +4535,7 @@ window.OZWOOD_CATALOG = {
       "why": "更契合「预算优先公寓、出租投资房」这类需求；选择前建议结合样板与现场条件确认。",
       "install": "检查基层平整度与含水率，使用指定地垫，正确错缝并保留伸缩缝。",
       "care": "经常吸尘，微湿拖布清洁，避免蒸汽拖把，及时处理水渍。",
-      "officialImage": "https://ozwoodaustralia.com.au/wp-content/uploads/2020/04/1-OZ2306.jpg",
+      "officialImage": "assets/ozwood/textures/oz2306-maple.jpg",
       "source": "https://ozwoodaustralia.com.au/product/oz2306-maple/",
       "hasRoomScene": true,
       "fit": {
@@ -4612,7 +4612,7 @@ window.OZWOOD_CATALOG = {
       "why": "更契合「冷灰现代空间、有孩宠物家庭、预算优先公寓」这类需求；选择前建议结合样板与现场条件确认。",
       "install": "检查基层平整度与含水率，使用指定地垫，正确错缝并保留伸缩缝。",
       "care": "经常吸尘，微湿拖布清洁，避免蒸汽拖把，及时处理水渍。",
-      "officialImage": "https://ozwoodaustralia.com.au/wp-content/uploads/2024/06/moonlight-grey.jpg",
+      "officialImage": "assets/ozwood/textures/wpl-1202-moonlight-grey.jpg",
       "source": "https://ozwoodaustralia.com.au/product/wpl-1202-moonlight-grey/",
       "hasRoomScene": true,
       "fit": {
@@ -4694,7 +4694,7 @@ window.OZWOOD_CATALOG = {
       "why": "它能让较暗或较小的空间显得更开阔，同时控制材料预算，又不会完全失去温暖的木质表达。",
       "install": "检查基层平整度与含水率，使用指定地垫，正确错缝并保留伸缩缝。",
       "care": "经常吸尘，微湿拖布清洁，避免蒸汽拖把，及时处理水渍。",
-      "officialImage": "assets/ozwood/official/product-white-oak.jpg",
+      "officialImage": "assets/ozwood/textures/product-white-oak.jpg",
       "source": "https://ozwoodaustralia.com.au/product/oz2618-bordeaux-oak/",
       "hasRoomScene": true,
       "fit": {
@@ -4772,7 +4772,7 @@ window.OZWOOD_CATALOG = {
       "why": "更契合「澳洲硬木个性、预算优先公寓、出租投资房」这类需求；选择前建议结合样板与现场条件确认。",
       "install": "检查基层平整度与含水率，使用指定地垫，正确错缝并保留伸缩缝。",
       "care": "经常吸尘，微湿拖布清洁，避免蒸汽拖把，及时处理水渍。",
-      "officialImage": "https://ozwoodaustralia.com.au/wp-content/uploads/2021/10/SG-1432-136.jpg",
+      "officialImage": "assets/ozwood/textures/6408-european-oak-weathered-stone-2.jpg",
       "source": "https://ozwoodaustralia.com.au/product/6408-european-oak-weathered-stone-2/",
       "hasRoomScene": true,
       "fit": {
@@ -4850,7 +4850,7 @@ window.OZWOOD_CATALOG = {
       "why": "更契合「澳洲硬木个性、预算优先公寓、出租投资房」这类需求；选择前建议结合样板与现场条件确认。",
       "install": "检查基层平整度与含水率，使用指定地垫，正确错缝并保留伸缩缝。",
       "care": "经常吸尘，微湿拖布清洁，避免蒸汽拖把，及时处理水渍。",
-      "officialImage": "https://ozwoodaustralia.com.au/wp-content/uploads/2021/10/SG1801-Spotted-Gum-1.jpg",
+      "officialImage": "assets/ozwood/textures/sg1801-spotted-gum.jpg",
       "source": "https://ozwoodaustralia.com.au/product/sg1801-spotted-gum/",
       "hasRoomScene": true,
       "fit": {
@@ -4928,7 +4928,7 @@ window.OZWOOD_CATALOG = {
       "why": "更契合「澳洲硬木个性、预算优先公寓、出租投资房」这类需求；选择前建议结合样板与现场条件确认。",
       "install": "检查基层平整度与含水率，使用指定地垫，正确错缝并保留伸缩缝。",
       "care": "经常吸尘，微湿拖布清洁，避免蒸汽拖把，及时处理水渍。",
-      "officialImage": "https://ozwoodaustralia.com.au/wp-content/uploads/2020/04/OZ2503-1.jpg",
+      "officialImage": "assets/ozwood/textures/oz2503-spotted-gum.jpg",
       "source": "https://ozwoodaustralia.com.au/product/oz2503-spotted-gum/",
       "hasRoomScene": true,
       "fit": {
@@ -5008,7 +5008,7 @@ window.OZWOOD_CATALOG = {
       "why": "更契合「澳洲硬木个性、有孩宠物家庭、预算优先公寓」这类需求；选择前建议结合样板与现场条件确认。",
       "install": "检查基层平整度与含水率，使用指定地垫，正确错缝并保留伸缩缝。",
       "care": "经常吸尘，微湿拖布清洁，避免蒸汽拖把，及时处理水渍。",
-      "officialImage": "https://ozwoodaustralia.com.au/wp-content/uploads/2021/09/Image_20240712141757.jpg",
+      "officialImage": "assets/ozwood/textures/bfl8603-spotted-gum.jpg",
       "source": "https://ozwoodaustralia.com.au/product/bfl8603-spotted-gum/",
       "hasRoomScene": true,
       "fit": {
@@ -5096,7 +5096,7 @@ window.OZWOOD_CATALOG = {
       "why": "更契合「有孩宠物家庭、预算优先公寓、出租投资房」这类需求；选择前建议结合样板与现场条件确认。",
       "install": "检查基层平整度与含水率，使用指定地垫，正确错缝并保留伸缩缝。",
       "care": "经常吸尘，微湿拖布清洁，避免蒸汽拖把，及时处理水渍。",
-      "officialImage": "https://ozwoodaustralia.com.au/wp-content/uploads/2021/09/V702.jpg",
+      "officialImage": "assets/ozwood/textures/ov702-tasmania-oak.jpg",
       "source": "https://ozwoodaustralia.com.au/product/ov702-tasmania-oak/",
       "hasRoomScene": true,
       "fit": {
@@ -5182,7 +5182,7 @@ window.OZWOOD_CATALOG = {
       "why": "更契合「澳洲硬木个性、预算优先公寓、出租投资房」这类需求；选择前建议结合样板与现场条件确认。",
       "install": "检查基层平整度与含水率，使用指定地垫，正确错缝并保留伸缩缝。",
       "care": "经常吸尘，微湿拖布清洁，避免蒸汽拖把，及时处理水渍。",
-      "officialImage": "https://ozwoodaustralia.com.au/wp-content/uploads/2025/07/IMG20250701150705.jpg",
+      "officialImage": "assets/ozwood/textures/tasmanian-oak-tas-3801-170.jpg",
       "source": "https://ozwoodaustralia.com.au/product/tasmanian-oak-tas-3801-170/",
       "hasRoomScene": true,
       "fit": {
@@ -5260,7 +5260,7 @@ window.OZWOOD_CATALOG = {
       "why": "更契合「预算优先公寓、出租投资房」这类需求；选择前建议结合样板与现场条件确认。",
       "install": "检查基层平整度与含水率，使用指定地垫，正确错缝并保留伸缩缝。",
       "care": "经常吸尘，微湿拖布清洁，避免蒸汽拖把，及时处理水渍。",
-      "officialImage": "https://ozwoodaustralia.com.au/wp-content/uploads/2020/04/OZ2002.jpg",
+      "officialImage": "assets/ozwood/textures/oz2002-toffee-oak.jpg",
       "source": "https://ozwoodaustralia.com.au/product/oz2002-toffee-oak/",
       "hasRoomScene": true,
       "fit": {
@@ -5335,7 +5335,7 @@ window.OZWOOD_CATALOG = {
       "why": "更契合「预算优先公寓、出租投资房」这类需求；选择前建议结合样板与现场条件确认。",
       "install": "检查基层平整度与含水率，使用指定地垫，正确错缝并保留伸缩缝。",
       "care": "经常吸尘，微湿拖布清洁，避免蒸汽拖把，及时处理水渍。",
-      "officialImage": "https://ozwoodaustralia.com.au/wp-content/uploads/2020/04/4-OZ2003.jpg",
+      "officialImage": "assets/ozwood/textures/oz2003-vintage-oak.jpg",
       "source": "https://ozwoodaustralia.com.au/product/oz2003-vintage-oak/",
       "hasRoomScene": true,
       "fit": {
@@ -5412,7 +5412,7 @@ window.OZWOOD_CATALOG = {
       "why": "更契合「暗厅提亮、有孩宠物家庭、预算优先公寓」这类需求；选择前建议结合样板与现场条件确认。",
       "install": "检查基层平整度与含水率，使用指定地垫，正确错缝并保留伸缩缝。",
       "care": "经常吸尘，微湿拖布清洁，避免蒸汽拖把，及时处理水渍。",
-      "officialImage": "https://ozwoodaustralia.com.au/wp-content/uploads/2024/06/White-wash-oak-1.jpg",
+      "officialImage": "assets/ozwood/textures/wpl-1201-white-wash-oak-2.jpg",
       "source": "https://ozwoodaustralia.com.au/product/wpl-1201-white-wash-oak-2/",
       "hasRoomScene": true,
       "fit": {
@@ -5494,7 +5494,7 @@ window.OZWOOD_CATALOG = {
       "why": "更契合「品质真实木感」这类需求；选择前建议结合样板与现场条件确认。",
       "install": "检测基层含水率与平整度后，由安装人员确定胶粘或悬浮方式、伸缩缝与材料适应时间。",
       "care": "定期清除砂粒，使用微湿拖布与木地板清洁剂，避免地面积水。",
-      "officialImage": "https://ozwoodaustralia.com.au/wp-content/uploads/2021/10/1901-1.jpg",
+      "officialImage": "assets/ozwood/textures/1901-european-oak-walnut.jpg",
       "source": "https://ozwoodaustralia.com.au/product/1901-european-oak-walnut/",
       "hasRoomScene": true,
       "fit": {
@@ -5564,7 +5564,7 @@ window.OZWOOD_CATALOG = {
       "why": "更契合「冷灰现代空间、品质真实木感」这类需求；选择前建议结合样板与现场条件确认。",
       "install": "检测基层含水率与平整度后，由安装人员确定胶粘或悬浮方式、伸缩缝与材料适应时间。",
       "care": "定期清除砂粒，使用微湿拖布与木地板清洁剂，避免地面积水。",
-      "officialImage": "https://ozwoodaustralia.com.au/wp-content/uploads/2021/10/19012.jpg",
+      "officialImage": "assets/ozwood/textures/19012-european-oak-heritage-grey.jpg",
       "source": "https://ozwoodaustralia.com.au/product/19012-european-oak-heritage-grey/",
       "hasRoomScene": true,
       "fit": {
@@ -5635,7 +5635,7 @@ window.OZWOOD_CATALOG = {
       "why": "更契合「暗厅提亮、品质真实木感」这类需求；选择前建议结合样板与现场条件确认。",
       "install": "检测基层含水率与平整度后，由安装人员确定胶粘或悬浮方式、伸缩缝与材料适应时间。",
       "care": "定期清除砂粒，使用微湿拖布与木地板清洁剂，避免地面积水。",
-      "officialImage": "https://ozwoodaustralia.com.au/wp-content/uploads/2021/10/19015.jpg",
+      "officialImage": "assets/ozwood/textures/19015-european-oak-pebble-beach.jpg",
       "source": "https://ozwoodaustralia.com.au/product/19015-european-oak-pebble-beach/",
       "hasRoomScene": true,
       "fit": {
@@ -5707,7 +5707,7 @@ window.OZWOOD_CATALOG = {
       "why": "更契合「品质真实木感」这类需求；选择前建议结合样板与现场条件确认。",
       "install": "检测基层含水率与平整度后，由安装人员确定胶粘或悬浮方式、伸缩缝与材料适应时间。",
       "care": "定期清除砂粒，使用微湿拖布与木地板清洁剂，避免地面积水。",
-      "officialImage": "https://ozwoodaustralia.com.au/wp-content/uploads/2021/10/Oak19016.jpg",
+      "officialImage": "assets/ozwood/textures/19016-european-oak.jpg",
       "source": "https://ozwoodaustralia.com.au/product/19016-european-oak/",
       "hasRoomScene": true,
       "fit": {
@@ -5777,7 +5777,7 @@ window.OZWOOD_CATALOG = {
       "why": "更契合「品质真实木感」这类需求；选择前建议结合样板与现场条件确认。",
       "install": "检测基层含水率与平整度后，由安装人员确定胶粘或悬浮方式、伸缩缝与材料适应时间。",
       "care": "定期清除砂粒，使用微湿拖布与木地板清洁剂，避免地面积水。",
-      "officialImage": "https://ozwoodaustralia.com.au/wp-content/uploads/2021/10/Oak19017.jpg",
+      "officialImage": "assets/ozwood/textures/19017-european-oak-2.jpg",
       "source": "https://ozwoodaustralia.com.au/product/19017-european-oak-2/",
       "hasRoomScene": true,
       "fit": {
@@ -5847,7 +5847,7 @@ window.OZWOOD_CATALOG = {
       "why": "更契合「品质真实木感」这类需求；选择前建议结合样板与现场条件确认。",
       "install": "检测基层含水率与平整度后，由安装人员确定胶粘或悬浮方式、伸缩缝与材料适应时间。",
       "care": "定期清除砂粒，使用微湿拖布与木地板清洁剂，避免地面积水。",
-      "officialImage": "https://ozwoodaustralia.com.au/wp-content/uploads/2021/10/Oak19018.jpg",
+      "officialImage": "assets/ozwood/textures/19018-european-oak-83-square-meter.jpg",
       "source": "https://ozwoodaustralia.com.au/product/19018-european-oak-83-square-meter/",
       "hasRoomScene": true,
       "fit": {
@@ -5917,7 +5917,7 @@ window.OZWOOD_CATALOG = {
       "why": "更契合「品质真实木感」这类需求；选择前建议结合样板与现场条件确认。",
       "install": "检测基层含水率与平整度后，由安装人员确定胶粘或悬浮方式、伸缩缝与材料适应时间。",
       "care": "定期清除砂粒，使用微湿拖布与木地板清洁剂，避免地面积水。",
-      "officialImage": "https://ozwoodaustralia.com.au/wp-content/uploads/2021/10/6408.jpg",
+      "officialImage": "assets/ozwood/textures/14mm-engineered-timber-68-m2.jpg",
       "source": "https://ozwoodaustralia.com.au/product/14mm-engineered-timber-68-m2/",
       "hasRoomScene": true,
       "fit": {
@@ -5987,7 +5987,7 @@ window.OZWOOD_CATALOG = {
       "why": "更契合「品质真实木感」这类需求；选择前建议结合样板与现场条件确认。",
       "install": "检测基层含水率与平整度后，由安装人员确定胶粘或悬浮方式、伸缩缝与材料适应时间。",
       "care": "定期清除砂粒，使用微湿拖布与木地板清洁剂，避免地面积水。",
-      "officialImage": "https://ozwoodaustralia.com.au/wp-content/uploads/2021/10/6406.jpg",
+      "officialImage": "assets/ozwood/textures/6406-european-oak-cardamon.jpg",
       "source": "https://ozwoodaustralia.com.au/product/6406-european-oak-cardamon/",
       "hasRoomScene": true,
       "fit": {
@@ -6058,7 +6058,7 @@ window.OZWOOD_CATALOG = {
       "why": "更契合「澳洲硬木个性、品质真实木感」这类需求；选择前建议结合样板与现场条件确认。",
       "install": "检测基层含水率与平整度后，由安装人员确定胶粘或悬浮方式、伸缩缝与材料适应时间。",
       "care": "定期清除砂粒，使用微湿拖布与木地板清洁剂，避免地面积水。",
-      "officialImage": "https://ozwoodaustralia.com.au/wp-content/uploads/2021/10/A04-Blackbutt.jpg",
+      "officialImage": "assets/ozwood/textures/a04-blackbutt.jpg",
       "source": "https://ozwoodaustralia.com.au/product/a04-blackbutt/",
       "hasRoomScene": true,
       "fit": {
@@ -6131,7 +6131,7 @@ window.OZWOOD_CATALOG = {
       "why": "更契合「澳洲硬木个性、品质真实木感」这类需求；选择前建议结合样板与现场条件确认。",
       "install": "检测基层含水率与平整度后，由安装人员确定胶粘或悬浮方式、伸缩缝与材料适应时间。",
       "care": "定期清除砂粒，使用微湿拖布与木地板清洁剂，避免地面积水。",
-      "officialImage": "https://ozwoodaustralia.com.au/wp-content/uploads/2021/10/A0402.jpg",
+      "officialImage": "assets/ozwood/textures/a0402-blackbutt-multi-strip.jpg",
       "source": "https://ozwoodaustralia.com.au/product/a0402-blackbutt-multi-strip/",
       "hasRoomScene": true,
       "fit": {
@@ -6203,7 +6203,7 @@ window.OZWOOD_CATALOG = {
       "why": "更契合「品质真实木感」这类需求；选择前建议结合样板与现场条件确认。",
       "install": "检测基层含水率与平整度后，由安装人员确定胶粘或悬浮方式、伸缩缝与材料适应时间。",
       "care": "定期清除砂粒，使用微湿拖布与木地板清洁剂，避免地面积水。",
-      "officialImage": "https://ozwoodaustralia.com.au/wp-content/uploads/2021/10/1505.jpg",
+      "officialImage": "assets/ozwood/textures/oak-1505.jpg",
       "source": "https://ozwoodaustralia.com.au/product/oak-1505/",
       "hasRoomScene": true,
       "fit": {
@@ -6274,7 +6274,7 @@ window.OZWOOD_CATALOG = {
       "why": "更契合「澳洲硬木个性、品质真实木感」这类需求；选择前建议结合样板与现场条件确认。",
       "install": "检测基层含水率与平整度后，由安装人员确定胶粘或悬浮方式、伸缩缝与材料适应时间。",
       "care": "定期清除砂粒，使用微湿拖布与木地板清洁剂，避免地面积水。",
-      "officialImage": "https://ozwoodaustralia.com.au/wp-content/uploads/2024/12/Image_20241204134842.jpg",
+      "officialImage": "assets/ozwood/textures/bbt04-125-blackbutt-88-m2.jpg",
       "source": "https://ozwoodaustralia.com.au/product/bbt04-125-blackbutt-88-m2/",
       "hasRoomScene": true,
       "fit": {
@@ -6347,7 +6347,7 @@ window.OZWOOD_CATALOG = {
       "why": "更契合「澳洲硬木个性、品质真实木感」这类需求；选择前建议结合样板与现场条件确认。",
       "install": "检测基层含水率与平整度后，由安装人员确定胶粘或悬浮方式、伸缩缝与材料适应时间。",
       "care": "定期清除砂粒，使用微湿拖布与木地板清洁剂，避免地面积水。",
-      "officialImage": "https://ozwoodaustralia.com.au/wp-content/uploads/2021/10/BBT1806.jpg",
+      "officialImage": "assets/ozwood/textures/bbt1806-blackbutt.jpg",
       "source": "https://ozwoodaustralia.com.au/product/bbt1806-blackbutt/",
       "hasRoomScene": true,
       "fit": {
@@ -6420,7 +6420,7 @@ window.OZWOOD_CATALOG = {
       "why": "更契合「澳洲硬木个性、品质真实木感」这类需求；选择前建议结合样板与现场条件确认。",
       "install": "检测基层含水率与平整度后，由安装人员确定胶粘或悬浮方式、伸缩缝与材料适应时间。",
       "care": "定期清除砂粒，使用微湿拖布与木地板清洁剂，避免地面积水。",
-      "officialImage": "https://ozwoodaustralia.com.au/wp-content/uploads/2021/11/BBTS04-92-e1637286841306.jpg",
+      "officialImage": "assets/ozwood/textures/bbts04-92-blackbutt-92mm.jpg",
       "source": "https://ozwoodaustralia.com.au/product/bbts04-92-blackbutt-92mm/",
       "hasRoomScene": true,
       "fit": {
@@ -6493,7 +6493,7 @@ window.OZWOOD_CATALOG = {
       "why": "更契合「澳洲硬木个性、性价比家庭优选」这类需求；选择前建议结合样板与现场条件确认。",
       "install": "检测基层含水率与平整度后，由安装人员确定胶粘或悬浮方式、伸缩缝与材料适应时间。",
       "care": "定期清除砂粒，使用微湿拖布与木地板清洁剂，避免地面积水。",
-      "officialImage": "https://ozwoodaustralia.com.au/wp-content/uploads/2024/12/IMG20241206105745.jpg",
+      "officialImage": "assets/ozwood/textures/engineer-rigid-core-v54.jpg",
       "source": "https://ozwoodaustralia.com.au/product/engineer-rigid-core-v54/",
       "hasRoomScene": true,
       "fit": {
@@ -6566,7 +6566,7 @@ window.OZWOOD_CATALOG = {
       "why": "更契合「澳洲硬木个性、品质真实木感」这类需求；选择前建议结合样板与现场条件确认。",
       "install": "检测基层含水率与平整度后，由安装人员确定胶粘或悬浮方式、伸缩缝与材料适应时间。",
       "care": "定期清除砂粒，使用微湿拖布与木地板清洁剂，避免地面积水。",
-      "officialImage": "https://ozwoodaustralia.com.au/wp-content/uploads/2025/05/JA048-Blackbutt-2.jpg",
+      "officialImage": "assets/ozwood/textures/solid-timber-triple-strip.jpg",
       "source": "https://ozwoodaustralia.com.au/product/solid-timber-triple-strip/",
       "hasRoomScene": true,
       "fit": {
@@ -6638,7 +6638,7 @@ window.OZWOOD_CATALOG = {
       "why": "更契合「品质真实木感」这类需求；选择前建议结合样板与现场条件确认。",
       "install": "检测基层含水率与平整度后，由安装人员确定胶粘或悬浮方式、伸缩缝与材料适应时间。",
       "care": "定期清除砂粒，使用微湿拖布与木地板清洁剂，避免地面积水。",
-      "officialImage": "https://ozwoodaustralia.com.au/wp-content/uploads/2021/10/6401.jpg",
+      "officialImage": "assets/ozwood/textures/6401-chardonnay.jpg",
       "source": "https://ozwoodaustralia.com.au/product/6401-chardonnay/",
       "hasRoomScene": true,
       "fit": {
@@ -6708,7 +6708,7 @@ window.OZWOOD_CATALOG = {
       "why": "更契合「品质真实木感」这类需求；选择前建议结合样板与现场条件确认。",
       "install": "检测基层含水率与平整度后，由安装人员确定胶粘或悬浮方式、伸缩缝与材料适应时间。",
       "care": "定期清除砂粒，使用微湿拖布与木地板清洁剂，避免地面积水。",
-      "officialImage": "https://ozwoodaustralia.com.au/wp-content/uploads/2024/12/IMG20241206114300.jpg",
+      "officialImage": "assets/ozwood/textures/european-oak-15a41.jpg",
       "source": "https://ozwoodaustralia.com.au/product/european-oak-15a41/",
       "hasRoomScene": true,
       "fit": {
@@ -6778,7 +6778,7 @@ window.OZWOOD_CATALOG = {
       "why": "更契合「性价比家庭优选」这类需求；选择前建议结合样板与现场条件确认。",
       "install": "检测基层含水率与平整度后，由安装人员确定胶粘或悬浮方式、伸缩缝与材料适应时间。",
       "care": "定期清除砂粒，使用微湿拖布与木地板清洁剂，避免地面积水。",
-      "officialImage": "https://ozwoodaustralia.com.au/wp-content/uploads/2024/12/Image_20241204143025.jpg",
+      "officialImage": "assets/ozwood/textures/engineer-rigid-core-v51.jpg",
       "source": "https://ozwoodaustralia.com.au/product/engineer-rigid-core-v51/",
       "hasRoomScene": true,
       "fit": {
@@ -6848,7 +6848,7 @@ window.OZWOOD_CATALOG = {
       "why": "更契合「性价比家庭优选」这类需求；选择前建议结合样板与现场条件确认。",
       "install": "检测基层含水率与平整度后，由安装人员确定胶粘或悬浮方式、伸缩缝与材料适应时间。",
       "care": "定期清除砂粒，使用微湿拖布与木地板清洁剂，避免地面积水。",
-      "officialImage": "https://ozwoodaustralia.com.au/wp-content/uploads/2024/12/IMG20241206105809.jpg",
+      "officialImage": "assets/ozwood/textures/engineer-rigid-core-v52.jpg",
       "source": "https://ozwoodaustralia.com.au/product/engineer-rigid-core-v52/",
       "hasRoomScene": true,
       "fit": {
@@ -6918,7 +6918,7 @@ window.OZWOOD_CATALOG = {
       "why": "更契合「品质真实木感」这类需求；选择前建议结合样板与现场条件确认。",
       "install": "检测基层含水率与平整度后，由安装人员确定胶粘或悬浮方式、伸缩缝与材料适应时间。",
       "care": "定期清除砂粒，使用微湿拖布与木地板清洁剂，避免地面积水。",
-      "officialImage": "https://ozwoodaustralia.com.au/wp-content/uploads/2021/10/0-3.jpg",
+      "officialImage": "assets/ozwood/textures/6408-european-oak-weathered-stone.jpg",
       "source": "https://ozwoodaustralia.com.au/product/6408-european-oak-weathered-stone/",
       "hasRoomScene": true,
       "fit": {
@@ -6988,7 +6988,7 @@ window.OZWOOD_CATALOG = {
       "why": "更契合「冷灰现代空间、品质真实木感」这类需求；选择前建议结合样板与现场条件确认。",
       "install": "检测基层含水率与平整度后，由安装人员确定胶粘或悬浮方式、伸缩缝与材料适应时间。",
       "care": "定期清除砂粒，使用微湿拖布与木地板清洁剂，避免地面积水。",
-      "officialImage": "https://ozwoodaustralia.com.au/wp-content/uploads/2021/10/6407.jpg",
+      "officialImage": "assets/ozwood/textures/6407-european-oak-grey-oak.jpg",
       "source": "https://ozwoodaustralia.com.au/product/6407-european-oak-grey-oak/",
       "hasRoomScene": true,
       "fit": {
@@ -7059,7 +7059,7 @@ window.OZWOOD_CATALOG = {
       "why": "更契合「品质真实木感」这类需求；选择前建议结合样板与现场条件确认。",
       "install": "检测基层含水率与平整度后，由安装人员确定胶粘或悬浮方式、伸缩缝与材料适应时间。",
       "care": "定期清除砂粒，使用微湿拖布与木地板清洁剂，避免地面积水。",
-      "officialImage": "https://ozwoodaustralia.com.au/wp-content/uploads/2021/10/1504.jpg",
+      "officialImage": "assets/ozwood/textures/oak-1504.jpg",
       "source": "https://ozwoodaustralia.com.au/product/oak-1504/",
       "hasRoomScene": true,
       "fit": {
@@ -7129,7 +7129,7 @@ window.OZWOOD_CATALOG = {
       "why": "更契合「暗厅提亮、品质真实木感」这类需求；选择前建议结合样板与现场条件确认。",
       "install": "检测基层含水率与平整度后，由安装人员确定胶粘或悬浮方式、伸缩缝与材料适应时间。",
       "care": "定期清除砂粒，使用微湿拖布与木地板清洁剂，避免地面积水。",
-      "officialImage": "https://ozwoodaustralia.com.au/wp-content/uploads/2021/10/0-2.jpg",
+      "officialImage": "assets/ozwood/textures/6405-lime-wash.jpg",
       "source": "https://ozwoodaustralia.com.au/product/6405-lime-wash/",
       "hasRoomScene": true,
       "fit": {
@@ -7201,7 +7201,7 @@ window.OZWOOD_CATALOG = {
       "why": "更契合「品质真实木感」这类需求；选择前建议结合样板与现场条件确认。",
       "install": "检测基层含水率与平整度后，由安装人员确定胶粘或悬浮方式、伸缩缝与材料适应时间。",
       "care": "定期清除砂粒，使用微湿拖布与木地板清洁剂，避免地面积水。",
-      "officialImage": "https://ozwoodaustralia.com.au/wp-content/uploads/2021/10/6402.jpg",
+      "officialImage": "assets/ozwood/textures/6402-european-oak-sandstone.jpg",
       "source": "https://ozwoodaustralia.com.au/product/6402-european-oak-sandstone/",
       "hasRoomScene": true,
       "fit": {
@@ -7271,7 +7271,7 @@ window.OZWOOD_CATALOG = {
       "why": "更契合「品质真实木感」这类需求；选择前建议结合样板与现场条件确认。",
       "install": "检测基层含水率与平整度后，由安装人员确定胶粘或悬浮方式、伸缩缝与材料适应时间。",
       "care": "定期清除砂粒，使用微湿拖布与木地板清洁剂，避免地面积水。",
-      "officialImage": "https://ozwoodaustralia.com.au/wp-content/uploads/2021/10/1502.jpg",
+      "officialImage": "assets/ozwood/textures/oak-1502.jpg",
       "source": "https://ozwoodaustralia.com.au/product/oak-1502/",
       "hasRoomScene": true,
       "fit": {
@@ -7342,7 +7342,7 @@ window.OZWOOD_CATALOG = {
       "why": "更契合「澳洲硬木个性、性价比家庭优选」这类需求；选择前建议结合样板与现场条件确认。",
       "install": "检测基层含水率与平整度后，由安装人员确定胶粘或悬浮方式、伸缩缝与材料适应时间。",
       "care": "定期清除砂粒，使用微湿拖布与木地板清洁剂，避免地面积水。",
-      "officialImage": "https://ozwoodaustralia.com.au/wp-content/uploads/2024/12/IMG20241206105707.jpg",
+      "officialImage": "assets/ozwood/textures/engineer-rigid-core-v53.jpg",
       "source": "https://ozwoodaustralia.com.au/product/engineer-rigid-core-v53/",
       "hasRoomScene": true,
       "fit": {
@@ -7414,7 +7414,7 @@ window.OZWOOD_CATALOG = {
       "why": "更契合「品质真实木感」这类需求；选择前建议结合样板与现场条件确认。",
       "install": "检测基层含水率与平整度后，由安装人员确定胶粘或悬浮方式、伸缩缝与材料适应时间。",
       "care": "定期清除砂粒，使用微湿拖布与木地板清洁剂，避免地面积水。",
-      "officialImage": "https://ozwoodaustralia.com.au/wp-content/uploads/2021/10/1508.jpg",
+      "officialImage": "assets/ozwood/textures/oak-1508.jpg",
       "source": "https://ozwoodaustralia.com.au/product/oak-1508/",
       "hasRoomScene": true,
       "fit": {
@@ -7484,7 +7484,7 @@ window.OZWOOD_CATALOG = {
       "why": "更契合「品质真实木感」这类需求；选择前建议结合样板与现场条件确认。",
       "install": "检测基层含水率与平整度后，由安装人员确定胶粘或悬浮方式、伸缩缝与材料适应时间。",
       "care": "定期清除砂粒，使用微湿拖布与木地板清洁剂，避免地面积水。",
-      "officialImage": "https://ozwoodaustralia.com.au/wp-content/uploads/2021/10/1506.jpg",
+      "officialImage": "assets/ozwood/textures/oak-1506.jpg",
       "source": "https://ozwoodaustralia.com.au/product/oak-1506/",
       "hasRoomScene": true,
       "fit": {
@@ -7554,7 +7554,7 @@ window.OZWOOD_CATALOG = {
       "why": "更契合「品质真实木感」这类需求；选择前建议结合样板与现场条件确认。",
       "install": "检测基层含水率与平整度后，由安装人员确定胶粘或悬浮方式、伸缩缝与材料适应时间。",
       "care": "定期清除砂粒，使用微湿拖布与木地板清洁剂，避免地面积水。",
-      "officialImage": "https://ozwoodaustralia.com.au/wp-content/uploads/2021/10/6408.jpg",
+      "officialImage": "assets/ozwood/textures/european-oak-weathered-stone-3.jpg",
       "source": "https://ozwoodaustralia.com.au/product/european-oak-weathered-stone-3/",
       "hasRoomScene": true,
       "fit": {
@@ -7624,7 +7624,7 @@ window.OZWOOD_CATALOG = {
       "why": "它能带来真实橡木的温度，又不会让空间过黄或过暗。当需求是“自然、安静、耐看”时，它是很稳妥的综合选择。",
       "install": "检测基层含水率与平整度后，由安装人员确定胶粘或悬浮方式、伸缩缝与材料适应时间。",
       "care": "定期清除砂粒，使用微湿拖布与木地板清洁剂，避免地面积水。",
-      "officialImage": "assets/ozwood/official/product-european-oak.jpg",
+      "officialImage": "assets/ozwood/textures/product-european-oak.jpg",
       "source": "https://ozwoodaustralia.com.au/product/oak-5106-france-78-m2/",
       "hasRoomScene": true,
       "fit": {
@@ -7695,7 +7695,7 @@ window.OZWOOD_CATALOG = {
       "why": "如果客户希望地板一眼就有澳洲木材的辨识度，接受明显木纹与颜色变化，而不是追求完全均一的表面，它会是最有说服力的推荐。",
       "install": "检测基层含水率与平整度后，由安装人员确定胶粘或悬浮方式、伸缩缝与材料适应时间。",
       "care": "定期清除砂粒，使用微湿拖布与木地板清洁剂，避免地面积水。",
-      "officialImage": "assets/ozwood/official/product-spotted-gum.jpg",
+      "officialImage": "assets/ozwood/textures/product-spotted-gum.jpg",
       "source": "https://ozwoodaustralia.com.au/product/engineer-timber-new-spotted-gum/",
       "hasRoomScene": true,
       "fit": {
@@ -7768,7 +7768,7 @@ window.OZWOOD_CATALOG = {
       "why": "更契合「澳洲硬木个性、品质真实木感」这类需求；选择前建议结合样板与现场条件确认。",
       "install": "实木对基层与含水率更敏感；安装前确认现场条件、批次色差与伸缩预留。",
       "care": "入口用地垫，家具脚加保护垫，低水分清洁，并遵循表面工艺养护说明。",
-      "officialImage": "https://ozwoodaustralia.com.au/wp-content/uploads/2021/11/spotted-gum-narrower.jpg",
+      "officialImage": "assets/ozwood/textures/a03-spotted-gum-narrow-plank.jpg",
       "source": "https://ozwoodaustralia.com.au/product/a03-spotted-gum-narrow-plank/",
       "hasRoomScene": true,
       "fit": {
@@ -7840,7 +7840,7 @@ window.OZWOOD_CATALOG = {
       "why": "更契合「澳洲硬木个性、品质真实木感」这类需求；选择前建议结合样板与现场条件确认。",
       "install": "实木对基层与含水率更敏感；安装前确认现场条件、批次色差与伸缩预留。",
       "care": "入口用地垫，家具脚加保护垫，低水分清洁，并遵循表面工艺养护说明。",
-      "officialImage": "https://ozwoodaustralia.com.au/wp-content/uploads/2021/11/spotted-gum-red.jpg",
+      "officialImage": "assets/ozwood/textures/a035-spotted-gum.jpg",
       "source": "https://ozwoodaustralia.com.au/product/a035-spotted-gum/",
       "hasRoomScene": true,
       "fit": {
@@ -7913,7 +7913,7 @@ window.OZWOOD_CATALOG = {
       "why": "更契合「澳洲硬木个性、冷灰现代空间、品质真实木感」这类需求；选择前建议结合样板与现场条件确认。",
       "install": "实木对基层与含水率更敏感；安装前确认现场条件、批次色差与伸缩预留。",
       "care": "入口用地垫，家具脚加保护垫，低水分清洁，并遵循表面工艺养护说明。",
-      "officialImage": "https://ozwoodaustralia.com.au/wp-content/uploads/2021/10/A03-Spotted-Gum-1-1.jpg",
+      "officialImage": "assets/ozwood/textures/k71rosewood.jpg",
       "source": "https://ozwoodaustralia.com.au/product/k71rosewood/",
       "hasRoomScene": true,
       "fit": {
@@ -7987,7 +7987,7 @@ window.OZWOOD_CATALOG = {
       "why": "更契合「品质真实木感」这类需求；选择前建议结合样板与现场条件确认。",
       "install": "实木对基层与含水率更敏感；安装前确认现场条件、批次色差与伸缩预留。",
       "care": "入口用地垫，家具脚加保护垫，低水分清洁，并遵循表面工艺养护说明。",
-      "officialImage": "https://ozwoodaustralia.com.au/wp-content/uploads/2021/10/jatoba-1.jpg",
+      "officialImage": "assets/ozwood/textures/a11-jatoba.jpg",
       "source": "https://ozwoodaustralia.com.au/product/a11-jatoba/",
       "hasRoomScene": true,
       "fit": {
@@ -8058,7 +8058,7 @@ window.OZWOOD_CATALOG = {
       "why": "更契合「澳洲硬木个性、冷灰现代空间、品质真实木感」这类需求；选择前建议结合样板与现场条件确认。",
       "install": "实木对基层与含水率更敏感；安装前确认现场条件、批次色差与伸缩预留。",
       "care": "入口用地垫，家具脚加保护垫，低水分清洁，并遵循表面工艺养护说明。",
-      "officialImage": "https://ozwoodaustralia.com.au/wp-content/uploads/2021/11/IRONBARK-narrow-e1637286982131.jpg",
+      "officialImage": "assets/ozwood/textures/a26-grey-ironbark-90mm-width.jpg",
       "source": "https://ozwoodaustralia.com.au/product/a26-grey-ironbark-90mm-width/",
       "hasRoomScene": true,
       "fit": {
@@ -8132,7 +8132,7 @@ window.OZWOOD_CATALOG = {
       "why": "更契合「品质真实木感」这类需求；选择前建议结合样板与现场条件确认。",
       "install": "实木对基层与含水率更敏感；安装前确认现场条件、批次色差与伸缩预留。",
       "care": "入口用地垫，家具脚加保护垫，低水分清洁，并遵循表面工艺养护说明。",
-      "officialImage": "https://ozwoodaustralia.com.au/wp-content/uploads/2021/11/IMG_4737-2.jpg",
+      "officialImage": "assets/ozwood/textures/a06-ironbark.jpg",
       "source": "https://ozwoodaustralia.com.au/product/a06-ironbark/",
       "hasRoomScene": true,
       "fit": {
@@ -8201,7 +8201,7 @@ window.OZWOOD_CATALOG = {
       "why": "更契合「品质真实木感」这类需求；选择前建议结合样板与现场条件确认。",
       "install": "实木对基层与含水率更敏感；安装前确认现场条件、批次色差与伸缩预留。",
       "care": "入口用地垫，家具脚加保护垫，低水分清洁，并遵循表面工艺养护说明。",
-      "officialImage": "https://ozwoodaustralia.com.au/wp-content/uploads/2025/05/A20-Padauk.jpg",
+      "officialImage": "assets/ozwood/textures/padauk-solid-timber.jpg",
       "source": "https://ozwoodaustralia.com.au/product/padauk-solid-timber/",
       "hasRoomScene": true,
       "fit": {
@@ -8271,7 +8271,7 @@ window.OZWOOD_CATALOG = {
       "why": "更契合「澳洲硬木个性、品质真实木感」这类需求；选择前建议结合样板与现场条件确认。",
       "install": "实木对基层与含水率更敏感；安装前确认现场条件、批次色差与伸缩预留。",
       "care": "入口用地垫，家具脚加保护垫，低水分清洁，并遵循表面工艺养护说明。",
-      "officialImage": "https://ozwoodaustralia.com.au/wp-content/uploads/2021/11/red-ironbark.jpg",
+      "officialImage": "assets/ozwood/textures/red-ironbark.jpg",
       "source": "https://ozwoodaustralia.com.au/product/red-ironbark/",
       "hasRoomScene": true,
       "fit": {
@@ -8342,7 +8342,7 @@ window.OZWOOD_CATALOG = {
       "why": "更契合「性价比家庭优选」这类需求；选择前建议结合样板与现场条件确认。",
       "install": "实木对基层与含水率更敏感；安装前确认现场条件、批次色差与伸缩预留。",
       "care": "入口用地垫，家具脚加保护垫，低水分清洁，并遵循表面工艺养护说明。",
-      "officialImage": "https://ozwoodaustralia.com.au/wp-content/uploads/2025/05/K855-1.jpg",
+      "officialImage": "assets/ozwood/textures/solid-timber-multi-strip.jpg",
       "source": "https://ozwoodaustralia.com.au/product/solid-timber-multi-strip/",
       "hasRoomScene": true,
       "fit": {
@@ -8412,7 +8412,7 @@ window.OZWOOD_CATALOG = {
       "why": "更契合「澳洲硬木个性、性价比家庭优选」这类需求；选择前建议结合样板与现场条件确认。",
       "install": "实木对基层与含水率更敏感；安装前确认现场条件、批次色差与伸缩预留。",
       "care": "入口用地垫，家具脚加保护垫，低水分清洁，并遵循表面工艺养护说明。",
-      "officialImage": "https://ozwoodaustralia.com.au/wp-content/uploads/2024/12/A0302-multi-strip.jpg",
+      "officialImage": "assets/ozwood/textures/solid-timber-sydney-blue-gum.jpg",
       "source": "https://ozwoodaustralia.com.au/product/solid-timber-sydney-blue-gum/",
       "hasRoomScene": true,
       "fit": {
@@ -8484,7 +8484,7 @@ window.OZWOOD_CATALOG = {
       "why": "更契合「澳洲硬木个性、性价比家庭优选」这类需求；选择前建议结合样板与现场条件确认。",
       "install": "实木对基层与含水率更敏感；安装前确认现场条件、批次色差与伸缩预留。",
       "care": "入口用地垫，家具脚加保护垫，低水分清洁，并遵循表面工艺养护说明。",
-      "officialImage": "https://ozwoodaustralia.com.au/wp-content/uploads/2025/05/A0702-Blue-Gum.jpg",
+      "officialImage": "assets/ozwood/textures/solid-timber-sydney-blue-gum-2.jpg",
       "source": "https://ozwoodaustralia.com.au/product/solid-timber-sydney-blue-gum-2/",
       "hasRoomScene": true,
       "fit": {
@@ -8557,7 +8557,7 @@ window.OZWOOD_CATALOG = {
       "why": "更契合「预算优先公寓」这类需求；选择前建议结合样板与现场条件确认。",
       "install": "实木对基层与含水率更敏感；安装前确认现场条件、批次色差与伸缩预留。",
       "care": "入口用地垫，家具脚加保护垫，低水分清洁，并遵循表面工艺养护说明。",
-      "officialImage": "https://ozwoodaustralia.com.au/wp-content/uploads/2025/05/K815-Triple-Strip-1.jpg",
+      "officialImage": "assets/ozwood/textures/solid-timber-triple-strip-2.jpg",
       "source": "https://ozwoodaustralia.com.au/product/solid-timber-triple-strip-2/",
       "hasRoomScene": true,
       "fit": {
@@ -8628,7 +8628,7 @@ window.OZWOOD_CATALOG = {
       "why": "更契合「人字拼设计焦点、低排放家庭关怀」这类需求；选择前建议结合样板与现场条件确认。",
       "install": "专业放线很关键；确认视觉中心轴、周边切割、过渡收口、胶粘系统与额外损耗后再报价。",
       "care": "避免砂粒与家具拖动损伤；按工程木低水分方式日常养护。",
-      "officialImage": "https://ozwoodaustralia.com.au/wp-content/uploads/2021/10/WN4308.jpg",
+      "officialImage": "assets/ozwood/textures/engineered-american-black-walnut-herringbone-4308.jpg",
       "source": "https://ozwoodaustralia.com.au/product/engineered-american-black-walnut-herringbone-4308/",
       "hasRoomScene": true,
       "fit": {
@@ -8704,7 +8704,7 @@ window.OZWOOD_CATALOG = {
       "why": "更契合「澳洲硬木个性、人字拼设计焦点、低排放家庭关怀」这类需求；选择前建议结合样板与现场条件确认。",
       "install": "专业放线很关键；确认视觉中心轴、周边切割、过渡收口、胶粘系统与额外损耗后再报价。",
       "care": "避免砂粒与家具拖动损伤；按工程木低水分方式日常养护。",
-      "officialImage": "https://ozwoodaustralia.com.au/wp-content/uploads/2021/10/BBT4304-1.jpg",
+      "officialImage": "assets/ozwood/textures/engineered-american-walnut-herringbone-4308.jpg",
       "source": "https://ozwoodaustralia.com.au/product/engineered-american-walnut-herringbone-4308/",
       "hasRoomScene": true,
       "fit": {
@@ -8781,7 +8781,7 @@ window.OZWOOD_CATALOG = {
       "why": "更契合「人字拼设计焦点、低排放家庭关怀」这类需求；选择前建议结合样板与现场条件确认。",
       "install": "专业放线很关键；确认视觉中心轴、周边切割、过渡收口、胶粘系统与额外损耗后再报价。",
       "care": "避免砂粒与家具拖动损伤；按工程木低水分方式日常养护。",
-      "officialImage": "https://ozwoodaustralia.com.au/wp-content/uploads/2021/10/OAK4302.jpg",
+      "officialImage": "assets/ozwood/textures/engineered-blackbutt-herringbone-bbt4304.jpg",
       "source": "https://ozwoodaustralia.com.au/product/engineered-blackbutt-herringbone-bbt4304/",
       "hasRoomScene": true,
       "fit": {
@@ -8856,7 +8856,7 @@ window.OZWOOD_CATALOG = {
       "why": "更契合「人字拼设计焦点、低排放家庭关怀」这类需求；选择前建议结合样板与现场条件确认。",
       "install": "专业放线很关键；确认视觉中心轴、周边切割、过渡收口、胶粘系统与额外损耗后再报价。",
       "care": "避免砂粒与家具拖动损伤；按工程木低水分方式日常养护。",
-      "officialImage": "https://ozwoodaustralia.com.au/wp-content/uploads/2021/10/OAK4305.jpg",
+      "officialImage": "assets/ozwood/textures/engineered-oak-herringbone-4305.jpg",
       "source": "https://ozwoodaustralia.com.au/product/engineered-oak-herringbone-4305/",
       "hasRoomScene": true,
       "fit": {
@@ -8931,7 +8931,7 @@ window.OZWOOD_CATALOG = {
       "why": "更契合「人字拼设计焦点、低排放家庭关怀」这类需求；选择前建议结合样板与现场条件确认。",
       "install": "专业放线很关键；确认视觉中心轴、周边切割、过渡收口、胶粘系统与额外损耗后再报价。",
       "care": "避免砂粒与家具拖动损伤；按工程木低水分方式日常养护。",
-      "officialImage": "https://ozwoodaustralia.com.au/wp-content/uploads/2021/10/OAK4306.jpg",
+      "officialImage": "assets/ozwood/textures/engineered-blue-gum-herringbone-4306.jpg",
       "source": "https://ozwoodaustralia.com.au/product/engineered-blue-gum-herringbone-4306/",
       "hasRoomScene": true,
       "fit": {
@@ -9006,7 +9006,7 @@ window.OZWOOD_CATALOG = {
       "why": "更契合「人字拼设计焦点、低排放家庭关怀」这类需求；选择前建议结合样板与现场条件确认。",
       "install": "专业放线很关键；确认视觉中心轴、周边切割、过渡收口、胶粘系统与额外损耗后再报价。",
       "care": "避免砂粒与家具拖动损伤；按工程木低水分方式日常养护。",
-      "officialImage": "https://ozwoodaustralia.com.au/wp-content/uploads/2025/08/图片_20250831111455.jpg",
+      "officialImage": "assets/ozwood/textures/engineered-oak-herringbone-4309.jpg",
       "source": "https://ozwoodaustralia.com.au/product/engineered-oak-herringbone-4309/",
       "hasRoomScene": true,
       "fit": {
@@ -9081,7 +9081,7 @@ window.OZWOOD_CATALOG = {
       "why": "更契合「人字拼设计焦点、低排放家庭关怀」这类需求；选择前建议结合样板与现场条件确认。",
       "install": "专业放线很关键；确认视觉中心轴、周边切割、过渡收口、胶粘系统与额外损耗后再报价。",
       "care": "避免砂粒与家具拖动损伤；按工程木低水分方式日常养护。",
-      "officialImage": "https://ozwoodaustralia.com.au/wp-content/uploads/2021/10/图片_20250831111509-2.jpg",
+      "officialImage": "assets/ozwood/textures/engineered-blue-gum-herringbone-4307.jpg",
       "source": "https://ozwoodaustralia.com.au/product/engineered-blue-gum-herringbone-4307/",
       "hasRoomScene": true,
       "fit": {
@@ -9157,7 +9157,7 @@ window.OZWOOD_CATALOG = {
       "why": "更契合「澳洲硬木个性、人字拼设计焦点、低排放家庭关怀」这类需求；选择前建议结合样板与现场条件确认。",
       "install": "专业放线很关键；确认视觉中心轴、周边切割、过渡收口、胶粘系统与额外损耗后再报价。",
       "care": "避免砂粒与家具拖动损伤；按工程木低水分方式日常养护。",
-      "officialImage": "https://ozwoodaustralia.com.au/wp-content/uploads/2021/10/SG4303.jpg",
+      "officialImage": "assets/ozwood/textures/engineered-spotted-gum-herringbone-sg4304.jpg",
       "source": "https://ozwoodaustralia.com.au/product/engineered-spotted-gum-herringbone-sg4304/",
       "hasRoomScene": true,
       "fit": {
@@ -9234,7 +9234,7 @@ window.OZWOOD_CATALOG = {
       "why": "当地面需要成为建筑设计的一部分，而不是一块中性的背景时，就应该优先考虑它。",
       "install": "专业放线很关键；确认视觉中心轴、周边切割、过渡收口、胶粘系统与额外损耗后再报价。",
       "care": "避免砂粒与家具拖动损伤；按工程木低水分方式日常养护。",
-      "officialImage": "assets/ozwood/official/product-herringbone.jpg",
+      "officialImage": "assets/ozwood/textures/product-herringbone.jpg",
       "source": "https://ozwoodaustralia.com.au/product/engineered-oak-herringbone-4301/",
       "hasRoomScene": true,
       "fit": {
